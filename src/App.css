@@ -37,3 +37,11 @@
     transform: translateY(0px);
   }
 }
+
+/* fields */
+input.system-field,
+button.system-field {
+  width: 80%;
+  text-align: right;
+  max-width: 200px;
+}
