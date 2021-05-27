@@ -20,7 +20,7 @@ export function DropDown(props) {
   );
   return (
     <Dropdown overlay={menu} placement="bottomCenter">
-      <Button className="system-field">
+      <Button className="system-field system-space">
         {selected ? selected : props.header}
       </Button>
     </Dropdown>
@@ -30,7 +30,7 @@ export function DropDown(props) {
 export function DisabledInput(props) {
   return (
     <Input
-      className="system-field"
+      className={`system-field ${props.className}`}
       placeholder={props.placeHolder}
       disabled
     ></Input>

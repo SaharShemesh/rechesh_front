@@ -45,3 +45,7 @@ button.system-field {
   text-align: right;
   max-width: 200px;
 }
+
+.ant-menu-horizontal {
+  margin: 0 0 5px 0;
+}
