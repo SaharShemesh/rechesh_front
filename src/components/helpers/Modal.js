@@ -15,6 +15,7 @@ function System_Modal(props) {
       maskClosable={props.show}
       style={{ textAlign: "center" }}
       onCancel={props.onCancel}
+      width="100%"
     >
       {props.children}
     </Modal>

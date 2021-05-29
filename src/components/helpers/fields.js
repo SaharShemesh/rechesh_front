@@ -13,6 +13,8 @@ export function DropDown(props) {
     <Menu
       onClick={(value) => {
         setSelected(value.key);
+        if (typeof props.valueChanged != "undefined")
+          props.valueChanged(value.key);
       }}
     >
       {menuItems}
