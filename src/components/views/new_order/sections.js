@@ -383,7 +383,14 @@ export function AcceptTable() {
 }
 
 export function SellItem(props) {
-  let valueInsertion = (row, key, e) => {};
+  let valueInsertion = (row, field, e) => {
+    row[field] = e.target.value;
+    props.new_value(row);
+  };
+  let DropdownInsertion = (row, value, field, e) => {
+    row[field] = value;
+    props.new_value(row);
+  };
   let columns = [
     {
       align: "right",
@@ -416,7 +423,15 @@ export function SellItem(props) {
       key: "iaf_num",
       dataIndex: "iaf_num",
       render(value, row, index) {
-        return <DropDown items={["73937356", "8123616493"]} header="מסחא" />;
+        return (
+          <DropDown
+            items={["73937356", "8123616493"]}
+            valueChanged={(va) => {
+              DropdownInsertion(row, va, "iaf_num");
+            }}
+            header="מסחא"
+          />
+        );
       },
     },
     {
@@ -425,7 +440,15 @@ export function SellItem(props) {
       key: "tech",
       dataIndex: "tech",
       render(value, row, index) {
-        return <DropDown items={["כן", "לא"]} header="איפיון טכני" />;
+        return (
+          <DropDown
+            items={["כן", "לא"]}
+            valueChanged={(va) => {
+              DropdownInsertion(row, va, "tech");
+            }}
+            header="איפיון טכני"
+          />
+        );
       },
     },
     {
@@ -450,7 +473,15 @@ export function SellItem(props) {
       key: "creator_name",
       dataIndex: "creator_name",
       render(value, row, index) {
-        return <DropDown items={["דוד", "אלכס"]} header="שם יצרן" />;
+        return (
+          <DropDown
+            items={["דוד", "אלכס"]}
+            valueChanged={(va) => {
+              DropdownInsertion(row, va, "creator_name");
+            }}
+            header="שם יצרן"
+          />
+        );
       },
     },
     {
@@ -459,7 +490,15 @@ export function SellItem(props) {
       key: "recomended_provider",
       dataIndex: "recomended_provider",
       render(value, row, index) {
-        return <DropDown items={["אלכס", "דוד"]} header="ספק מומלץ" />;
+        return (
+          <DropDown
+            items={["אלכס", "דוד"]}
+            valueChanged={(va) => {
+              DropdownInsertion(row, va, "recomended_provider");
+            }}
+            header="ספק מומלץ"
+          />
+        );
       },
     },
     {
@@ -484,7 +523,15 @@ export function SellItem(props) {
       key: "measurement",
       dataIndex: "measurement",
       render(value, row, index) {
-        return <DropDown items={["קילו", "אינץ"]} header="יחידת מידה" />;
+        return (
+          <DropDown
+            items={["קילו", "אינץ"]}
+            header="יחידת מידה"
+            valueChanged={(va) => {
+              DropdownInsertion(row, va, "measurement");
+            }}
+          />
+        );
       },
     },
     {
@@ -510,12 +557,6 @@ export function SellItem(props) {
       props.items_selected(selectedRowKeys);
     },
   };
-  let data = [
-    {
-      key: 0,
-      item_number: 1,
-    },
-  ];
 
   return (
     <>
