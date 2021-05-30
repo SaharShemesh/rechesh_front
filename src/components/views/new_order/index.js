@@ -62,20 +62,27 @@ export default function New_order() {
   let [items, setItems] = useState([]);
   let [selected_items, setSelected] = useState([]);
   function addItem() {
-    let messages = [];
-    let last_row = items[items.length - 1];
-    if (last_row.desc == "") messages.push("לא הוזן תיאור פריט");
-    if (last_row.iaf_num == "") messages.push("לא הוזנה מסחא");
-    if (last_row.tech == "") messages.push("לא נבחר אפיון טכני ");
-    if (last_row.creator_num == "") messages.push("לא נבחר מספר יצרן");
-    if (last_row.recomended_provider == "") messages.push("לא נבחר ספק מומלץ");
-    if (last_row.quantity == "") messages.push("לא הוזנה כמות פריטים");
-    if (last_row.measurement == "") messages.push("לא נבחרה יחידת מידה");
-    if (last_row.price == "") messages.push("לא הוזן מחיר ליח");
+    if (items.length >= 1) {
+      let messages = [];
+      let last_row = items[items.length - 1];
+      if (last_row.desc == "") messages.push("לא הוזן תיאור פריט");
+      if (last_row.iaf_num == "") messages.push("לא הוזנה מסחא");
+      if (last_row.tech == "") messages.push("לא נבחר אפיון טכני ");
+      if (last_row.creator_num == "") messages.push("לא נבחר מספר יצרן");
+      if (last_row.recomended_provider == "")
+        messages.push("לא נבחר ספק מומלץ");
+      if (last_row.quantity == "") messages.push("לא הוזנה כמות פריטים");
+      if (last_row.measurement == "") messages.push("לא נבחרה יחידת מידה");
+      if (last_row.price == "") messages.push("לא הוזן מחיר ליח");
 
-    if (messages.length >= 1) {
-      let error_list = messages.map((error) => <li>{error}</li>);
-      return system_Notification("error", "שגיאת הזנה", <ul>{error_list}</ul>);
+      if (messages.length >= 1) {
+        let error_list = messages.map((error) => <li>{error}</li>);
+        return system_Notification(
+          "error",
+          "שגיאת הזנה",
+          <ul>{error_list}</ul>
+        );
+      }
     }
     setItems(
       re_order_the_key([
