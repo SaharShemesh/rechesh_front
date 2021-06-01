@@ -302,7 +302,16 @@ export function Screen_Permission(props) {
   return (
     <FormModal header="מסך הרשאות" show={props.show} onCancel={props.onCancel}>
       <Form {...layout}>
-        <Form.Item label=" חיפוש">
+        <Form.Item
+          name="soldiers"
+          label=" חיפוש"
+          rules={[
+            {
+              required: true,
+              message: "יש להזין",
+            },
+          ]}
+        >
           <Input
             placeholder=" מספר אישי "
             suffix={<UserOutlined className="site-form-item-icon" />}

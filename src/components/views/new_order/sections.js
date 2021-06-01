@@ -8,10 +8,17 @@ import {
   FileOutlined,
 } from "@ant-design/icons";
 import { map_bid_to_table } from "../../helpers/procedures";
+import { isNumber } from "../../../helpers/validators";
 export function Order_details() {
+  const [form] = Form.useForm();
   return (
     <React.Fragment>
-      <Form name="advanced_search" className="ant-advanced-search-form">
+      <Form
+        name="order_details"
+        form={form}
+        className="ant-advanced-search-form"
+        onValuesChange={(values) => console.log(form.getFieldsValue())}
+      >
         <Row>
           <Col span={8}>
             <Form.Item
@@ -31,6 +38,12 @@ export function Order_details() {
 
           <Col span={8}>
             <Form.Item
+              rules={[
+                {
+                  validator: isNumber,
+                  message: "חייב מספר",
+                },
+              ]}
               labelCol={{
                 span: 7,
               }}
@@ -74,7 +87,7 @@ export function Order_details() {
               name="desc"
               label="תיאור:"
             >
-              <DisabledInput placeHolder="תיאור"></DisabledInput>
+              <DisabledInput value="test" placeHolder="תיאור"></DisabledInput>
             </Form.Item>
           </Col>
 
@@ -85,8 +98,36 @@ export function Order_details() {
               }}
               name="assign_Num"
               label="מספר מטלה:"
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (
+                      form.getFieldValue("buy_Type") == "אסמכתא" &&
+                      (value.substring(value.length - 3) == "962" ||
+                        value.substring(value.length - 3) == "950")
+                    ) {
+                      console.log(1);
+                      return Promise.reject(
+                        "מספר מטלה אינו תואם את סוג הרכש. מועבר לבחינת מחלקת רכש"
+                      );
+                    } else {
+                      if (
+                        (form.getFieldValue("buy_Type") == "דרישה" ||
+                          form.getFieldValue("buy_Type") == "משיכה") &&
+                        value.substring(value.length - 3) != "962" &&
+                        value.substring(value.length - 3) != "950"
+                      ) {
+                        return Promise.reject(
+                          "מספר מטלה אינו תואם את סוג הרכש. מועבר לבחינת מחלקת רכש"
+                        );
+                      }
+                      return Promise.resolve();
+                    }
+                  },
+                },
+              ]}
             >
-              <DropDown items={["679678856", "657497040"]} header="סוג הזמנה" />
+              <DropDown items={["679678856", "657497040"]} header="מטלות" />
             </Form.Item>
           </Col>
         </Row>
@@ -99,7 +140,7 @@ export function Order_details() {
               name="buy_Type"
               label="סוג רכש:"
             >
-              <DropDown items={["קטן", "גדול"]} header="סוג רכש" />
+              <DropDown items={["משיכה", "אסמכתא", "דרישה"]} header="סוג רכש" />
             </Form.Item>
           </Col>
 

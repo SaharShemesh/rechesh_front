@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   AcceptTable,
   Details,
@@ -11,6 +11,10 @@ import { Row, Col } from "antd";
 import "./css/order.css";
 import { re_order_the_key } from "../../helpers/procedures";
 import { system_Notification } from "../../helpers/notification";
+import { Form } from "antd";
+//memos
+let ActionsMemo = React.memo(Actions);
+let BidMemo = React.memo(Bid);
 //dummy bids
 let object = {
   1: {
@@ -104,7 +108,7 @@ export default function New_order() {
     );
   }
 
-  function do_action(action) {
+  let do_action = useCallback(function (action) {
     switch (action) {
       case "delete":
         setItems(
@@ -115,46 +119,50 @@ export default function New_order() {
         );
         setSelected([]);
     }
-  }
+  }, []);
   return (
     <React.Fragment>
-      <Row justify="end" gutter={[0, 0]}>
-        <Col span={18}>
-          <Order_details />
-        </Col>
-        <Col span={6}>
-          <Details />
-        </Col>
-        <Col span={18}>
-          <SellItem
-            sell_Items={items}
-            add_item={addItem}
-            selected_keys={selected_items}
-            items_selected={(items) => {
-              setSelected(items);
-            }}
-            new_value={(row) => {
-              let index = items.findIndex(
-                (current_row) => current_row.key == row.key
-              );
-              let new_items = items.slice();
-              new_items[index] = row;
-              setItems(new_items);
-            }}
-          />
-        </Col>
-        <Col span={1}></Col>
-        <Col span={5}>
-          <Actions on_delete={do_action.bind(this, "delete")}></Actions>
-        </Col>
-        <Col span={13}>
-          <Bid bids={bids} />
-        </Col>
-        <Col span={1}></Col>
-        <Col span={10}>
-          <AcceptTable />
-        </Col>
-      </Row>
+      <Form.Provider>
+        <Row justify="end" gutter={[0, 0]}>
+          <Col span={18}>
+            <Order_details />
+          </Col>
+          <Col span={6}>
+            <Details />
+          </Col>
+          <Col span={18}>
+            <SellItem
+              sell_Items={items}
+              add_item={addItem}
+              selected_keys={selected_items}
+              items_selected={(items) => {
+                setSelected(items);
+              }}
+              new_value={(row) => {
+                let index = items.findIndex(
+                  (current_row) => current_row.key == row.key
+                );
+                let new_items = items.slice();
+                new_items[index] = row;
+                setItems(new_items);
+              }}
+            />
+          </Col>
+          <Col span={1}></Col>
+          <Col span={5}>
+            <ActionsMemo
+              on_delete={do_action.bind(this, "delete")}
+            ></ActionsMemo>
+          </Col>
+          <Col span={13}>
+            <BidMemo bids={bids} />
+          </Col>
+          <Col span={1}></Col>
+          <Col span={10}>
+            <AcceptTable />
+          </Col>
+        </Row>
+      </Form.Provider>
     </React.Fragment>
   );
 }

@@ -1,7 +1,7 @@
 import { Menu, Dropdown, Button, Input } from "antd";
 import { useState, React } from "react";
 export function DropDown(props) {
-  let [selected, setSelected] = useState();
+  let [selected, setSelected] = useState(props.value);
   let menuItems = props.items.map((item) => {
     return (
       <Menu.Item key={item}>
@@ -13,8 +13,7 @@ export function DropDown(props) {
     <Menu
       onClick={(value) => {
         setSelected(value.key);
-        if (typeof props.valueChanged != "undefined")
-          props.valueChanged(value.key);
+        if (typeof props.onChange != "undefined") props.onChange(value.key);
       }}
     >
       {menuItems}
@@ -35,6 +34,8 @@ export function DisabledInput(props) {
       className={`system-field ${props.className}`}
       placeholder={props.placeHolder}
       disabled
+      value={props.value}
+      onInput={props.onChange}
     ></Input>
   );
 }
