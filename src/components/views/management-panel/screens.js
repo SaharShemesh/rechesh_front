@@ -1,6 +1,9 @@
 import { Form, Table, Input } from "antd";
+import React, { useState } from "react";
 import { FormModal } from "../../helpers/Modal";
 import { UserOutlined } from "@ant-design/icons";
+import { isNumber } from "../../../helpers/validators";
+let valueInsertion = (row, key, e) => {};
 export function Update_bag(props) {
   //<FolderOpenOutlined />
   const layout = {
@@ -65,17 +68,21 @@ export function Update_bag(props) {
       <Form layout="inline">
         <Form.Item
           label=" מס' תיק"
-          name="username"
-          rules={[{ required: true, message: "Please input your username!" }]}
+          name="bag_num"
+          rules={[
+            { 
+              validator:isNumber,
+              message:"חייב להיות מספר" 
+            }
+          ]}
         >
           <Input placeholder="מספר תיק" />
         </Form.Item>
         <Form.Item
           label="תיאור תיק"
-          name="password"
-          rules={[{ required: true, message: "Please input your password!" }]}
+          name="bag_desc"
         >
-          <Input type="password" placeholder="תיאור תיק" />
+          <Input type="text" placeholder="תיאור תיק" />
         </Form.Item>
       </Form>
 
@@ -97,12 +104,22 @@ export function Update_notificationData(props) {
       title: "ערוץ רכש",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>
     },
     {
       title: "תנאי",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "condition",
+      key: "condition",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        );
+      },
+      
     },
     {
       title: "הזנה",
@@ -162,43 +179,106 @@ export function Update_provider(props) {
     },
     {
       title: "התמחויות",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "proffession",
+      key: "proffession",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        )}
     },
     {
-      title: "טלפונים",
-      dataIndex: "age",
-      key: "age",
+      title: "טלפון",
+      dataIndex: "phone",
+      key: "phone",
+      render(value, row, index) {
+        return (
+          <Input
+            type="number"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        )}
     },
     {
       title: "פקס",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "fax",
+      key: "fax",
+      render(value, row, index) {
+        return (
+          <Input
+            type="number"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        )}
     },
     {
       title: "איש קשר",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "contact",
+      key: "contact",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        )}
     },
     {
       title: "כתובת החברה/איסוף",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "adress",
+      key: "adress",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        )}
     },
     {
       title: "מייל",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "mail",
+      key: "mail",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        )}
     },
     {
       title: "אתר אינטרנט",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "website",
+      key: "website",      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        )}
     },
     {
       title: "מס ספק משהבט",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "provider_number",
+      key: "provider_number",
+      render(value, row, index) {
+        return (
+          <Input
+            type="number"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        )}
     },
   ];
 
@@ -224,24 +304,27 @@ export function Update_provider(props) {
       <Form layout="inline">
         <Form.Item
           label=" שם ספק"
-          name="username"
-          rules={[{ required: true, message: "Please input your username!" }]}
+          name="providerName"
         >
           <Input placeholder="שם ספק" />
         </Form.Item>
         <Form.Item
           label="התמחות"
-          name="password"
-          rules={[{ required: true, message: "Please input your password!" }]}
+          name="proffession"
         >
-          <Input type="password" placeholder="התמחות" />
+          <Input type="text" placeholder="התמחות" />
         </Form.Item>
         <Form.Item
           label="מספר ספק משהבט"
-          name="password"
-          rules={[{ required: true, message: "Please input your password!" }]}
+          name="providerNum"
+          rules={[
+            { 
+              validator:isNumber,
+              message:"חייב להיות מספר" 
+            }
+          ]}
         >
-          <Input type="password" placeholder="תיאור תיק" />
+          <Input type="text" placeholder="תיאור תיק" />
         </Form.Item>
       </Form>
 
@@ -279,7 +362,7 @@ export function Screen_Permission(props) {
     {
       title: "סוג הרשאות",
       dataIndex: "age",
-      key: "age",
+      kefy: "age",
     },
   ];
 
@@ -298,11 +381,23 @@ export function Screen_Permission(props) {
       name: "דרישה",
     },
   ];
-
+  let [form] = Form.useForm();
   return (
+    
     <FormModal header="מסך הרשאות" show={props.show} onCancel={props.onCancel}>
-      <Form {...layout}>
-        <Form.Item label=" חיפוש">
+      <Form form={form} onValuesChange={() => console.log(form.getFieldsValue())} {...layout}>
+        <Form.Item
+        name="soldiers"
+        label=" חיפוש" 
+        rules={[ 
+                {
+                  validator:isNumber,
+                  message:"מספר אישי חייב להיות מספר"
+                },
+                {
+                  len:7,
+                  message:"מספר אישי חייב להיות באורך 7"
+                }]}>
           <Input
             placeholder=" מספר אישי "
             suffix={<UserOutlined className="site-form-item-icon" />}

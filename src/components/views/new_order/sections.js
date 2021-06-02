@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Row, Col, Form, Input, Button, Table } from "antd";
+import { Row, Col, Form, Input, Button, Table, message } from "antd";
 import { DropDown, DisabledInput } from "../../helpers/fields";
 import {
   PlayCircleOutlined,
@@ -8,16 +8,24 @@ import {
   FileOutlined,
 } from "@ant-design/icons";
 import { map_bid_to_table } from "../../helpers/procedures";
+import { isNumber } from "../../../helpers/validators";
 export function Order_details() {
+  let [form] = Form.useForm();
   return (
     <React.Fragment>
-      <Form name="advanced_search" className="ant-advanced-search-form">
+      <Form name="advanced_search" form={form} onValuesChange={() => console.log(form.getFieldsValue())} className="ant-advanced-search-form">
         <Row>
           <Col span={8}>
             <Form.Item
               labelCol={{
                 span: 7,
               }}
+              rules={[
+                {
+                  required:true,
+                  message:"חובה להזין סוג הזמנה"
+                }
+              ]}
               name="order_type"
               label="סוג הזמנה:"
             >
@@ -34,6 +42,24 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
+              rules={[
+                {
+                  required:true,
+                  message:"יש להזין פקע"
+                },
+                {
+                  validator:isNumber,
+                  message:"פקע חייבת להיות מספר"
+                },
+                {
+                  max:9,
+                  message:"פקע ארוכה מדי"
+                },
+                {
+                  min:8,
+                  message:"פקע קצרה מדי"
+                }
+              ]}
               name="paka"
               label="פקע:"
             >
@@ -46,6 +72,12 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
+              rules={[
+                {
+                  required:true,
+                  message:"חובה להזין גורם מקצועי"
+                }
+              ]}
               name="pro_Att"
               label="גורם מקצועי:"
             >
@@ -59,6 +91,12 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
+              rules={[
+                {
+                  required:true,
+                  message:"חובה להזין גורם מתקצב"
+                }
+              ]}
               name="pay"
               label="גורם מתקצב:"
             >
@@ -83,6 +121,12 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
+              rules={[
+                {
+                  required:true,
+                  message:"חובה להזין מספר מטלה"
+                }
+              ]}
               name="assign_Num"
               label="מספר מטלה:"
             >
@@ -96,6 +140,12 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
+              rules={[
+                {
+                  required:true,
+                  message:"חובה להזין סוג רכש"
+                }
+              ]}
               name="buy_Type"
               label="סוג רכש:"
             >
@@ -123,6 +173,12 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
+              rules={[
+                {
+                  required:true,
+                  message:"חובה להזין תיק משיכה"
+                }
+              ]}
               name="pulling_Bag"
               label="תיק משיכה:"
             >
@@ -150,6 +206,12 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
+              rules={[
+                {
+                  required:true,
+                  message:"יש להזין פקע"
+                }
+              ]}
               name="reason"
               label="הגדרת הצורך:"
             >
@@ -170,9 +232,14 @@ export function Order_details() {
           </Col>
 
           <Col span={8}></Col>
+          <Col span={24}>
+          <Form.Item>
+      </Form.Item>
+      </Col>
         </Row>
       </Form>
     </React.Fragment>
+    
   );
 }
 
@@ -344,7 +411,7 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={["אלכס", "דוד"]} header="גורם מתקצב" />
+              <DropDown items={["אלכס", "דוד"]} header="גורם מקצועי" />
             </Form.Item>
           </Col>
         </Row>
@@ -373,7 +440,7 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={["אלכס", "דוד"]} header="גורם מתקצב" />
+              <DropDown items={["אלכס", "דוד"]} header="גורם מקצועי" />
             </Form.Item>
           </Col>
         </Row>
@@ -561,6 +628,7 @@ export function SellItem(props) {
   return (
     <>
       <Button onClick={props.add_item}>הוסף פריט</Button>
+      <Button>הוסף הצעת מחיר</Button>
       <Table
         columns={columns}
         pagination={false}
@@ -634,6 +702,7 @@ export function Bid(prop) {
         title={() => "ריכוז הצעות"}
         dataSource={rows}
         pagination={false}
+        scroll={{y:"200px"}}
       />
     </>
   );

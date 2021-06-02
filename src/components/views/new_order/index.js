@@ -7,7 +7,7 @@ import {
   SellItem,
   Bid,
 } from "./sections";
-import { Row, Col } from "antd";
+import { Row, Col, Button } from "antd";
 import "./css/order.css";
 import { re_order_the_key } from "../../helpers/procedures";
 import { system_Notification } from "../../helpers/notification";
@@ -66,6 +66,7 @@ export default function New_order() {
       let messages = [];
       let last_row = items[items.length - 1];
       if (last_row.desc == "") messages.push("לא הוזן תיאור פריט");
+      else if(!isNaN(last_row.desc)) messages.push("תיאור פריט חייב להיות טקסט")
       if (last_row.iaf_num == "") messages.push("לא הוזנה מסחא");
       if (last_row.tech == "") messages.push("לא נבחר אפיון טכני ");
       if (last_row.creator_num == "") messages.push("לא נבחר מספר יצרן");
@@ -153,6 +154,14 @@ export default function New_order() {
         <Col span={1}></Col>
         <Col span={10}>
           <AcceptTable />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={22}></Col>
+        <Col span={2}>
+          <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
         </Col>
       </Row>
     </React.Fragment>
