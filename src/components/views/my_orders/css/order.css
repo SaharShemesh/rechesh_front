@@ -1,0 +1,35 @@
+/* #components-dropdown-demo-arrow .ant-btn {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+.ant-row-rtl #components-dropdown-demo-arrow .ant-btn {
+  margin-right: 0;
+  margin-bottom: 8px;
+  margin-left: 8px;
+}
+.system-space {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+.ant-row-rtl .ant-btn {
+  margin-right: 0;
+  margin-bottom: 8px;
+  margin-left: 8px;
+} */
+
+div.ant-col {
+    text-align: right;
+  }
+  .ant-input[disabled] {
+    text-align: right;
+  }
+  .ant-input:placeholder-shown {
+    text-align: right;
+  }
+  .ant-dropdown-menu {
+    text-align: right;
+  }
+  .ant-form-item-label > label::after {
+    margin: 0 1px 0 0;
+  }
+  
