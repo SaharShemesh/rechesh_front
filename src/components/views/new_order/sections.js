@@ -29,7 +29,11 @@ export function Order_details() {
               label="סוג הזמנה:"
             >
               <DropDown
-                items={["קטן", "גדול"]}
+                items={[
+                  { id: 1, name: "רכש בהקפה" },
+                  { id: 2, name: "רכש במשיכה" },
+                  { id: 3, name: "רכש בדרישה" },
+                ]}
                 header="סוג הזמנה"
                 valueUpdated={(value) => console.log(value)}
               />
@@ -72,7 +76,7 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
-              name="pay"
+              name="budget_type"
               label="גורם מתקצב:"
             >
               <DropDown items={["בסיסי", "שושי", "מטה"]} header="גורם מתקצב" />
@@ -140,7 +144,15 @@ export function Order_details() {
               name="buy_Type"
               label="סוג רכש:"
             >
-              <DropDown items={["משיכה", "אסמכתא", "דרישה"]} header="סוג רכש" />
+              <DropDown
+                onChange={(value) => console.log(value)}
+                items={[
+                  { id: 1, name: "אסמכתא" },
+                  { id: 2, name: "משיכה" },
+                  { id: 3, name: "דרישה" },
+                ]}
+                header="סוג רכש"
+              />
             </Form.Item>
           </Col>
 

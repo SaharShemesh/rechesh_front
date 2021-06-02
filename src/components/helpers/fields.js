@@ -3,17 +3,20 @@ import { useState, React } from "react";
 export function DropDown(props) {
   let [selected, setSelected] = useState(props.value);
   let menuItems = props.items.map((item) => {
+    let id = item.id ? item.id : item;
+    let name = item.name ? item.name : item;
     return (
-      <Menu.Item key={item}>
-        <a>{item}</a>
+      <Menu.Item key={id}>
+        <a>{name}</a>
       </Menu.Item>
     );
   });
   let menu = (
     <Menu
       onClick={(value) => {
-        setSelected(value.key);
-        if (typeof props.onChange != "undefined") props.onChange(value.key);
+        setSelected(props.items.find((item) => item.id == value.key).name);
+        if (typeof props.onChange != "undefined")
+          props.onChange(props.items.find((item) => item.id == value.key).id);
       }}
     >
       {menuItems}
