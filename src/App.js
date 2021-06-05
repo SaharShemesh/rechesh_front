@@ -1,11 +1,26 @@
-import React, { useState } from "react";
-import { Counter } from "./features/counter/Counter";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import "antd/dist/antd.css"; // or 'antd/dist/antd.less'
-import { Table } from "antd";
+import { Spin } from "antd";
 import App_Router from "./components/helpers/navigation";
 import { BrowserRouter } from "react-router-dom";
+import { store } from "./app/store";
+import { fetchOrders } from "./features/order/orderSlice";
+import { fetch_units } from "./features/collections/unitSlice";
+import { fetch_types } from "./features/collections/procumenttypeSlice";
+import { fetch_bags } from "./features/collections/pulling_bagSlice";
 function App() {
+  let [ready, setReady] = useState(false);
+  useEffect(() => {
+    //fetching all the members on start up!
+    Promise.all([
+      store.dispatch(fetchOrders()),
+      store.dispatch(fetch_units()),
+      store.dispatch(fetch_types()),
+      store.dispatch(fetch_bags()),
+    ]).then((done) => setReady(true));
+  }, []);
+  if (!ready) return <Spin />;
   return (
     <BrowserRouter>
       <App_Router />

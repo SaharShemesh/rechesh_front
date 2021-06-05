@@ -9,8 +9,12 @@ import {
 } from "@ant-design/icons";
 import { map_bid_to_table } from "../../helpers/procedures";
 import { isNumber } from "../../../helpers/validators";
-export function Order_details() {
+import { useSelector } from "react-redux";
+export function Order_details(props) {
   const [form] = Form.useForm();
+  let procument_types = useSelector((state) => state.procument_types.items);
+  let pulling_bags = useSelector((state) => state.pulling_bags.items);
+  console.log(procument_types);
   return (
     <React.Fragment>
       <Form
@@ -144,28 +148,31 @@ export function Order_details() {
               ]}
               name="assign_Num"
               label="מספר מטלה:"
+              dependencies={["procument_type"]}
               rules={[
                 {
-                  validator: (_, value) => {
+                  validator: (_, vl) => {
+                    let value = vl.name;
+                    console.log(value);
                     if (
-                      form.getFieldValue("buy_Type") == "אסמכתא" &&
+                      form.getFieldValue("procument_type").id == 1 &&
                       (value.substring(value.length - 3) == "962" ||
                         value.substring(value.length - 3) == "950")
                     ) {
-                      console.log(1);
-                      return Promise.reject(
+                      message.error(
                         "מספר מטלה אינו תואם את סוג הרכש. מועבר לבחינת מחלקת רכש"
                       );
+                      return Promise.reject();
                     } else {
                       if (
-                        (form.getFieldValue("buy_Type") == "דרישה" ||
-                          form.getFieldValue("buy_Type") == "משיכה") &&
+                        form.getFieldValue("procument_type").id > 1 &&
                         value.substring(value.length - 3) != "962" &&
                         value.substring(value.length - 3) != "950"
                       ) {
-                        return Promise.reject(
+                        message.error(
                           "מספר מטלה אינו תואם את סוג הרכש. מועבר לבחינת מחלקת רכש"
                         );
+                        return Promise.reject();
                       }
                       return Promise.resolve();
                     }
@@ -173,7 +180,13 @@ export function Order_details() {
                 },
               ]}
             >
-              <DropDown items={["679678856", "657497040"]} header="מטלות" />
+              <DropDown
+                items={[
+                  { id: 1, name: "679678856" },
+                  { name: "657497040", id: 2 },
+                ]}
+                header="מטלות"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -189,16 +202,12 @@ export function Order_details() {
                   message: "חובה להזין סוג רכש",
                 },
               ]}
-              name="buy_Type"
+              name="procument_type"
               label="סוג רכש:"
             >
               <DropDown
                 onChange={(value) => console.log(value)}
-                items={[
-                  { id: 1, name: "אסמכתא" },
-                  { id: 2, name: "משיכה" },
-                  { id: 3, name: "דרישה" },
-                ]}
+                items={procument_types}
                 header="סוג רכש"
               />
             </Form.Item>
@@ -233,7 +242,7 @@ export function Order_details() {
               name="pulling_Bag"
               label="תיק משיכה:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="תיק משיכה" />
+              <DropDown items={pulling_bags} header="תיק משיכה" />
             </Form.Item>
           </Col>
 
