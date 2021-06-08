@@ -15,7 +15,9 @@ export function Order_details(props) {
   let procument_types = useSelector((state) => state.procument_types.items);
   let pulling_bags = useSelector((state) => state.pulling_bags.items);
   let assignments = useSelector((state) => state.assignments.items);
-  console.log(procument_types);
+  let soldiers = useSelector((state) => state.soldiers.items);
+  let budget_types = useSelector((state) => state.budget_types.items);
+  let order_types = useSelector((state) => state.order_types.items);
   return (
     <React.Fragment>
       <Form
@@ -40,11 +42,10 @@ export function Order_details(props) {
               label="סוג הזמנה:"
             >
               <DropDown
-                items={[
-                  { id: 1, name: "רכש בהקפה" },
-                  { id: 2, name: "רכש במשיכה" },
-                  { id: 3, name: "רכש בדרישה" },
-                ]}
+                items={order_types.map((type) => ({
+                  id: type.type_id,
+                  name: type.type,
+                }))}
                 header="סוג הזמנה"
                 valueUpdated={(value) => console.log(value)}
               />
@@ -101,7 +102,18 @@ export function Order_details(props) {
               name="pro_Att"
               label="גורם מקצועי:"
             >
-              <DropDown items={["דני", "דניאל"]} header="גורם מקצועי" />
+              <DropDown
+                items={soldiers.map((soldier) => ({
+                  id: soldier.id,
+                  name:
+                    soldier.id_num +
+                    "- " +
+                    soldier.first_name +
+                    " " +
+                    soldier.last_name,
+                }))}
+                header="גורם מקצועי"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -120,7 +132,13 @@ export function Order_details(props) {
               ]}
               label="גורם מתקצב:"
             >
-              <DropDown items={["בסיסי", "שושי", "מטה"]} header="גורם מתקצב" />
+              <DropDown
+                items={budget_types.map((type) => ({
+                  id: type.type_id,
+                  name: type.type,
+                }))}
+                header="גורם מתקצב"
+              />
             </Form.Item>
           </Col>
 

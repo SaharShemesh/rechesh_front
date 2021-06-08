@@ -12,6 +12,8 @@ import "./css/order.css";
 import { re_order_the_key } from "../../helpers/procedures";
 import { system_Notification } from "../../helpers/notification";
 import { Form } from "antd";
+import { useDispatch } from "react-redux";
+import { add_order } from "../../../features/order/orderSlice";
 //memos
 let ActionsMemo = React.memo(Actions);
 let BidMemo = React.memo(Bid);
@@ -61,10 +63,16 @@ let object = {
   },
 };
 export default function New_order() {
+  let dispatch = useDispatch();
+  let create_order = (details) => {
+    details = { ...details, status: 1 };
+    dispatch(add_order({ order: details }));
+  };
   //sections state
   let [bids, setBids] = useState(object);
   let [items, setItems] = useState([]);
   let [selected_items, setSelected] = useState([]);
+  let details = {};
   function addItem() {
     if (items.length >= 1) {
       let messages = [];
@@ -124,7 +132,14 @@ export default function New_order() {
   }, []);
   return (
     <React.Fragment>
-      <Form.Provider>
+      <Form.Provider
+        onFormFinish={(name, { values, forms }) => {
+          if (name == "order_details") {
+            details = forms.getFieldValues();
+            console.log(details);
+          }
+        }}
+      >
         <Row justify="end" gutter={[0, 0]}>
           <Col span={18}>
             <Order_details />
@@ -166,7 +181,7 @@ export default function New_order() {
         </Row>
         <Row>
           <Col span={5} pull={2}>
-            <Button>צור הזמנה</Button>
+            <Button onClick={create_order.bind(this)}>צור הזמנה</Button>
           </Col>
         </Row>
       </Form.Provider>

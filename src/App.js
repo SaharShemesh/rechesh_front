@@ -10,6 +10,9 @@ import { fetch_units } from "./features/collections/unitSlice";
 import { fetch_types } from "./features/collections/procumenttypeSlice";
 import { fetch_bags } from "./features/collections/pulling_bagSlice";
 import { fetch_assignments } from "./features/collections/assignmentSlice";
+import { fetch_soldiers } from "./features/collections/soldiersSlice";
+import { fetch_orderTypes } from "./features/collections/order_typeSlice";
+import { fetch_budgetTypes } from "./features/collections/budget_typeSlice";
 function App() {
   let [ready, setReady] = useState(false);
   useEffect(() => {
@@ -20,6 +23,9 @@ function App() {
       store.dispatch(fetch_types()),
       store.dispatch(fetch_bags()),
       store.dispatch(fetch_assignments()),
+      store.dispatch(fetch_soldiers()),
+      store.dispatch(fetch_orderTypes()),
+      store.dispatch(fetch_budgetTypes()),
     ]).then((done) => setReady(true));
   }, []);
   if (!ready) return <Spin />;
