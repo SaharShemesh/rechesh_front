@@ -10,8 +10,12 @@ import {
 } from "@ant-design/icons";
 import { map_bid_to_table } from "../../helpers/procedures";
 import { isNumber } from "../../../helpers/validators";
-export function Order_details() {
+import { useSelector } from "react-redux";
+export function Order_details(props) {
   const [form] = Form.useForm();
+  let procument_types = useSelector((state) => state.procument_types.items);
+  let pulling_bags = useSelector((state) => state.pulling_bags.items);
+  console.log(procument_types);
   return (
     <React.Fragment>
       <Form
@@ -49,12 +53,6 @@ export function Order_details() {
 
           <Col span={8}>
             <Form.Item
-              rules={[
-                {
-                  validator: isNumber,
-                  message: "חייב מספר",
-                },
-              ]}
               labelCol={{
                 span: 7,
               }}
@@ -154,28 +152,31 @@ export function Order_details() {
               ]}
               name="assignment_id"
               label="מספר מטלה:"
+              dependencies={["procument_type"]}
               rules={[
                 {
-                  validator: (_, value) => {
+                  validator: (_, vl) => {
+                    let value = vl.name;
+                    console.log(value);
                     if (
-                      form.getFieldValue("procument_type") == "אסמכתא" &&
+                      form.getFieldValue("procument_type").id == 1 &&
                       (value.substring(value.length - 3) == "962" ||
                         value.substring(value.length - 3) == "950")
                     ) {
-                      console.log(1);
-                      return Promise.reject(
+                      message.error(
                         "מספר מטלה אינו תואם את סוג הרכש. מועבר לבחינת מחלקת רכש"
                       );
+                      return Promise.reject();
                     } else {
                       if (
-                        (form.getFieldValue("procument_type") == "דרישה" ||
-                          form.getFieldValue("procument_type") == "משיכה") &&
+                        form.getFieldValue("procument_type").id > 1 &&
                         value.substring(value.length - 3) != "962" &&
                         value.substring(value.length - 3) != "950"
                       ) {
-                        return Promise.reject(
+                        message.error(
                           "מספר מטלה אינו תואם את סוג הרכש. מועבר לבחינת מחלקת רכש"
                         );
+                        return Promise.reject();
                       }
                       return Promise.resolve();
                     }
@@ -183,11 +184,13 @@ export function Order_details() {
                 },
               ]}
             >
-              <DropDown items={[
-                  { id: 1, name: "8574837261" },
-                  { id: 2, name: "1937284719" },
-                  { id: 3, name: "6473829162" },
-                ]} header="מטלות" />
+              <DropDown
+                items={[
+                  { id: 1, name: "679678856" },
+                  { name: "657497040", id: 2 },
+                ]}
+                header="מטלות"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -208,11 +211,7 @@ export function Order_details() {
             >
               <DropDown
                 onChange={(value) => console.log(value)}
-                items={[
-                  { id: 1, name: "אסמכתא" },
-                  { id: 2, name: "משיכה" },
-                  { id: 3, name: "דרישה" },
-                ]}
+                items={procument_types}
                 header="סוג רכש"
               />
             </Form.Item>
@@ -247,11 +246,7 @@ export function Order_details() {
               name="pulling_bag"
               label="תיק משיכה:"
             >
-              <DropDown items={[
-                  { id: 1, name: "839572" },
-                  { id: 2, name: "428797" },
-                  { id: 3, name: "849237" },
-                ]} header="תיק משיכה" />
+              <DropDown items={pulling_bags} header="תיק משיכה" />
             </Form.Item>
           </Col>
 

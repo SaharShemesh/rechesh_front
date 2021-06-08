@@ -16,7 +16,7 @@ export function DropDown(props) {
       onClick={(value) => {
         setSelected(props.items.find((item) => item.id == value.key).name);
         if (typeof props.onChange != "undefined")
-          props.onChange(props.items.find((item) => item.id == value.key).id);
+          props.onChange(props.items.find((item) => item.id == value.key));
       }}
     >
       {menuItems}

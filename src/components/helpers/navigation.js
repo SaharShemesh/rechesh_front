@@ -5,6 +5,7 @@ import {
   Switch,
   Link,
   useRouteMatch,
+  NavLink,
 } from "react-router-dom";
 import Home from "../views/Home.view";
 import My_orders from "../views/my_orders";
@@ -14,10 +15,10 @@ function NavB() {
   return (
     <Menu style={{ width: "100%", background: "#f8f8f8" }} mode="horizontal">
       <Menu.Item style={{ float: "right" }}>
-        <Link to="/my-orders">הזמנות קיימות</Link>
+        <NavLink activeClassName="ant-menu-item-selected" to="/my-orders">הזמנות קיימות</NavLink>
       </Menu.Item>
       <Menu.Item style={{ float: "right" }}>
-        <Link to="/new-order">יצירה של הזמנה חדשה</Link>
+        <NavLink activeClassName="ant-menu-item-selected" activeStyle={{color:"red"}} to="/new-order">יצירה של הזמנה חדשה</NavLink>
       </Menu.Item>
       <Menu.Item style={{ float: "right" }}>
         <Link to="/management-panel">פאנל ניהול</Link>

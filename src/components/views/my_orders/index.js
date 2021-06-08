@@ -1,126 +1,128 @@
 import React, { useState } from "react";
-
-import { Row, Col, Form, Input, Button, Table, Modal } from "antd";
 import { DropDown, DisabledInput } from "../../helpers/fields";
+import { Row, Col, Form, Input, Button, Table, Modal } from "antd";
+import { Filter } from "./fltr";
+import {Link, useHistory} from "react-router-dom";
 import {
   PlayCircleOutlined,
   CloseOutlined, SearchOutlined ,ApartmentOutlined,
   FileOutlined, 
 } from "@ant-design/icons";
-import { map_bid_to_table } from "../../helpers/procedures";
-
-import { Card } from "antd";
-
-
 export default function Management_panel() {
   let [form] = Form.useForm();
-  let [screensStatus, setStatus] = useState({
-    Update_bag: false,
-    Update_notification: false,
-    Update_provider: false,
-    Screen_Permission: false,
-  });
-
-  let gridStyle = {
-    width: "33.33%",
-    textAlign: "center",
-  };
-
-  let openScreen = (screen_type, e) => {
-    setStatus({ [screen_type]: true });
-  };
-
-  let cancelScreen = (screen_type) => {
-    setStatus({ [screen_type]: false });
-  };
-
-
-  const layout = {
-    labelCol: { span: 12 },
-    wrapperCol: { span: 22 },
-    name: "control-hooks",
-  };
-
-  let columns = [
+  let rows = [];
+  const history = useHistory();
+  let new_order = () => {
+    history.push("/new-order")
+}
+  // main_orders.foreach((mn) => {
+  //   mn.Orders.foreach(
+  //     ({ erp_order, erp_req, invc, need, paka, pulling_bag }) => {
+  //       rows.push({ erp_order, erp_req, invc, need, paka, pulling_bag });
+  //     }
+  //   );
+  // });
+  const columns = [
     {
-      align: "right",
-      title: 'מס בקשה',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <p>{text}</p>,
+      title: "מס בקשה",
+      dataIndex: "order_id",
+      key: "order_id",
+      render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
-      title: 'תיאור בקשה',
-      dataIndex: 'desc',
-      key: 'desc',
+      title: "תיאור בקשה",
+      dataIndex: "need",
+      key: "need",
+      render: (text) => <p>{text}</p>,
     },
     {
       align:"right",
       title: 'פק"ע',
-      dataIndex: 'paka',
-      key: 'paka',
+      dataIndex: "paka",
+      key: "paka",
+      render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
-      title: 'עדיפות',
-      dataIndex: 'priority',
-      key: 'priority',
+      title: "עדיפות",
+      dataIndex: "priority",
+      key: "priority",
+      render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
-      title: 'סוג',
-      dataIndex: 'type',
-      key: 'type',
+      title: "סוג",
+      dataIndex: "type",
+      key: "type",
+      render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
-      title: 'תיק משיכה',
-      dataIndex: 'pulling_bag',
-      key: 'pulling_bag',
+      title: "תיק משיכה",
+      dataIndex: "Pulling_bag",
+      key: "Pulling_bag",
+      render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
-      title: 'מחיר',
-      dataIndex: 'price',
-      key: 'price',
+      title: "מחיר",
+      dataIndex: "price",
+      key: "price",
+      render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
-      title: 'מזמין',
-      dataIndex: 'ordering',
-      key: 'ordering',
+      title: "מזמין",
+      dataIndex: "Customer",
+      key: "Customer",
+      render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
-      title: 'בי"מ מזמין',
-      dataIndex: 'order_bim',
-      key: 'order_bim',
+      title: "בים מזמין",
+      dataIndex: "bim",
+      key: "bim",
+      render: (text) => <p>{text}</p>,
     },
-    
-    
-  ]
+    {
+      title: "גורם מטפל",
+      dataIndex: "treating_factor",
+      key: "treating_factor",
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "מס בקשה erp",
+      dataIndex: "erp_request",
+      key: "erp_request",
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "מס הזמנה erp",
+      dataIndex: "erp_order",
+      key: "name",
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "מספר חשבונית",
+      dataIndex: "erp_invoice",
+      key: "erp_invoice",
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "סטטוס",
+      dataIndex: "status",
+      key: "status",
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "ימים בסטטוס",
+      dataIndex: "status_days",
+      key: "status_days",
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      title: 'סה"כ ימים',
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <p>{text}</p>,
+    },
+  ];
 
-  const data = [
-    {
-      key: '1',
-      name: 'תיאור 1',
-      desc: "תיאור",
-      paka: "פקע",
-      priority: "עדיפות",
-      type: "סוג",
-      pulling_bag: "תיק משיכה",
-      price: "מחיר",
-      ordering: "מזמין",
-      order_bim:"בימ מזמין"
-    },
-    {
-      key: '2',
-      name: 'תיאור 2',
-      
-    },
-  ]
-  
+  const data = [];
   return (
     <>
         
@@ -401,10 +403,8 @@ export default function Management_panel() {
         <Col span = {24}> </Col>
                 </Row>
              
-        <Table pagination={false} dataSource={data} columns={columns}/>;
-
-        <h3 style={{ textAlign: "center" }}> <Button type="primary">פתיחת בקשה חדשה</Button>  </h3>
-
+        <Table pagination={false} dataSource={data} columns={columns}/>
+          <div style={{ textAlign: "center" }}> <Button onClick={new_order.bind(this)} type="primary" >פתיחת בקשה חדשה</Button>  </div>
        
       </Form>
     </React.Fragment>
@@ -412,7 +412,5 @@ export default function Management_panel() {
     </>
       
   );
+
 }
-
-
-
