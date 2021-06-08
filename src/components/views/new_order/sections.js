@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Row, Col, Form, Input, Button, Table, message } from "antd";
+import {New_bid} from "../management-panel/screens";
 import { DropDown, DisabledInput } from "../../helpers/fields";
 import {
   PlayCircleOutlined,
@@ -93,10 +94,14 @@ export function Order_details() {
                   message: "חובה להזין גורם מקצועי",
                 },
               ]}
-              name="pro_Att"
+              name="Professional_at"
               label="גורם מקצועי:"
             >
-              <DropDown items={["דני", "דניאל"]} header="גורם מקצועי" />
+              <DropDown items={[
+                  { id: 1, name: "דני" },
+                  { id: 2, name: "אלכס" },
+                  { id: 3, name: "סהר" },
+                ]} header="גורם מקצועי" />
             </Form.Item>
           </Col>
         </Row>
@@ -115,7 +120,12 @@ export function Order_details() {
               ]}
               label="גורם מתקצב:"
             >
-              <DropDown items={["בסיסי", "שושי", "מטה"]} header="גורם מתקצב" />
+              <DropDown items={[
+                  { id: 1, name: "מטלה תקציבית" },
+                  { id: 2, name: "אישור מנהל לתקציב בסיסי" },
+                  { id: 3, name: "מצמ" },
+                  { id: 4, name: "פרויקטנט"},
+                ]} header="גורם מתקצב" />
             </Form.Item>
           </Col>
 
@@ -127,7 +137,7 @@ export function Order_details() {
               name="desc"
               label="תיאור:"
             >
-              <DisabledInput value="test" placeHolder="תיאור"></DisabledInput>
+              <DisabledInput value="תיאור" placeHolder="תיאור"></DisabledInput>
             </Form.Item>
           </Col>
 
@@ -142,13 +152,13 @@ export function Order_details() {
                   message: "חובה להזין מספר מטלה",
                 },
               ]}
-              name="assign_Num"
+              name="assignment_id"
               label="מספר מטלה:"
               rules={[
                 {
                   validator: (_, value) => {
                     if (
-                      form.getFieldValue("buy_Type") == "אסמכתא" &&
+                      form.getFieldValue("procument_type") == "אסמכתא" &&
                       (value.substring(value.length - 3) == "962" ||
                         value.substring(value.length - 3) == "950")
                     ) {
@@ -158,8 +168,8 @@ export function Order_details() {
                       );
                     } else {
                       if (
-                        (form.getFieldValue("buy_Type") == "דרישה" ||
-                          form.getFieldValue("buy_Type") == "משיכה") &&
+                        (form.getFieldValue("procument_type") == "דרישה" ||
+                          form.getFieldValue("procument_type") == "משיכה") &&
                         value.substring(value.length - 3) != "962" &&
                         value.substring(value.length - 3) != "950"
                       ) {
@@ -173,7 +183,11 @@ export function Order_details() {
                 },
               ]}
             >
-              <DropDown items={["679678856", "657497040"]} header="מטלות" />
+              <DropDown items={[
+                  { id: 1, name: "8574837261" },
+                  { id: 2, name: "1937284719" },
+                  { id: 3, name: "6473829162" },
+                ]} header="מטלות" />
             </Form.Item>
           </Col>
         </Row>
@@ -189,7 +203,7 @@ export function Order_details() {
                   message: "חובה להזין סוג רכש",
                 },
               ]}
-              name="buy_Type"
+              name="procument_type"
               label="סוג רכש:"
             >
               <DropDown
@@ -209,7 +223,7 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
-              name="prio"
+              name="priority"
               label="עדיפות:"
             >
               <DisabledInput placeHolder="עדיפות"></DisabledInput>
@@ -230,10 +244,14 @@ export function Order_details() {
                   message: "חובה להזין תיק משיכה",
                 },
               ]}
-              name="pulling_Bag"
+              name="pulling_bag"
               label="תיק משיכה:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="תיק משיכה" />
+              <DropDown items={[
+                  { id: 1, name: "839572" },
+                  { id: 2, name: "428797" },
+                  { id: 3, name: "849237" },
+                ]} header="תיק משיכה" />
             </Form.Item>
           </Col>
 
@@ -242,7 +260,7 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
-              name="type"
+              name="Paka_type"
               label="סוג:"
             >
               <DisabledInput placeHolder="סוג"></DisabledInput>
@@ -260,7 +278,7 @@ export function Order_details() {
               rules={[
                 {
                   required: true,
-                  message: "יש להזין פקע",
+                  message: "יש להזין הגדרת צורך",
                 },
               ]}
               name="reason"
@@ -275,7 +293,7 @@ export function Order_details() {
               labelCol={{
                 span: 7,
               }}
-              name="scheduale"
+              name="schedule"
               label="לוז פרויקט:"
             >
               <DisabledInput placeHolder="לוז פרויקט"></DisabledInput>
@@ -418,7 +436,7 @@ export function AcceptTable() {
               labelCol={{
                 span: 10,
               }}
-              name="bim_commander"
+              name="Bim_commander"
               label="מפקד בימ:"
               style={{
                 width: "80%",
@@ -430,7 +448,11 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={["ארותור", "גלית"]} header="גורם מתקצב" />
+              <DropDown items={[
+                  { id: 1, name: "ארתור" },
+                  { id: 2, name: "גלית" },
+                  { id: 3, name: "מפקד בימ נוסף" },
+                ]} header="מפקד בימ" />
             </Form.Item>
           </Col>
         </Row>
@@ -448,7 +470,7 @@ export function AcceptTable() {
 
           <Col span={17}>
             <Form.Item
-              name="pro_att1"
+              name="Professional_at1"
               label="גורם מקצועי:"
               style={{
                 width: "80%",
@@ -460,7 +482,11 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={["אלכס", "דוד"]} header="גורם מקצועי" />
+              <DropDown items={[
+                  { id: 1, name: "אלכס" },
+                  { id: 2, name: "אלכסיי" },
+                  { id: 3, name: "ולאדימיר" },
+                ]} header="גורם מקצועי" />
             </Form.Item>
           </Col>
         </Row>
@@ -477,7 +503,7 @@ export function AcceptTable() {
 
           <Col span={17}>
             <Form.Item
-              name="pro_att2"
+              name="Professional_at1"
               label="גורם מקצועי:"
               style={{
                 width: "80%",
@@ -489,7 +515,11 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={["אלכס", "דוד"]} header="גורם מקצועי" />
+              <DropDown items={[
+                  { id: 1, name: "אלכס" },
+                  { id: 2, name: "אלכסיי" },
+                  { id: 3, name: "ולאדימיר" },
+                ]} header="גורם מקצועי" />
             </Form.Item>
           </Col>
         </Row>
@@ -502,6 +532,17 @@ export function SellItem(props) {
   let valueInsertion = (row, field, e) => {
     row[field] = e.target.value;
     props.new_value(row);
+  };
+  let [screensStatus, setStatus] = useState({
+    New_bid: false,
+  });
+
+  let openScreen = (screen_type, e) => {
+    setStatus({ [screen_type]: true });
+  };
+
+  let cancelScreen = (screen_type) => {
+    setStatus({ [screen_type]: false });
   };
   let DropdownInsertion = (row, value, field, e) => {
     row[field] = value;
@@ -527,6 +568,12 @@ export function SellItem(props) {
         return (
           <Input
             type="text"
+            rules={[
+              {
+                required: true,
+                message: "יש להזין פקע",
+              },
+            ]}
             value={value}
             onInput={valueInsertion.bind(this, row, "desc")}
           />
@@ -541,7 +588,11 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-            items={["73937356", "8123616493"]}
+          items={[
+            { id: 1, name: "82718473" },
+            { id: 2, name: "83726471" },
+            { id: 3, name: "85973827" },
+          ]}
             valueChanged={(va) => {
               DropdownInsertion(row, va, "iaf_num");
             }}
@@ -558,7 +609,10 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-            items={["כן", "לא"]}
+          items={[
+            { id: 1, name: "כן" },
+            { id: 2, name: "לא" },
+          ]}
             valueChanged={(va) => {
               DropdownInsertion(row, va, "tech");
             }}
@@ -571,14 +625,19 @@ export function SellItem(props) {
       align: "right",
       width: "10%",
       title: "מספר יצרן",
-      key: "creator_num",
-      dataIndex: "creator_num",
+      key: "creator",
+      dataIndex: "creator",
       render(value, row, index) {
         return (
-          <Input
-            type="text"
-            value={value}
-            onInput={valueInsertion.bind(this, row, "creator_num")}
+          <DropDown
+          items={[
+            { id: 1, name: "84729384" },
+            { id: 2, name: "42839749" },
+          ]}
+            valueChanged={(va) => {
+              DropdownInsertion(row, va, "מספר יצרן");
+            }}
+            header="מספר יצרן"
           />
         );
       },
@@ -590,27 +649,24 @@ export function SellItem(props) {
       dataIndex: "creator_name",
       render(value, row, index) {
         return (
-          <DropDown
-            items={["דוד", "אלכס"]}
-            valueChanged={(va) => {
-              DropdownInsertion(row, va, "creator_name");
-            }}
-            header="שם יצרן"
-          />
+          <DisabledInput value="שם יצרן" placeHolder="שם יצרן"></DisabledInput>
         );
       },
     },
     {
       align: "right",
       title: "ספק מומלץ",
-      key: "recomended_provider",
-      dataIndex: "recomended_provider",
+      key: "provider",
+      dataIndex: "provider",
       render(value, row, index) {
         return (
           <DropDown
-            items={["אלכס", "דוד"]}
+          items={[
+            { id: 1, name: "אלכס" },
+            { id: 2, name: "דוד" },
+          ]}
             valueChanged={(va) => {
-              DropdownInsertion(row, va, "recomended_provider");
+              DropdownInsertion(row, va, "provider");
             }}
             header="ספק מומלץ"
           />
@@ -626,7 +682,17 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <Input
-            type="number"
+            type="text"
+            rules={[
+              {
+                required: true,
+                message: "יש להזין פקע",
+              },
+              {
+                validator: isNumber,
+                message: "פקע חייבת להיות מספר",
+              },
+            ]}
             value={value}
             onInput={valueInsertion.bind(this, row, "quantity")}
           />
@@ -641,7 +707,10 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-            items={["קילו", "אינץ"]}
+          items={[
+            { id: 1, name: "קילו" },
+            { id: 2, name: "אינץ" },
+          ]}
             header="יחידת מידה"
             valueChanged={(va) => {
               DropdownInsertion(row, va, "measurement");
@@ -659,7 +728,17 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <Input
-            type="number"
+            type="text"
+            rules={[
+              {
+                required: true,
+                message: "יש להזין פקע",
+              },
+              {
+                validator: isNumber,
+                message: "פקע חייבת להיות מספר",
+              },
+            ]}
             value={value}
             onInput={valueInsertion.bind(this, row, "price")}
           />
@@ -674,10 +753,17 @@ export function SellItem(props) {
     },
   };
 
+
   return (
     <>
       <Button onClick={props.add_item}>הוסף פריט</Button>
-      <Button>הוסף הצעת מחיר</Button>
+      <Button onClick={props.add_price}
+             onClick={openScreen.bind(this, "New_bid")}
+             > הוסף הצעה חדשה </Button>
+             <New_bid
+            show={screensStatus.New_bid}
+            onCancel={cancelScreen.bind(this, "New_bid")}
+          />
       <Table
         columns={columns}
         pagination={false}

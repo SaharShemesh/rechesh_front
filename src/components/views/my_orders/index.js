@@ -41,52 +41,61 @@ export default function Management_panel() {
     name: "control-hooks",
   };
 
-  const columns = [
+  let columns = [
     {
+      align: "right",
       title: 'מס בקשה',
       dataIndex: 'name',
       key: 'name',
-      render: text => <a>{text}</a>,
+      render: text => <p>{text}</p>,
     },
     {
+      align:"right",
       title: 'תיאור בקשה',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'desc',
+      key: 'desc',
     },
     {
+      align:"right",
       title: 'פק"ע',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'paka',
+      key: 'paka',
     },
     {
+      align:"right",
       title: 'עדיפות',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'priority',
+      key: 'priority',
     },
     {
+      align:"right",
       title: 'סוג',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'type',
+      key: 'type',
     },
     {
+      align:"right",
       title: 'תיק משיכה',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'pulling_bag',
+      key: 'pulling_bag',
     },
     {
+      align:"right",
       title: 'מחיר',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'price',
+      key: 'price',
     },
     {
+      align:"right",
       title: 'מזמין',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'ordering',
+      key: 'ordering',
     },
     {
+      align:"right",
       title: 'בי"מ מזמין',
-      dataIndex: 'age',
-      key: 'age',
+      dataIndex: 'order_bim',
+      key: 'order_bim',
     },
     
     
@@ -96,7 +105,14 @@ export default function Management_panel() {
     {
       key: '1',
       name: 'תיאור 1',
-      age: 'fdsfds'
+      desc: "תיאור",
+      paka: "פקע",
+      priority: "עדיפות",
+      type: "סוג",
+      pulling_bag: "תיק משיכה",
+      price: "מחיר",
+      ordering: "מזמין",
+      order_bim:"בימ מזמין"
     },
     {
       key: '2',
@@ -132,7 +148,10 @@ export default function Management_panel() {
               name="req_num"
               label="מספר בקשה:"
             >
-             <DropDown items={["ישיר", "עקיף"]} header="מספר בקשה" />
+             <DropDown items={[
+            { id: 1, name: "84729384" },
+            { id: 2, name: "42839749" },
+          ]} header="מספר בקשה" />
             </Form.Item>
           </Col>
 
@@ -141,10 +160,13 @@ export default function Management_panel() {
               labelCol={{
                 span: 7,
               }}
-              name="customer"
+              name="ordering"
               label="מזמין:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "דוד" },
+            { id: 2, name: "אלכס" },
+          ]} header="מזמין" />
             </Form.Item>
           </Col>
           <Col span = {5}></Col>
@@ -159,7 +181,10 @@ export default function Management_panel() {
               name="sub_order"
               label="תת הזמנה:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "84729384" },
+            { id: 2, name: "42839749" },
+          ]} header="תת הזמנה" />
             </Form.Item>
           </Col>
 
@@ -171,7 +196,10 @@ export default function Management_panel() {
               name="order_bim"
               label="בימ מזמין:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "לא" },
+            { id: 2, name: "נשר" },
+          ]} header="בימ מזמין" />
             </Form.Item>
           </Col>
           <Col span = {5}></Col>
@@ -186,7 +214,12 @@ export default function Management_panel() {
               name="priority"
               label="עדיפות:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "מפת דרכים" },
+            { id: 2, name: "7200" },
+            { id: 3, name: "אמלח פשוט" },
+            { id: 2, name: "רגיל" },
+          ]} header="עדיפות" />
             </Form.Item>
           </Col>
 
@@ -198,7 +231,10 @@ export default function Management_panel() {
               name="treating_factor"
               label="גורם מטפל:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "דוד" },
+            { id: 2, name: "אלכס" },
+          ]} header="גורם מטפל" />
             </Form.Item>
           </Col>
           <Col span = {5}></Col>
@@ -216,7 +252,14 @@ export default function Management_panel() {
               name="type"
               label="סוג:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "A" },
+            { id: 2, name: "B" },
+            { id: 3, name: "משימה" },
+            { id: 4, name: "אחזקה בקליטת משימה" },
+            { id: 5, name: "קומ" },
+            { id: 6, name: "הנדסת שדה וחוליות" },
+          ]} header="סוג" />
             </Form.Item>
           </Col>
 
@@ -226,9 +269,12 @@ export default function Management_panel() {
                 span: 7,
               }}
               name="ERP_demand"
-              label="מס' דרישה-ERP:"
+              label="מס דרישה-ERP:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "84729384" },
+            { id: 2, name: "42839749" },
+          ]} header="מס דרישה - ERP" />
             </Form.Item>
           </Col>
           <Col span = {5}></Col>
@@ -246,7 +292,10 @@ export default function Management_panel() {
               name="pulling_bag"
               label="תיק משיכה:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "84729384" },
+            { id: 2, name: "42839749" },
+          ]} header="תיק משיכה" />
             </Form.Item>
           </Col>
 
@@ -256,9 +305,12 @@ export default function Management_panel() {
                 span: 7,
               }}
               name="ERP_num"
-              label="מס' הזמנה-ERP:"
+              label="מס' הזמנה - ERP:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "84729384" },
+            { id: 2, name: "42839749" },
+          ]} header="מס הזמנה - ERP" />
             </Form.Item>
           </Col>
          
@@ -276,7 +328,20 @@ export default function Management_panel() {
               name="status"
               label="סטטוס:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "ממתין לאישור" },
+            { id: 2, name: "ממתין לשליחה" },
+            { id: 3, name: "נשלח לספקים" },
+            { id: 4, name: "סבב אישורים" },
+            { id: 5, name: "ממתין לפתיחת דרישה" },
+            { id: 6, name: "נפתחה דרישה ב-ERP" },
+            { id: 7, name: "ממתין לאישור ספק ההזמנה" },
+            { id: 8, name: "ממתין להגעת הפריט לבסיס או לאיסוף" },
+            { id: 9, name: "ממתין לאיסוף ממחלקת רכש" },
+            { id: 10, name: "טיפול חריגים" },
+            { id: 11, name: "הזמנה טופלה" },
+            { id: 12, name: "הזמנה טופלה" },
+          ]} header="סטטוס" />
             </Form.Item>
           </Col>
 
@@ -286,9 +351,12 @@ export default function Management_panel() {
                 span: 7,
               }}
               name="num"
-              label="מס' חשבונית:"
+              label="מס חשבונית:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "84729384" },
+            { id: 2, name: "42839749" },
+          ]} header="מס חשבונית" />
             </Form.Item>
           </Col>
 
@@ -303,7 +371,10 @@ export default function Management_panel() {
               name="paka"
               label="פקע:"
             >
-              <DropDown items={["ישיר", "עקיף"]} header="DD" />
+              <DropDown items={[
+            { id: 1, name: "84729384" },
+            { id: 2, name: "42839749" },
+          ]} header="פקע" />
             </Form.Item>
           </Col>
 
@@ -330,7 +401,7 @@ export default function Management_panel() {
         <Col span = {24}> </Col>
                 </Row>
              
-        <Table pagination={false} dataSource={data} columns={columns} />;
+        <Table pagination={false} dataSource={data} columns={columns}/>;
 
         <h3 style={{ textAlign: "center" }}> <Button type="primary">פתיחת בקשה חדשה</Button>  </h3>
 
