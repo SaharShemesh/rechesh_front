@@ -9,6 +9,7 @@ import { fetchOrders } from "./features/order/orderSlice";
 import { fetch_units } from "./features/collections/unitSlice";
 import { fetch_types } from "./features/collections/procumenttypeSlice";
 import { fetch_bags } from "./features/collections/pulling_bagSlice";
+import { fetch_assignments } from "./features/collections/assignmentSlice";
 function App() {
   let [ready, setReady] = useState(false);
   useEffect(() => {
@@ -18,6 +19,7 @@ function App() {
       store.dispatch(fetch_units()),
       store.dispatch(fetch_types()),
       store.dispatch(fetch_bags()),
+      store.dispatch(fetch_assignments()),
     ]).then((done) => setReady(true));
   }, []);
   if (!ready) return <Spin />;

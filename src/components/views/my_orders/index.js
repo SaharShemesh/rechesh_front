@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import { Row, Col, Form, Input, Button, Table, Modal, Spin } from "antd";
 import { Filter } from "./fltr";
+import { useHistory } from "react-router";
 
 export default function Management_panel() {
   let rows = [];
@@ -12,6 +13,7 @@ export default function Management_panel() {
   //     }
   //   );
   // });
+  let history = useHistory();
   const columns = [
     {
       title: "מס בקשה",
@@ -123,9 +125,22 @@ export default function Management_panel() {
       </Row>
       <h2 style={{ textAlign: "center" }}>שורת עדכונים חדשים</h2>
       <Filter />
-      <Table pagination={false} dataSource={rows} columns={columns} />;
+      <Table
+        pagination={false}
+        locale={{ emptyText: <p>אין הזמנות</p> }}
+        dataSource={rows}
+        columns={columns}
+      />
+      ;
       <div style={{ textAlign: "center" }}>
-        <Button type="primary">פתיחת בקשה חדשה</Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            history.push("/new-order");
+          }}
+        >
+          פתיחת בקשה חדשה
+        </Button>
       </div>
     </>
   );

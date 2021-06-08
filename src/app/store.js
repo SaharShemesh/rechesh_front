@@ -4,6 +4,7 @@ import orderReducer from "../features/order/orderSlice";
 import procument_typeReducer from "../features/collections/procumenttypeSlice";
 import unitReducer from "../features/collections/unitSlice";
 import pulling_bagReducer from "../features/collections/pulling_bagSlice";
+import assignments_Reducer from "../features/collections/assignmentSlice";
 //reducers
 import {} from "../features/order/orderSlice";
 export const store = configureStore({
@@ -12,5 +13,6 @@ export const store = configureStore({
     units: unitReducer,
     procument_types: procument_typeReducer,
     pulling_bags: pulling_bagReducer,
+    assignments: assignments_Reducer,
   },
 });

@@ -164,6 +164,11 @@ export default function New_order() {
             <AcceptTable />
           </Col>
         </Row>
+        <Row>
+          <Col span={5} pull={2}>
+            <Button>צור הזמנה</Button>
+          </Col>
+        </Row>
       </Form.Provider>
     </React.Fragment>
   );

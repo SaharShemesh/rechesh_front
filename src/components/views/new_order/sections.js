@@ -14,6 +14,7 @@ export function Order_details(props) {
   const [form] = Form.useForm();
   let procument_types = useSelector((state) => state.procument_types.items);
   let pulling_bags = useSelector((state) => state.pulling_bags.items);
+  let assignments = useSelector((state) => state.assignments.items);
   console.log(procument_types);
   return (
     <React.Fragment>
@@ -180,13 +181,7 @@ export function Order_details(props) {
                 },
               ]}
             >
-              <DropDown
-                items={[
-                  { id: 1, name: "679678856" },
-                  { name: "657497040", id: 2 },
-                ]}
-                header="מטלות"
-              />
+              <DropDown items={assignments} header="מטלות" />
             </Form.Item>
           </Col>
         </Row>
