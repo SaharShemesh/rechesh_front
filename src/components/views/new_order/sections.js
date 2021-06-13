@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Row, Col, Form, Input, Button, Table, message } from "antd";
-import {New_bid} from "../management-panel/screens";
-import { DropDown, DisabledInput } from "../../helpers/fields";
+import {New_bid} from "./screens";
+import { DropDown, DisabledInput, System_input } from "../../helpers/fields";
 import {
   PlayCircleOutlined,
   CloseOutlined,
@@ -15,14 +15,18 @@ export function Order_details(props) {
   const [form] = Form.useForm();
   let procument_types = useSelector((state) => state.procument_types.items);
   let pulling_bags = useSelector((state) => state.pulling_bags.items);
-  console.log(procument_types);
+  let assignments = useSelector((state) => state.assignments.items);
+  let soldiers = useSelector((state) => state.soldiers.items);
+  let budget_types = useSelector((state) => state.budget_types.items);
+  let order_types = useSelector((state) => state.order_types.items);
+  
+  
   return (
     <React.Fragment>
       <Form
         name="order_details"
         form={form}
         className="ant-advanced-search-form"
-        onValuesChange={(values) => console.log(form.getFieldsValue())}
       >
         <Row>
           <Col span={8}>
@@ -40,11 +44,10 @@ export function Order_details(props) {
               label="סוג הזמנה:"
             >
               <DropDown
-                items={[
-                  { id: 1, name: "רכש בהקפה" },
-                  { id: 2, name: "רכש במשיכה" },
-                  { id: 3, name: "רכש בדרישה" },
-                ]}
+                items={order_types.map((type) => ({
+                  id: type.type_id,
+                  name: type.type,
+                }))}
                 header="סוג הזמנה"
                 valueUpdated={(value) => console.log(value)}
               />
@@ -95,11 +98,18 @@ export function Order_details(props) {
               name="Professional_at"
               label="גורם מקצועי:"
             >
-              <DropDown items={[
-                  { id: 1, name: "דני" },
-                  { id: 2, name: "אלכס" },
-                  { id: 3, name: "סהר" },
-                ]} header="גורם מקצועי" />
+              <DropDown
+                items={soldiers.map((soldier) => ({
+                  id: soldier.id,
+                  name:
+                    soldier.id_num +
+                    "- " +
+                    soldier.first_name +
+                    " " +
+                    soldier.last_name,
+                }))}
+                header="גורם מקצועי"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -118,12 +128,13 @@ export function Order_details(props) {
               ]}
               label="גורם מתקצב:"
             >
-              <DropDown items={[
-                  { id: 1, name: "מטלה תקציבית" },
-                  { id: 2, name: "אישור מנהל לתקציב בסיסי" },
-                  { id: 3, name: "מצמ" },
-                  { id: 4, name: "פרויקטנט"},
-                ]} header="גורם מתקצב" />
+              <DropDown
+                items={budget_types.map((type) => ({
+                  id: type.type_id,
+                  name: type.type,
+                }))}
+                header="גורם מתקצב"
+              />
             </Form.Item>
           </Col>
 
@@ -135,7 +146,7 @@ export function Order_details(props) {
               name="desc"
               label="תיאור:"
             >
-              <DisabledInput value="תיאור" placeHolder="תיאור"></DisabledInput>
+              <Input value="תיאור" placeHolder="תיאור"></Input>
             </Form.Item>
           </Col>
 
@@ -184,13 +195,7 @@ export function Order_details(props) {
                 },
               ]}
             >
-              <DropDown
-                items={[
-                  { id: 1, name: "679678856" },
-                  { name: "657497040", id: 2 },
-                ]}
-                header="מטלות"
-              />
+              <DropDown items={assignments} header="מטלות" />
             </Form.Item>
           </Col>
         </Row>
@@ -225,7 +230,7 @@ export function Order_details(props) {
               name="priority"
               label="עדיפות:"
             >
-              <DisabledInput placeHolder="עדיפות"></DisabledInput>
+              <Input placeHolder="עדיפות"></Input>
             </Form.Item>
           </Col>
 
@@ -258,7 +263,7 @@ export function Order_details(props) {
               name="Paka_type"
               label="סוג:"
             >
-              <DisabledInput placeHolder="סוג"></DisabledInput>
+              <Input placeHolder="סוג"></Input>
             </Form.Item>
           </Col>
 
@@ -291,13 +296,15 @@ export function Order_details(props) {
               name="schedule"
               label="לוז פרויקט:"
             >
-              <DisabledInput placeHolder="לוז פרויקט"></DisabledInput>
+              <Input placeHolder="לוז פרויקט"></Input>
             </Form.Item>
           </Col>
 
           <Col span={8}></Col>
           <Col span={24}>
-            <Form.Item></Form.Item>
+          <Button type="primary" htmlType="submit">
+          אשר
+        </Button>
           </Col>
         </Row>
       </Form>
@@ -407,10 +414,10 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DisabledInput
+              <Input
                 className="system-space"
                 placeHolder="מזמין"
-              ></DisabledInput>
+              ></Input>
             </Form.Item>
           </Col>
         </Row>
@@ -524,6 +531,12 @@ export function AcceptTable() {
 }
 
 export function SellItem(props) {
+  let iaf_nums = useSelector((state) => state.iaf_nums.items);
+  let creators = useSelector((state) => state.creators.items);
+  let providers = useSelector((state) => state.providers.items);
+  let measurements = useSelector((state) => state.measurements.items);
+  let [selectedCreatorId,setSelected] = useState(null);
+  console.log(creators);
   let valueInsertion = (row, field, e) => {
     row[field] = e.target.value;
     props.new_value(row);
@@ -583,11 +596,7 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-          items={[
-            { id: 1, name: "82718473" },
-            { id: 2, name: "83726471" },
-            { id: 3, name: "85973827" },
-          ]}
+          items={iaf_nums.map(num => ({id:num.id, name: num.iaf_num}))}
             valueChanged={(va) => {
               DropdownInsertion(row, va, "iaf_num");
             }}
@@ -624,11 +633,9 @@ export function SellItem(props) {
       dataIndex: "creator",
       render(value, row, index) {
         return (
-          <DropDown
-          items={[
-            { id: 1, name: "84729384" },
-            { id: 2, name: "42839749" },
-          ]}
+          <DropDown 
+          onChange = {(selectedCreator) => setSelected(selectedCreator.id)}
+          items={creators.map(num => ({id:num.id, name: num.creator_num}))}
             valueChanged={(va) => {
               DropdownInsertion(row, va, "מספר יצרן");
             }}
@@ -644,7 +651,7 @@ export function SellItem(props) {
       dataIndex: "creator_name",
       render(value, row, index) {
         return (
-          <DisabledInput value="שם יצרן" placeHolder="שם יצרן"></DisabledInput>
+          <System_input value={selectedCreatorId ? creators.find(creator => creator.id == selectedCreatorId).creator_name : ""} placeHolder="שם יצרן"></System_input>
         );
       },
     },
@@ -656,10 +663,7 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-          items={[
-            { id: 1, name: "אלכס" },
-            { id: 2, name: "דוד" },
-          ]}
+          items={providers.map(num => ({id:num.provider_id, name: num.provider_name}))}
             valueChanged={(va) => {
               DropdownInsertion(row, va, "provider");
             }}
@@ -702,10 +706,7 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-          items={[
-            { id: 1, name: "קילו" },
-            { id: 2, name: "אינץ" },
-          ]}
+          items={measurements.map(num => ({id:num.id, name: num.measurement}))}
             header="יחידת מידה"
             valueChanged={(va) => {
               DropdownInsertion(row, va, "measurement");
@@ -758,6 +759,7 @@ export function SellItem(props) {
              <New_bid
             show={screensStatus.New_bid}
             onCancel={cancelScreen.bind(this, "New_bid")}
+            sell_Items={props.sell_Items}
           />
       <Table
         columns={columns}

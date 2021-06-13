@@ -2,16 +2,11 @@ import React, { useState } from "react";
 import { DropDown, DisabledInput } from "../../helpers/fields";
 import { Row, Col, Form, Input, Button, Table, Modal } from "antd";
 import { Filter } from "./fltr";
-import {Link, useHistory} from "react-router-dom";
-import {
-  PlayCircleOutlined,
-  CloseOutlined, SearchOutlined ,ApartmentOutlined,
-  FileOutlined, 
-} from "@ant-design/icons";
-export default function Management_panel() {
+import { useHistory } from "react-router";
+import { useSelector } from "react-redux";
+
+export default function MyOrders_View() {
   let [form] = Form.useForm();
-  let rows = [];
-  const history = useHistory();
   let new_order = () => {
     history.push("/new-order")
 }
@@ -22,6 +17,27 @@ export default function Management_panel() {
   //     }
   //   );
   // });
+  let orders = useSelector(state => state.orders.items);
+
+  let rows = orders.map((order, id) => ({
+    order_id: id + 1,
+    need: order.desc,
+    paka: order.paka,
+    priority: order.priority,
+    type: order.Paka_type,
+    Pulling_bag: order.pulling_bag.name,
+    price: 5000,
+    Customer: "דוד",
+    bim: "נשר",
+    treating_factor: "גורם",
+    erp_request: 3,
+    erp_order: 5,
+    erp_invoice: 10,
+    status: 2,
+    status_days: 3,
+    days: 90
+  }))
+  let history = useHistory();
   const columns = [
     {
       title: "מס בקשה",
@@ -116,8 +132,8 @@ export default function Management_panel() {
     },
     {
       title: 'סה"כ ימים',
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "days",
+      key: "days",
       render: (text) => <p>{text}</p>,
     },
   ];
@@ -137,278 +153,24 @@ export default function Management_panel() {
      
           
       <h2 style={{ textAlign: "center" }}>שורת עדכונים חדשים</h2>
-      
-      <React.Fragment>
-      <Form name="advanced_search" form={form} className="ant-advanced-search-form">
-        <Row>
-          <Col span = {5}></Col>
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="req_num"
-              label="מספר בקשה:"
-            >
-             <DropDown items={[
-            { id: 1, name: "84729384" },
-            { id: 2, name: "42839749" },
-          ]} header="מספר בקשה" />
-            </Form.Item>
-          </Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="ordering"
-              label="מזמין:"
-            >
-              <DropDown items={[
-            { id: 1, name: "דוד" },
-            { id: 2, name: "אלכס" },
-          ]} header="מזמין" />
-            </Form.Item>
-          </Col>
-          <Col span = {5}></Col>
-        </Row>
-        <Row>
-        <Col span = {5}></Col>
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="sub_order"
-              label="תת הזמנה:"
-            >
-              <DropDown items={[
-            { id: 1, name: "84729384" },
-            { id: 2, name: "42839749" },
-          ]} header="תת הזמנה" />
-            </Form.Item>
-          </Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="order_bim"
-              label="בימ מזמין:"
-            >
-              <DropDown items={[
-            { id: 1, name: "לא" },
-            { id: 2, name: "נשר" },
-          ]} header="בימ מזמין" />
-            </Form.Item>
-          </Col>
-          <Col span = {5}></Col>
-        </Row>
-        <Row>
-        <Col span = {5}></Col>
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="priority"
-              label="עדיפות:"
-            >
-              <DropDown items={[
-            { id: 1, name: "מפת דרכים" },
-            { id: 2, name: "7200" },
-            { id: 3, name: "אמלח פשוט" },
-            { id: 2, name: "רגיל" },
-          ]} header="עדיפות" />
-            </Form.Item>
-          </Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="treating_factor"
-              label="גורם מטפל:"
-            >
-              <DropDown items={[
-            { id: 1, name: "דוד" },
-            { id: 2, name: "אלכס" },
-          ]} header="גורם מטפל" />
-            </Form.Item>
-          </Col>
-          <Col span = {5}></Col>
-
-          <Col span={8}></Col>
-        </Row>
-        <Row>
-        <Col span = {5}></Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="type"
-              label="סוג:"
-            >
-              <DropDown items={[
-            { id: 1, name: "A" },
-            { id: 2, name: "B" },
-            { id: 3, name: "משימה" },
-            { id: 4, name: "אחזקה בקליטת משימה" },
-            { id: 5, name: "קומ" },
-            { id: 6, name: "הנדסת שדה וחוליות" },
-          ]} header="סוג" />
-            </Form.Item>
-          </Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="ERP_demand"
-              label="מס דרישה-ERP:"
-            >
-              <DropDown items={[
-            { id: 1, name: "84729384" },
-            { id: 2, name: "42839749" },
-          ]} header="מס דרישה - ERP" />
-            </Form.Item>
-          </Col>
-          <Col span = {5}></Col>
-
-          <Col span={8}></Col>
-        </Row>
-        <Row>
-        <Col span = {5}></Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="pulling_bag"
-              label="תיק משיכה:"
-            >
-              <DropDown items={[
-            { id: 1, name: "84729384" },
-            { id: 2, name: "42839749" },
-          ]} header="תיק משיכה" />
-            </Form.Item>
-          </Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="ERP_num"
-              label="מס' הזמנה - ERP:"
-            >
-              <DropDown items={[
-            { id: 1, name: "84729384" },
-            { id: 2, name: "42839749" },
-          ]} header="מס הזמנה - ERP" />
-            </Form.Item>
-          </Col>
-         
-
-        
-        </Row>
-        <Row>
-        <Col span = {5}></Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="status"
-              label="סטטוס:"
-            >
-              <DropDown items={[
-            { id: 1, name: "ממתין לאישור" },
-            { id: 2, name: "ממתין לשליחה" },
-            { id: 3, name: "נשלח לספקים" },
-            { id: 4, name: "סבב אישורים" },
-            { id: 5, name: "ממתין לפתיחת דרישה" },
-            { id: 6, name: "נפתחה דרישה ב-ERP" },
-            { id: 7, name: "ממתין לאישור ספק ההזמנה" },
-            { id: 8, name: "ממתין להגעת הפריט לבסיס או לאיסוף" },
-            { id: 9, name: "ממתין לאיסוף ממחלקת רכש" },
-            { id: 10, name: "טיפול חריגים" },
-            { id: 11, name: "הזמנה טופלה" },
-            { id: 12, name: "הזמנה טופלה" },
-          ]} header="סטטוס" />
-            </Form.Item>
-          </Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="num"
-              label="מס חשבונית:"
-            >
-              <DropDown items={[
-            { id: 1, name: "84729384" },
-            { id: 2, name: "42839749" },
-          ]} header="מס חשבונית" />
-            </Form.Item>
-          </Col>
-
-        </Row>
-        <Row>
-        <Col span = {5}></Col>
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="paka"
-              label="פקע:"
-            >
-              <DropDown items={[
-            { id: 1, name: "84729384" },
-            { id: 2, name: "42839749" },
-          ]} header="פקע" />
-            </Form.Item>
-          </Col>
-
-          <Col span={7}>
-            <Form.Item
-              labelCol={{
-                span: 7,
-              }}
-              name="desc"
-              label="תיאור בקשה:"
-            >
-              <Input className="system-field"></Input>
-            </Form.Item>
-          </Col>
-          <Col span={8}></Col>
-
-        </Row>
-        
-        <Row>
-        <Col span = {12}> </Col>
-          <Col span = {12}>    
-        <Button type="primary" shape="circle" icon={<SearchOutlined />} />
-        </Col>
-        <Col span = {24}> </Col>
-                </Row>
-             
-        <Table pagination={false} dataSource={data} columns={columns}/>
-          <div style={{ textAlign: "center" }}> <Button onClick={new_order.bind(this)} type="primary" >פתיחת בקשה חדשה</Button>  </div>
-       
-      </Form>
-    </React.Fragment>
-
+      <Filter />
+      <Table
+        pagination={false}
+        locale={{ emptyText: <p>אין הזמנות</p> }}
+        dataSource={rows}
+        columns={columns}
+      />
+      ;
+      <div style={{ textAlign: "center" }}>
+        <Button
+          type="primary"
+          onClick={() => {
+            history.push("/new-order");
+          }}
+        >
+          פתיחת בקשה חדשה
+        </Button>
+      </div>
     </>
       
   );
