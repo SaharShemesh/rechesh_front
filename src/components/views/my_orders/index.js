@@ -8,8 +8,8 @@ import { useSelector } from "react-redux";
 export default function MyOrders_View() {
   let [form] = Form.useForm();
   let new_order = () => {
-    history.push("/new-order")
-}
+    history.push("/new-order");
+  };
   // main_orders.foreach((mn) => {
   //   mn.Orders.foreach(
   //     ({ erp_order, erp_req, invc, need, paka, pulling_bag }) => {
@@ -17,15 +17,15 @@ export default function MyOrders_View() {
   //     }
   //   );
   // });
-  let orders = useSelector(state => state.orders.items);
-
+  let orders = useSelector((state) => state.orders.items);
+  console.log(orders);
   let rows = orders.map((order, id) => ({
     order_id: id + 1,
     need: order.desc,
     paka: order.paka,
     priority: order.priority,
     type: order.Paka_type,
-    Pulling_bag: order.pulling_bag.name,
+    Pulling_bag: order.pulling_bag ? order.pulling_bag.name : "",
     price: 5000,
     Customer: "דוד",
     bim: "נשר",
@@ -35,8 +35,8 @@ export default function MyOrders_View() {
     erp_invoice: 10,
     status: 2,
     status_days: 3,
-    days: 90
-  }))
+    days: 90,
+  }));
   let history = useHistory();
   const columns = [
     {
@@ -52,7 +52,7 @@ export default function MyOrders_View() {
       render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
+      align: "right",
       title: 'פק"ע',
       dataIndex: "paka",
       key: "paka",
@@ -141,17 +141,13 @@ export default function MyOrders_View() {
   const data = [];
   return (
     <>
-        
-      <h1 style={{ textAlign: "center" }}>ברוך הבא למערכת רכש 108!  </h1>
-      
+      <h1 style={{ textAlign: "center" }}>ברוך הבא למערכת רכש 108! </h1>
       <Row>
-        <Col span = {20}> </Col>
-          <Col span = {2}>    
-        <Button type="primary">סגירה/פתיחת מערכות תקציב</Button>
+        <Col span={20}> </Col>
+        <Col span={2}>
+          <Button type="primary">סגירה/פתיחת מערכות תקציב</Button>
         </Col>
-        </Row>
-     
-          
+      </Row>
       <h2 style={{ textAlign: "center" }}>שורת עדכונים חדשים</h2>
       <Filter />
       <Table
@@ -172,7 +168,5 @@ export default function MyOrders_View() {
         </Button>
       </div>
     </>
-      
   );
-
 }
