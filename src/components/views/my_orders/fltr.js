@@ -1,7 +1,7 @@
 import { useForm } from "antd/lib/form/Form";
 import { Form, Col, Row, Input, Button, Collapse } from "antd";
 import { DropDown } from "../../helpers/fields";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, CaretRightOutlined  } from "@ant-design/icons";
 
 const { Panel } = Collapse;
 
@@ -11,7 +11,10 @@ function callback(key) {
 export let Filter = (props) => {
   let [form] = useForm();
   return (
-    <Collapse onChange={callback}>
+    <Collapse 
+    
+    expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+        onChange={callback}>
       <Panel header="חיפוש בקשה" style={{ textAlign: "center" }}>
 
       <Form
