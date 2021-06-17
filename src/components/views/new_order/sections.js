@@ -302,52 +302,61 @@ export function Order_details(props) {
 }
 
 export function Actions(prop) {
+  if (prop.permission ==1) {
+    return <h1>manager rank</h1>;
+  }
+
   return (
-    <React.Fragment>
-      <Row justify="end" gutter={[0, 16]} align="middle">
-        <Col span={24}>
-          <Button
-            onClick={prop.on_delete}
-            type="primary"
-            shape="circle"
-            size="large"
-            icon={<CloseOutlined />}
-          ></Button>{" "}
-          מחק פריטים מסומנים
-        </Col>
-
-        <Col span={24}>
-          <Button
-            type="primary"
-            shape="circle"
-            size="large"
-            icon={<ApartmentOutlined />}
-          ></Button>{" "}
-          הפרד פריטים לבקשה משנית
-        </Col>
-
-        <Col span={24}>
-          <Button
-            type="primary"
-            shape="circle"
-            size="large"
-            icon={<FileOutlined />}
-          ></Button>{" "}
-          הפק נספח ב
-        </Col>
-
-        <Col span={24}>
-          <Button
-            type="primary"
-            shape="circle"
-            size="large"
-            icon={<PlayCircleOutlined />}
-          ></Button>{" "}
-          כלל הבקשות המקושרות
-        </Col>
-      </Row>
-    </React.Fragment>
+    <h1>user rank</h1>
   );
+
+
+  // return (
+  //   <React.Fragment>
+  //     <Row justify="end" gutter={[0, 16]} align="middle">
+  //       <Col span={24}>
+  //         <Button
+  //           onClick={prop.on_delete}
+  //           type="primary"
+  //           shape="circle"
+  //           size="large"
+  //           icon={<CloseOutlined />}
+  //         ></Button>{" "}
+  //         מחק פריטים מסומנים
+  //       </Col>
+
+  //       <Col span={24}>
+  //         <Button
+  //           type="primary"
+  //           shape="circle"
+  //           size="large"
+  //           icon={<ApartmentOutlined />}
+  //         ></Button>{" "}
+  //         הפרד פריטים לבקשה משנית
+  //       </Col>
+
+  //       <Col span={24}>
+  //         <Button
+  //           type="primary"
+  //           shape="circle"
+  //           size="large"
+  //           icon={<FileOutlined />}
+  //         ></Button>{" "}
+  //         הפק נספח ב
+  //       </Col>
+
+  //       <Col span={24}>
+  //         <Button
+  //           type="primary"
+  //           shape="circle"
+  //           size="large"
+  //           icon={<PlayCircleOutlined />}
+  //         ></Button>{" "}
+  //         כלל הבקשות המקושרות
+  //       </Col>
+  //     </Row>
+  //   </React.Fragment>
+  // );
 }
 
 export function Details() {

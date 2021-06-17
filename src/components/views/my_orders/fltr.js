@@ -1,11 +1,20 @@
 import { useForm } from "antd/lib/form/Form";
-import { Form, Col, Row, Input, Button } from "antd";
+import { Form, Col, Row, Input, Button, Collapse } from "antd";
 import { DropDown } from "../../helpers/fields";
 import { SearchOutlined } from "@ant-design/icons";
+
+const { Panel } = Collapse;
+
+function callback(key) {
+  console.log(key);
+}
 export let Filter = (props) => {
   let [form] = useForm();
   return (
-    <Form
+    <Collapse onChange={callback}>
+      <Panel header="חיפוש בקשה" style={{ textAlign: "center" }}>
+
+      <Form
       name="advanced_search"
       form={form}
       className="ant-advanced-search-form"
@@ -212,5 +221,17 @@ export let Filter = (props) => {
         <Col span={24}> </Col>
       </Row>
     </Form>
+      
+      <p>ffsdfd</p>
+    </Panel>
+    </Collapse>
+
+
+
+    
+  
+  
+  
+  
   );
 };

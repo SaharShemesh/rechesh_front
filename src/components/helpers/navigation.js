@@ -39,7 +39,7 @@ function App_Router() {
           <My_orders />
         </Route>
         <Route path="/new-order">
-          <New_Order />
+          <New_Order permission="1" />
         </Route>
         <Route path="/management-panel">
           <Management_view />
