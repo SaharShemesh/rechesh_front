@@ -15,18 +15,11 @@ function System_Modal(props) {
       maskClosable={props.show}
       style={{ textAlign: "center" }}
       onCancel={props.onCancel}
+      onOk={props.onOk}
       width="100%"
     >
       {props.children}
     </Modal>
-  );
-}
-
-function PopUp(props) {
-  return (
-    <System_Modal header={props.header} show={props.show} buttonText={"אישור"}>
-      <p> {props.message} </p>
-    </System_Modal>
   );
 }
 
@@ -38,6 +31,7 @@ export function FormModal(props) {
       buttonText={props.buttonText}
       cancelText={"ביטול"}
       onCancel={props.onCancel}
+      onOk={props.onOk}
       //click = {props.onSave}
     >
       {props.children}

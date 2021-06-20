@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Row, Col, Form, Input, Button, Table, message } from "antd";
-import {New_bid} from "./screens";
+import { New_bid } from "./screens";
 import { DropDown, DisabledInput, System_input } from "../../helpers/fields";
 import {
   PlayCircleOutlined,
@@ -19,8 +19,7 @@ export function Order_details(props) {
   let soldiers = useSelector((state) => state.soldiers.items);
   let budget_types = useSelector((state) => state.budget_types.items);
   let order_types = useSelector((state) => state.order_types.items);
-  
-  
+
   return (
     <React.Fragment>
       <Form
@@ -302,9 +301,9 @@ export function Order_details(props) {
 
           <Col span={8}></Col>
           <Col span={24}>
-          <Button type="primary" htmlType="submit">
-          אשר
-        </Button>
+            <Button type="primary" htmlType="submit">
+              אשר
+            </Button>
           </Col>
         </Row>
       </Form>
@@ -414,10 +413,7 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <Input
-                className="system-space"
-                placeHolder="מזמין"
-              ></Input>
+              <Input className="system-space" placeHolder="מזמין"></Input>
             </Form.Item>
           </Col>
         </Row>
@@ -450,11 +446,14 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={[
+              <DropDown
+                items={[
                   { id: 1, name: "ארתור" },
                   { id: 2, name: "גלית" },
                   { id: 3, name: "מפקד בימ נוסף" },
-                ]} header="מפקד בימ" />
+                ]}
+                header="מפקד בימ"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -484,11 +483,14 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={[
+              <DropDown
+                items={[
                   { id: 1, name: "אלכס" },
                   { id: 2, name: "אלכסיי" },
                   { id: 3, name: "ולאדימיר" },
-                ]} header="גורם מקצועי" />
+                ]}
+                header="גורם מקצועי"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -517,11 +519,14 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={[
+              <DropDown
+                items={[
                   { id: 1, name: "אלכס" },
                   { id: 2, name: "אלכסיי" },
                   { id: 3, name: "ולאדימיר" },
-                ]} header="גורם מקצועי" />
+                ]}
+                header="גורם מקצועי"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -535,16 +540,14 @@ export function SellItem(props) {
   let creators = useSelector((state) => state.creators.items);
   let providers = useSelector((state) => state.providers.items);
   let measurements = useSelector((state) => state.measurements.items);
-  let [selectedCreatorId,setSelected] = useState(null);
-  console.log(creators);
+  let [selectedCreatorId, setSelected] = useState(null);
   let valueInsertion = (row, field, e) => {
-    row[field] = e.target.value;
-    props.new_value(row);
+    row[field] =
+      (!isNaN(e.target.value) && e.target.value) || e.target.value == "0"
+        ? parseFloat(e.target.value)
+        : e.target.value;
+    props.new_value(Object.assign({}, row));
   };
-  let [screensStatus, setStatus] = useState({
-    New_bid: false,
-  });
-
   let openScreen = (screen_type, e) => {
     setStatus({ [screen_type]: true });
   };
@@ -552,10 +555,18 @@ export function SellItem(props) {
   let cancelScreen = (screen_type) => {
     setStatus({ [screen_type]: false });
   };
+  let getNewBid = (Bid) => {
+    props.new_bid(Bid);
+    cancelScreen("New_bid");
+  };
   let DropdownInsertion = (row, value, field, e) => {
     row[field] = value;
     props.new_value(row);
   };
+  let [screensStatus, setStatus] = useState({
+    New_bid: false,
+  });
+
   let columns = [
     {
       align: "right",
@@ -583,7 +594,7 @@ export function SellItem(props) {
               },
             ]}
             value={value}
-            onInput={valueInsertion.bind(this, row, "desc")}
+            onChange={valueInsertion.bind(this, row, "desc")}
           />
         );
       },
@@ -596,10 +607,11 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-          items={iaf_nums.map(num => ({id:num.id, name: num.iaf_num}))}
-            valueChanged={(va) => {
+            items={iaf_nums.map((num) => ({ id: num.id, name: num.iaf_num }))}
+            onChange={(va) => {
               DropdownInsertion(row, va, "iaf_num");
             }}
+            value={value ? value : null}
             header="מסחא"
           />
         );
@@ -608,16 +620,18 @@ export function SellItem(props) {
     {
       align: "right",
       title: "איפיון טכני",
+      width: "300px",
       key: "tech",
       dataIndex: "tech",
       render(value, row, index) {
         return (
           <DropDown
-          items={[
-            { id: 1, name: "כן" },
-            { id: 2, name: "לא" },
-          ]}
-            valueChanged={(va) => {
+            items={[
+              { id: 1, name: "כן" },
+              { id: 2, name: "לא" },
+            ]}
+            value={value ? value : null}
+            onChange={(va) => {
               DropdownInsertion(row, va, "tech");
             }}
             header="איפיון טכני"
@@ -627,17 +641,27 @@ export function SellItem(props) {
     },
     {
       align: "right",
-      width: "10%",
+      width: "300px",
       title: "מספר יצרן",
-      key: "creator",
-      dataIndex: "creator",
+      key: "creator_num",
+      dataIndex: "creator_num",
       render(value, row, index) {
         return (
-          <DropDown 
-          onChange = {(selectedCreator) => setSelected(selectedCreator.id)}
-          items={creators.map(num => ({id:num.id, name: num.creator_num}))}
-            valueChanged={(va) => {
-              DropdownInsertion(row, va, "מספר יצרן");
+          <DropDown
+            onChange={(selectedCreator) => setSelected(selectedCreator.id)}
+            value={value ? value : null}
+            items={creators.map((num) => ({
+              id: num.id,
+              name: num.creator_num,
+            }))}
+            onChange={(va) => {
+              console.log(va);
+              DropdownInsertion(row, va, "creator_num");
+              DropdownInsertion(
+                row,
+                creators.find((creator) => creator.id == va.id).creator_name,
+                "creator_name"
+              );
             }}
             header="מספר יצרן"
           />
@@ -649,23 +673,27 @@ export function SellItem(props) {
       title: "שם יצרן",
       key: "creator_name",
       dataIndex: "creator_name",
+      width: "300px",
       render(value, row, index) {
-        return (
-          <System_input value={selectedCreatorId ? creators.find(creator => creator.id == selectedCreatorId).creator_name : ""} placeHolder="שם יצרן"></System_input>
-        );
+        return <p>{row.creator_name}</p>;
       },
     },
     {
       align: "right",
       title: "ספק מומלץ",
       key: "provider",
-      dataIndex: "provider",
+      dataIndex: "recommended_provider",
+      width: "300px",
       render(value, row, index) {
         return (
           <DropDown
-          items={providers.map(num => ({id:num.provider_id, name: num.provider_name}))}
-            valueChanged={(va) => {
-              DropdownInsertion(row, va, "provider");
+            value={value ? value : null}
+            items={providers.map((num) => ({
+              id: num.provider_id,
+              name: num.provider_name,
+            }))}
+            onChange={(va) => {
+              DropdownInsertion(row, va, "recommended_provider");
             }}
             header="ספק מומלץ"
           />
@@ -674,7 +702,7 @@ export function SellItem(props) {
     },
     {
       align: "right",
-      width: "6%",
+      width: "300px",
       title: "כמות",
       key: "quantity",
       dataIndex: "quantity",
@@ -693,7 +721,7 @@ export function SellItem(props) {
               },
             ]}
             value={value}
-            onInput={valueInsertion.bind(this, row, "quantity")}
+            onChange={valueInsertion.bind(this, row, "quantity")}
           />
         );
       },
@@ -702,13 +730,19 @@ export function SellItem(props) {
       align: "right",
       title: "יחידת מידה",
       key: "measurement",
+      width: "300px",
       dataIndex: "measurement",
       render(value, row, index) {
+        console.log("יחידת מידה:", value);
         return (
           <DropDown
-          items={measurements.map(num => ({id:num.id, name: num.measurement}))}
+            items={measurements.map((num) => ({
+              id: num.id,
+              name: num.measurement,
+            }))}
+            value={value ? value : null}
             header="יחידת מידה"
-            valueChanged={(va) => {
+            onChange={(va) => {
               DropdownInsertion(row, va, "measurement");
             }}
           />
@@ -717,8 +751,8 @@ export function SellItem(props) {
     },
     {
       align: "right",
-      width: "10%",
-      title: "עלות משוארת ליח",
+      width: "300px",
+      title: "עלות משוערת ליח",
       key: "price",
       dataIndex: "price",
       render(value, row, index) {
@@ -736,7 +770,7 @@ export function SellItem(props) {
               },
             ]}
             value={value}
-            onInput={valueInsertion.bind(this, row, "price")}
+            onChange={valueInsertion.bind(this, row, "price")}
           />
         );
       },
@@ -745,22 +779,26 @@ export function SellItem(props) {
   let selection = {
     selectedRowKeys: props.selected_keys,
     onChange(selectedRowKeys) {
+      console.log("selected", selectedRowKeys);
       props.items_selected(selectedRowKeys);
     },
   };
 
-
   return (
     <>
       <Button onClick={props.add_item}>הוסף פריט</Button>
-      <Button onClick={props.add_price}
-             onClick={openScreen.bind(this, "New_bid")}
-             > הוסף הצעה חדשה </Button>
-             <New_bid
-            show={screensStatus.New_bid}
-            onCancel={cancelScreen.bind(this, "New_bid")}
-            sell_Items={props.sell_Items}
-          />
+      <Button
+        onClick={props.add_price}
+        onClick={openScreen.bind(this, "New_bid")}
+      >
+        הוסף הצעה חדשה
+      </Button>
+      <New_bid
+        show={screensStatus.New_bid}
+        onCancel={cancelScreen.bind(this, "New_bid")}
+        sell_Items={props.sell_Items}
+        onCreation={getNewBid}
+      />
       <Table
         columns={columns}
         pagination={false}

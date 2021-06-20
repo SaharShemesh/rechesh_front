@@ -23,7 +23,7 @@ function NavB() {
   return (
     <Menu style={{ width: "100%", background: "#f8f8f8" }} mode="horizontal">
       <Menu.Item style={{ float: "right" }}>
-        <NavLink exact to="/my-orders">
+        <NavLink exact to="/">
           הזמנות קיימות
         </NavLink>
       </Menu.Item>
@@ -57,9 +57,6 @@ function App_Router() {
 
       <Switch>
         <Route exact path="/">
-          <Home />
-        </Route>
-        <Route path="/my-orders">
           <My_orders />
         </Route>
         <Route path="/new-order">

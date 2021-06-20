@@ -10,77 +10,76 @@ import {
 import { useHistory } from "react-router";
 import { Row, Col, Button } from "antd";
 import "./css/order.css";
-import { re_order_the_key } from "../../helpers/procedures";
+import { get_random, re_order_the_key } from "../../helpers/procedures";
 import { system_Notification } from "../../helpers/notification";
 import { Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { add_order } from "../../../features/order/orderSlice";
 //memos
 let ActionsMemo = Actions;
-let BidMemo = Bid;
 
 //dummy bids
-let object = {
-  1: {
-    desc: "פריט ראשון",
-    1: {
-      name: "ספק ראשון",
-      amount: 5,
-      price: 300,
-      providing_time: "1-3-2022",
-    },
-    2: {
-      name: "ספק שני",
-      amount: 53,
-      price: 300,
-      providing_time: "1-3-2022",
-    },
-    3: {
-      name: "ספק מס 3",
-      amount: 42,
-      price: 300,
-      providing_time: "1-3-2022",
-    },
-  },
-  2: {
-    desc: "פריט שני",
-    1: {
-      name: "ספק ראשון",
-      amount: 51,
-      price: 300,
-      providing_time: "1-3-2022",
-    },
-    2: {
-      name: "ספק שני",
-      amount: 53,
-      price: 300,
-      providing_time: "1-3-2022",
-    },
-    3: {
-      name: "ספק מס 3",
-      amount: 55,
-      price: 300,
-      providing_time: "1-3-2022",
-    },
-  },
-};
+// let object = {
+//   1: {
+//     desc: "פריט ראשון",
+//     1: {
+//       name: "ספק ראשון",
+//       amount: 5,
+//       price: 300,
+//       providing_time: "1-3-2022",
+//     },
+//     2: {
+//       name: "ספק שני",
+//       amount: 53,
+//       price: 300,
+//       providing_time: "1-3-2022",
+//     },
+//     3: {
+//       name: "ספק מס 3",
+//       amount: 42,
+//       price: 300,
+//       providing_time: "1-3-2022",
+//     },
+//   },
+//   2: {
+//     desc: "פריט שני",
+//     1: {
+//       name: "ספק ראשון",
+//       amount: 51,
+//       price: 300,
+//       providing_time: "1-3-2022",
+//     },
+//     2: {
+//       name: "ספק שני",
+//       amount: 53,
+//       price: 300,
+//       providing_time: "1-3-2022",
+//     },
+//     3: {
+//       name: "ספק מס 3",
+//       amount: 55,
+//       price: 300,
+//       providing_time: "1-3-2022",
+//     },
+//   },
+// };
 export default function New_order() {
   let history = useHistory();
   let details = useRef({});
-  let orders = useSelector(state => state.orders.items);
+  let orders = useSelector((state) => state.orders.items);
   console.log(orders);
   let dispatch = useDispatch();
   let create_order = (details) => {
     details.current = { ...details.current, status: 1 };
     dispatch(add_order({ order: details.current }));
-    console.log("DETAILS: ", details)
+    console.log("DETAILS: ", details);
     history.push("/my-orders");
   };
   //sections state
-  let [bids, setBids] = useState(object);
+  let [bids, setBids] = useState({});
   let [items, setItems] = useState([]);
   let [selected_items, setSelected] = useState([]);
-  
+
   function addItem() {
     if (items.length >= 1) {
       let messages = [];
@@ -117,16 +116,39 @@ export default function New_order() {
           tech: "",
           creator_num: "",
           creator_name: "",
-          recomended_provider: "",
+          recommended_provider: "",
           quantity: "",
           measurement: "",
           price: "",
+          item_sign: get_random(items.map((item) => item.item_sign)),
         },
       ])
     );
   }
 
-  let do_action = useCallback(function (action) {
+  let getBid = (bid) => {
+    let new_bids = bids;
+    Object.keys(bid).forEach((item_sign) => {
+      if (Object.keys(new_bids).find((sign) => sign == item_sign))
+        new_bids[item_sign] = { ...new_bids[item_sign], ...bid[item_sign] };
+      else
+        new_bids[item_sign] = {
+          desc: items.find((sell) => sell.item_sign == item_sign).desc,
+          quantity: items.find((sell) => sell.item_sign == item_sign).quantity,
+          ...bid[item_sign],
+        };
+    });
+    console.log(new_bids);
+    setBids({ ...new_bids });
+  };
+  let do_action = function (action) {
+    console.log(selected_items);
+    console.log(
+      re_order_the_key(
+        items.filter((item) => !selected_items.includes(item.key)),
+        "item_number"
+      )
+    );
     switch (action) {
       case "delete":
         setItems(
@@ -137,7 +159,7 @@ export default function New_order() {
         );
         setSelected([]);
     }
-  }, []);
+  };
   return (
     <React.Fragment>
       <Form.Provider
@@ -145,7 +167,6 @@ export default function New_order() {
           if (name == "order_details") {
             details.current = values;
             console.log(values);
-            
           }
         }}
       >
@@ -162,16 +183,20 @@ export default function New_order() {
               add_item={addItem}
               selected_keys={selected_items}
               items_selected={(items) => {
+                console.log("items:", items);
                 setSelected(items);
               }}
               new_value={(row) => {
+                console.log(row);
                 let index = items.findIndex(
                   (current_row) => current_row.key == row.key
                 );
                 let new_items = items.slice();
                 new_items[index] = row;
+                console.log("new_items:", new_items);
                 setItems(new_items);
               }}
+              new_bid={getBid}
             />
           </Col>
           <Col span={1}></Col>
@@ -181,7 +206,7 @@ export default function New_order() {
             ></ActionsMemo>
           </Col>
           <Col span={13}>
-            <BidMemo bids={bids} />
+            <Bid bids={bids} />
           </Col>
           <Col span={1}></Col>
           <Col span={10}>
@@ -190,7 +215,9 @@ export default function New_order() {
         </Row>
         <Row>
           <Col span={5} pull={2}>
-            <Button onClick={create_order.bind(this, details)}>צור הזמנה</Button>
+            <Button onClick={create_order.bind(this, details)}>
+              צור הזמנה
+            </Button>
           </Col>
         </Row>
       </Form.Provider>

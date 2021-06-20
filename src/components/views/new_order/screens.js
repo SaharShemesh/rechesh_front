@@ -3,18 +3,22 @@ import React, { useEffect, useState } from "react";
 import { FormModal } from "../../helpers/Modal";
 import { UserOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
+import { DropDown } from "../../helpers/fields";
 
 export function New_bid(props) {
   let current_date = new Date();
   let day = ("0" + current_date.getDate()).slice(-2);
   let month = ("0" + (current_date.getMonth() + 1)).slice(-2);
-  let items = props.sell_Items.map(({ desc, quantity, price }, index) => ({
-    desc,
-    quantity: parseInt(quantity),
-    price: parseFloat(price),
-    getting_date: current_date.getFullYear() + "-" + month + "-" + day,
-    key: index,
-  }));
+  let items = props.sell_Items.map(
+    ({ desc, quantity, price, item_sign }, index) => ({
+      desc,
+      quantity: parseInt(quantity),
+      price: parseFloat(price),
+      getting_date: current_date.getFullYear() + "-" + month + "-" + day,
+      key: index,
+      item_sign,
+    })
+  );
   let [sell_items, set_item] = useState(items);
   console.log(items);
   useEffect(() => {
@@ -73,41 +77,44 @@ export function New_bid(props) {
       },
     },
   ];
-
-  let [selected_provider, setSelected] = useState({ label: "", value: "" });
+  let [selected_provider, setSelected] = useState({ name: "", id: -1 });
   let providers_collection = providers.map((provider) => ({
-    label: provider.provider_name,
-    value: provider.provider_id,
+    name: provider.provider_name,
+    id: provider.provider_id,
   }));
+  let changeProvider = (provider) => {
+    setSelected(provider);
+  };
+  let saveBid = () => {
+    let BID = sell_items.map((item) => ({
+      [item.item_sign]: {
+        [selected_provider.id]: {
+          name: selected_provider.name,
+          id: selected_provider.id,
+          price: parseFloat(item.price),
+          providing_time: item.getting_date,
+        },
+      },
+    }));
+    BID = Object.assign({}, ...BID);
+    props.onCreation(BID);
+  };
   return (
     <FormModal
-      header="הצעת מחיר חדשה - הזמנה מספר"
+      header="הוסף הצעת מחיר חדשה"
       show={props.show}
       onCancel={() => {
         set_item(items);
         props.onCancel();
       }}
+      onOk={saveBid}
     >
       <Form {...layout}>
         <Form.Item label=" שם ספק">
-          <AutoComplete
-            filterOption={(inputValue, option) =>
-              option.label.includes(inputValue)
-            }
-            value={selected_provider.label}
-            options={providers.map((provider) => ({
-              label: provider.provider_name,
-              value: provider.provider_id,
-            }))}
-            onChange={(valu) => {
-              let provider_option = providers_collection.find(
-                (provider) => provider.value == valu
-              );
-              if (!provider_option)
-                provider_option = { value: -1, label: valu };
-              setSelected(provider_option);
-            }}
-            placeholder="ספקים מוגדרים"
+          <DropDown
+            header="יש לבחור ספק רצוי"
+            items={providers_collection}
+            onChange={changeProvider}
           />
         </Form.Item>
         <Form.Item label="פריטים">
