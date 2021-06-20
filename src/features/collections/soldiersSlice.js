@@ -2,23 +2,23 @@ import { createAsyncThunk, createReducer, createSlice } from "@reduxjs/toolkit";
 import fetcher from "../../helpers/fetcher";
 
 //thunk
-export let fetch_orderTypes = createAsyncThunk("fetch_orderTypes", async () => {
-  let response = await fetcher("Order-Types");
+export let fetch_soldiers = createAsyncThunk("fetch_soldiers", async () => {
+  let response = await fetcher("Soldiers");
   return response;
 });
 
-export const type_Slice = createSlice({
-  name: "order_Types",
+export const soldiersSlice = createSlice({
+  name: "soldiers",
   initialState: {
     status: "idle",
     items: [],
   },
   reducers: {},
   extraReducers: {
-    [fetch_orderTypes.fulfilled]: (state, action) => {
+    [fetch_soldiers.fulfilled]: (state, action) => {
       state.items = state.items.concat(action.payload);
     },
   },
 });
 
-export default type_Slice.reducer;
+export default soldiersSlice.reducer;

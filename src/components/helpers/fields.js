@@ -1,33 +1,27 @@
-import { Menu, Dropdown, Button, Input } from "antd";
+import { Menu, Dropdown, Button, Input, AutoComplete } from "antd";
 import { useState, React } from "react";
+import { procument_TypesSlice } from "../../features/collections/procumenttypeSlice";
 export function DropDown(props) {
-  let [selected, setSelected] = useState(props.value);
-  let menuItems = props.items.map((item) => {
-    let id = item.id ? item.id : item;
-    let name = item.name ? item.name : item;
-    return (
-      <Menu.Item key={id}>
-        <a>{name}</a>
-      </Menu.Item>
-    );
-  });
-  let menu = (
-    <Menu
-      onClick={(value) => {
-        setSelected(props.items.find((item) => item.id == value.key).name);
-        if (typeof props.onChange != "undefined")
-          props.onChange(props.items.find((item) => item.id == value.key));
-      }}
-    >
-      {menuItems}
-    </Menu>
-  );
+  let [selected, setSelected] = useState({label:"",value:-1});
+  let options = props.items.map(item => ({
+    label:item.name,
+    value:item.id
+  }))
+ 
   return (
-    <Dropdown overlay={menu} placement="bottomCenter">
-      <Button className="system-field system-space">
-        {selected ? selected : props.header}
-      </Button>
-    </Dropdown>
+   <AutoComplete
+     options={options}
+     value={selected.label}
+     placeholder={props.header}
+     filterOption={(inputValue, option) => option.label.includes(inputValue)}
+     onChange={(valu) => {
+      let _option = options.find(option => option.value == valu);
+        if(!_option) _option = {value:-1, label:valu}; 
+       setSelected(_option);
+       if(props.onChange)
+       props.onChange({name:_option.label,id:_option.value})
+      }}
+   />
   );
 }
 export function DisabledInput(props) {
@@ -40,4 +34,8 @@ export function DisabledInput(props) {
       onInput={props.onChange}
     ></Input>
   );
+}
+
+export function System_input(props){
+  return <Input  value ={props.value} key={props.value} placeholder={props.placeholder} />;
 }

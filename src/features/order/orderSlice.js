@@ -15,12 +15,7 @@ export const orderSlice = createSlice({
   },
   reducers: {
     add_order: (state, action) => {
-      let main_order = action.payload.main_id;
-      let order_id = action.payload.order_id;
-      let order = state
-        .find((order) => order.id == main_order)
-        .orders.find((order) => order.id == order_id);
-      order.push(action.payload);
+      state.items.push(action.payload.order);
     },
   },
   extraReducers: {

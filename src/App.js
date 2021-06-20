@@ -9,6 +9,14 @@ import { fetchOrders } from "./features/order/orderSlice";
 import { fetch_units } from "./features/collections/unitSlice";
 import { fetch_types } from "./features/collections/procumenttypeSlice";
 import { fetch_bags } from "./features/collections/pulling_bagSlice";
+import { fetch_assignments } from "./features/collections/assignmentSlice";
+import { fetch_soldiers } from "./features/collections/soldiersSlice";
+import { fetch_orderTypes } from "./features/collections/order_typeSlice";
+import { fetch_budgetTypes } from "./features/collections/budget_typeSlice";
+import { fetch_iaf_num} from "./features/collections/iaf_numSlice";
+import { fetch_creators } from "./features/collections/creatorSlice";
+import { fetch_providers } from "./features/collections/providerSlice";
+import { fetch_measurements } from "./features/collections/measurementSlice";
 function App() {
   let [ready, setReady] = useState(false);
   useEffect(() => {
@@ -18,6 +26,14 @@ function App() {
       store.dispatch(fetch_units()),
       store.dispatch(fetch_types()),
       store.dispatch(fetch_bags()),
+      store.dispatch(fetch_assignments()),
+      store.dispatch(fetch_soldiers()),
+      store.dispatch(fetch_orderTypes()),
+      store.dispatch(fetch_budgetTypes()),
+      store.dispatch(fetch_iaf_num()),
+      store.dispatch(fetch_creators()),
+      store.dispatch(fetch_providers()),
+      store.dispatch(fetch_measurements()),
     ]).then((done) => setReady(true));
   }, []);
   if (!ready) return <Spin />;

@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-
-import { Row, Col, Form, Input, Button, Table, Modal, Spin } from "antd";
+import { DropDown, DisabledInput } from "../../helpers/fields";
+import { Row, Col, Form, Input, Button, Table, Modal } from "antd";
 import { Filter } from "./fltr";
+import { useHistory } from "react-router";
+import { useSelector } from "react-redux";
 
-export default function Management_panel() {
-  let rows = [];
+export default function MyOrders_View() {
+  let [form] = Form.useForm();
+  let new_order = () => {
+    history.push("/new-order");
+  };
   // main_orders.foreach((mn) => {
   //   mn.Orders.foreach(
   //     ({ erp_order, erp_req, invc, need, paka, pulling_bag }) => {
@@ -12,6 +17,27 @@ export default function Management_panel() {
   //     }
   //   );
   // });
+  let orders = useSelector((state) => state.orders.items);
+  console.log(orders);
+  let rows = orders.map((order, id) => ({
+    order_id: id + 1,
+    need: order.desc,
+    paka: order.paka,
+    priority: order.priority,
+    type: order.Paka_type,
+    Pulling_bag: order.pulling_bag ? order.pulling_bag.name : "",
+    price: 5000,
+    Customer: "דוד",
+    bim: "נשר",
+    treating_factor: "גורם",
+    erp_request: 3,
+    erp_order: 5,
+    erp_invoice: 10,
+    status: 2,
+    status_days: 3,
+    days: 90,
+  }));
+  let history = useHistory();
   const columns = [
     {
       title: "מס בקשה",
@@ -26,6 +52,7 @@ export default function Management_panel() {
       render: (text) => <p>{text}</p>,
     },
     {
+      align: "right",
       title: 'פק"ע',
       dataIndex: "paka",
       key: "paka",
@@ -105,8 +132,8 @@ export default function Management_panel() {
     },
     {
       title: 'סה"כ ימים',
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "days",
+      key: "days",
       render: (text) => <p>{text}</p>,
     },
   ];
@@ -123,9 +150,22 @@ export default function Management_panel() {
       </Row>
       <h2 style={{ textAlign: "center" }}>שורת עדכונים חדשים</h2>
       <Filter />
-      <Table pagination={false} dataSource={rows} columns={columns} />;
+      <Table
+        pagination={false}
+        locale={{ emptyText: <p>אין הזמנות</p> }}
+        dataSource={rows}
+        columns={columns}
+      />
+      ;
       <div style={{ textAlign: "center" }}>
-        <Button type="primary">פתיחת בקשה חדשה</Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            history.push("/new-order");
+          }}
+        >
+          פתיחת בקשה חדשה
+        </Button>
       </div>
     </>
   );

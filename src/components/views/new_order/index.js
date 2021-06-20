@@ -7,14 +7,18 @@ import {
   SellItem,
   Bid,
 } from "./sections";
+import { useHistory } from "react-router";
 import { Row, Col, Button } from "antd";
 import "./css/order.css";
 import { re_order_the_key } from "../../helpers/procedures";
 import { system_Notification } from "../../helpers/notification";
 import { Form } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { add_order } from "../../../features/order/orderSlice";
 //memos
-let ActionsMemo = React.memo(Actions);
-let BidMemo = React.memo(Bid);
+let ActionsMemo = Actions;
+let BidMemo = Bid;
+
 //dummy bids
 let object = {
   1: {
@@ -61,10 +65,22 @@ let object = {
   },
 };
 export default function New_order() {
+  let history = useHistory();
+  let details = useRef({});
+  let orders = useSelector(state => state.orders.items);
+  console.log(orders);
+  let dispatch = useDispatch();
+  let create_order = (details) => {
+    details.current = { ...details.current, status: 1 };
+    dispatch(add_order({ order: details.current }));
+    console.log("DETAILS: ", details)
+    history.push("/my-orders");
+  };
   //sections state
   let [bids, setBids] = useState(object);
   let [items, setItems] = useState([]);
   let [selected_items, setSelected] = useState([]);
+  
   function addItem() {
     if (items.length >= 1) {
       let messages = [];
@@ -124,7 +140,15 @@ export default function New_order() {
   }, []);
   return (
     <React.Fragment>
-      <Form.Provider>
+      <Form.Provider
+        onFormFinish={(name, { values, forms }) => {
+          if (name == "order_details") {
+            details.current = values;
+            console.log(values);
+            
+          }
+        }}
+      >
         <Row justify="end" gutter={[0, 0]}>
           <Col span={18}>
             <Order_details />
@@ -162,6 +186,11 @@ export default function New_order() {
           <Col span={1}></Col>
           <Col span={10}>
             <AcceptTable />
+          </Col>
+        </Row>
+        <Row>
+          <Col span={5} pull={2}>
+            <Button onClick={create_order.bind(this, details)}>צור הזמנה</Button>
           </Col>
         </Row>
       </Form.Provider>

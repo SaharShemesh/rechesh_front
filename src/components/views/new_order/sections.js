@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Row, Col, Form, Input, Button, Table, message } from "antd";
-import { DropDown, DisabledInput } from "../../helpers/fields";
+import React, { useRef, useState } from "react";
+import { Space, Card, Row, Col, Form, Input, Button, Table, message } from "antd";
+import { New_bid } from "./screens";
+import { DropDown, DisabledInput, System_input } from "../../helpers/fields";
 import {
   PlayCircleOutlined,
   CloseOutlined,
@@ -14,20 +15,28 @@ export function Order_details(props) {
   const [form] = Form.useForm();
   let procument_types = useSelector((state) => state.procument_types.items);
   let pulling_bags = useSelector((state) => state.pulling_bags.items);
-  console.log(procument_types);
+  let assignments = useSelector((state) => state.assignments.items);
+  let soldiers = useSelector((state) => state.soldiers.items);
+  let budget_types = useSelector((state) => state.budget_types.items);
+  let order_types = useSelector((state) => state.order_types.items);
+
+
   return (
+    <Card title="פרטי הבקשה" >
     <React.Fragment>
       <Form
         name="order_details"
         form={form}
         className="ant-advanced-search-form"
-        onValuesChange={(values) => console.log(form.getFieldsValue())}
       >
         <Row>
           <Col span={8}>
             <Form.Item
               labelCol={{
-                span: 7,
+                span: 8,
+              }}
+              wrapperCol={{
+                span: 15,
               }}
               rules={[
                 {
@@ -39,11 +48,10 @@ export function Order_details(props) {
               label="סוג הזמנה:"
             >
               <DropDown
-                items={[
-                  { id: 1, name: "רכש בהקפה" },
-                  { id: 2, name: "רכש במשיכה" },
-                  { id: 3, name: "רכש בדרישה" },
-                ]}
+                items={order_types.map((type) => ({
+                  id: type.type_id,
+                  name: type.type,
+                }))}
                 header="סוג הזמנה"
                 valueUpdated={(value) => console.log(value)}
               />
@@ -52,14 +60,11 @@ export function Order_details(props) {
 
           <Col span={8}>
             <Form.Item
-              rules={[
-                {
-                  validator: isNumber,
-                  message: "חייב מספר",
-                },
-              ]}
               labelCol={{
                 span: 7,
+              }}
+              wrapperCol={{
+                span: 17,
               }}
               rules={[
                 {
@@ -91,16 +96,28 @@ export function Order_details(props) {
               labelCol={{
                 span: 7,
               }}
+              
               rules={[
                 {
                   required: true,
                   message: "חובה להזין גורם מקצועי",
                 },
               ]}
-              name="pro_Att"
+              name="Professional_at"
               label="גורם מקצועי:"
             >
-              <DropDown items={["דני", "דניאל"]} header="גורם מקצועי" />
+              <DropDown
+                items={soldiers.map((soldier) => ({
+                  id: soldier.id,
+                  name:
+                    soldier.id_num +
+                    "- " +
+                    soldier.first_name +
+                    " " +
+                    soldier.last_name,
+                }))}
+                header="גורם מקצועי"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -108,7 +125,10 @@ export function Order_details(props) {
           <Col span={8}>
             <Form.Item
               labelCol={{
-                span: 7,
+                span: 8,
+              }}
+              wrapperCol={{
+                span: 15,
               }}
               name="budget_type"
               rules={[
@@ -119,7 +139,13 @@ export function Order_details(props) {
               ]}
               label="גורם מתקצב:"
             >
-              <DropDown items={["בסיסי", "שושי", "מטה"]} header="גורם מתקצב" />
+              <DropDown
+                items={budget_types.map((type) => ({
+                  id: type.type_id,
+                  name: type.type,
+                }))}
+                header="גורם מתקצב"
+              />
             </Form.Item>
           </Col>
 
@@ -128,10 +154,13 @@ export function Order_details(props) {
               labelCol={{
                 span: 7,
               }}
+              wrapperCol={{
+                span: 14,
+              }}
               name="desc"
               label="תיאור:"
             >
-              <DisabledInput value="test" placeHolder="תיאור"></DisabledInput>
+              <Input value="תיאור" placeHolder="תיאור"></Input>
             </Form.Item>
           </Col>
 
@@ -146,7 +175,7 @@ export function Order_details(props) {
                   message: "חובה להזין מספר מטלה",
                 },
               ]}
-              name="assign_Num"
+              name="assignment_id"
               label="מספר מטלה:"
               dependencies={["procument_type"]}
               rules={[
@@ -180,13 +209,7 @@ export function Order_details(props) {
                 },
               ]}
             >
-              <DropDown
-                items={[
-                  { id: 1, name: "679678856" },
-                  { name: "657497040", id: 2 },
-                ]}
-                header="מטלות"
-              />
+              <DropDown items={assignments} header="מטלות" />
             </Form.Item>
           </Col>
         </Row>
@@ -194,7 +217,10 @@ export function Order_details(props) {
           <Col span={8}>
             <Form.Item
               labelCol={{
-                span: 7,
+                span: 8,
+              }}
+              wrapperCol={{
+                span: 15,
               }}
               rules={[
                 {
@@ -218,10 +244,13 @@ export function Order_details(props) {
               labelCol={{
                 span: 7,
               }}
-              name="prio"
+              wrapperCol={{
+                span: 14,
+              }}
+              name="priority"
               label="עדיפות:"
             >
-              <DisabledInput placeHolder="עדיפות"></DisabledInput>
+              <Input placeHolder="עדיפות"></Input>
             </Form.Item>
           </Col>
 
@@ -230,16 +259,19 @@ export function Order_details(props) {
         <Row>
           <Col span={8}>
             <Form.Item
-              labelCol={{
-                span: 7,
-              }}
+             labelCol={{
+              span: 8,
+            }}
+            wrapperCol={{
+              span: 15,
+            }}
               rules={[
                 {
                   required: true,
                   message: "חובה להזין תיק משיכה",
                 },
               ]}
-              name="pulling_Bag"
+              name="pulling_bag"
               label="תיק משיכה:"
             >
               <DropDown items={pulling_bags} header="תיק משיכה" />
@@ -251,10 +283,13 @@ export function Order_details(props) {
               labelCol={{
                 span: 7,
               }}
-              name="type"
+              wrapperCol={{
+                span: 14,
+              }}
+              name="Paka_type"
               label="סוג:"
             >
-              <DisabledInput placeHolder="סוג"></DisabledInput>
+              <Input placeHolder="סוג"></Input>
             </Form.Item>
           </Col>
 
@@ -263,13 +298,16 @@ export function Order_details(props) {
         <Row>
           <Col span={8}>
             <Form.Item
-              labelCol={{
-                span: 7,
+               labelCol={{
+                span: 8,
+              }}
+              wrapperCol={{
+                span: 26,
               }}
               rules={[
                 {
                   required: true,
-                  message: "יש להזין פקע",
+                  message: "יש להזין הגדרת צורך",
                 },
               ]}
               name="reason"
@@ -284,107 +322,113 @@ export function Order_details(props) {
               labelCol={{
                 span: 7,
               }}
-              name="scheduale"
+              wrapperCol={{
+                span: 14,
+              }}
+              name="schedule"
               label="לוז פרויקט:"
             >
-              <DisabledInput placeHolder="לוז פרויקט"></DisabledInput>
+              <Input placeHolder="לוז פרויקט"></Input>
             </Form.Item>
           </Col>
 
           <Col span={8}></Col>
           <Col span={24}>
-            <Form.Item></Form.Item>
+            <Button type="primary" htmlType="submit">
+              אשר
+            </Button>
           </Col>
         </Row>
       </Form>
     </React.Fragment>
+    </Card>
   );
 }
 
 export function Actions(prop) {
-  if (prop.permission ==1) {
+  if (prop.permission == 1) {
     return <h1>manager rank</h1>;
   }
 
   return (
-    <h1>user rank</h1>
+    <Card title="פעולות נוספות" style={{ width: 300 }}>
+      <React.Fragment>
+        <Row justify="end" gutter={[0, 16]} align="middle">
+          <Col span={24}>
+            <Button
+              onClick={prop.on_delete}
+              type="primary"
+              shape="circle"
+              size="large"
+              icon={<CloseOutlined />}
+            ></Button>{" "}
+            מחק פריטים מסומנים
+          </Col>
+
+          <Col span={24}>
+            <Button
+              type="primary"
+              shape="circle"
+              size="large"
+              icon={<ApartmentOutlined />}
+            ></Button>{" "}
+            הפרד פריטים לבקשה משנית
+          </Col>
+
+          <Col span={24}>
+            <Button
+              type="primary"
+              shape="circle"
+              size="large"
+              icon={<FileOutlined />}
+            ></Button>{" "}
+            הפק נספח ב
+          </Col>
+
+          <Col span={24}>
+            <Button
+              type="primary"
+              shape="circle"
+              size="large"
+              icon={<PlayCircleOutlined />}
+            ></Button>{" "}
+            כלל הבקשות המקושרות
+          </Col>
+        </Row>
+      </React.Fragment>
+    </Card>
   );
-
-
-  // return (
-  //   <React.Fragment>
-  //     <Row justify="end" gutter={[0, 16]} align="middle">
-  //       <Col span={24}>
-  //         <Button
-  //           onClick={prop.on_delete}
-  //           type="primary"
-  //           shape="circle"
-  //           size="large"
-  //           icon={<CloseOutlined />}
-  //         ></Button>{" "}
-  //         מחק פריטים מסומנים
-  //       </Col>
-
-  //       <Col span={24}>
-  //         <Button
-  //           type="primary"
-  //           shape="circle"
-  //           size="large"
-  //           icon={<ApartmentOutlined />}
-  //         ></Button>{" "}
-  //         הפרד פריטים לבקשה משנית
-  //       </Col>
-
-  //       <Col span={24}>
-  //         <Button
-  //           type="primary"
-  //           shape="circle"
-  //           size="large"
-  //           icon={<FileOutlined />}
-  //         ></Button>{" "}
-  //         הפק נספח ב
-  //       </Col>
-
-  //       <Col span={24}>
-  //         <Button
-  //           type="primary"
-  //           shape="circle"
-  //           size="large"
-  //           icon={<PlayCircleOutlined />}
-  //         ></Button>{" "}
-  //         כלל הבקשות המקושרות
-  //       </Col>
-  //     </Row>
-  //   </React.Fragment>
-  // );
 }
 
 export function Details() {
   return (
-    <React.Fragment>
-      <Row justify="end" gutter={[0, 16]} align="middle">
-        <Col span={24}>
-          <DisabledInput placeHolder="שם"></DisabledInput>
-        </Col>
+    <Card title="פרטי המזמין" style={{ width: 300 }} >
+      <React.Fragment>
+        <Row justify="end" gutter={[0, 16]} align="middle">
+          <Col span={24}>
+            <DisabledInput placeHolder="שם"></DisabledInput>
+          </Col>
 
-        <Col span={24}>
-          <DisabledInput placeHolder="נייד"></DisabledInput>
-        </Col>
+          <Col span={24}>
+            <DisabledInput placeHolder="נייד"></DisabledInput>
+          </Col>
 
-        <Col span={24}>
-          <DisabledInput placeHolder="בימ/גף"></DisabledInput>
-        </Col>
+          <Col span={24}>
+            <DisabledInput placeHolder="בימ/גף"></DisabledInput>
+          </Col>
 
-        <Col span={24}>
-          <DisabledInput placeHolder="מחלקה"></DisabledInput>
-        </Col>
-      </Row>
-    </React.Fragment>
+          <Col span={24}>
+            <DisabledInput placeHolder="מחלקה"></DisabledInput>
+          </Col>
+        </Row>
+      </React.Fragment>
+    </Card>
   );
 }
 
 export function AcceptTable() {
   return (
+    <Card title="טבלת מאשרים" style={{ width: 650 }}>
     <React.Fragment>
       <Form name="advanced_search" className="ant-advanced-search-form">
         <Row>
@@ -412,10 +456,10 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DisabledInput
+              <Input
                 className="system-space"
                 placeHolder="מזמין"
-              ></DisabledInput>
+              ></Input>
             </Form.Item>
           </Col>
         </Row>
@@ -436,7 +480,7 @@ export function AcceptTable() {
               labelCol={{
                 span: 10,
               }}
-              name="bim_commander"
+              name="Bim_commander"
               label="מפקד בימ:"
               style={{
                 width: "80%",
@@ -448,7 +492,11 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={["ארותור", "גלית"]} header="גורם מתקצב" />
+              <DropDown items={[
+                { id: 1, name: "ארתור" },
+                { id: 2, name: "גלית" },
+                { id: 3, name: "מפקד בימ נוסף" },
+              ]} header="מפקד בימ" />
             </Form.Item>
           </Col>
         </Row>
@@ -466,7 +514,7 @@ export function AcceptTable() {
 
           <Col span={17}>
             <Form.Item
-              name="pro_att1"
+              name="Professional_at1"
               label="גורם מקצועי:"
               style={{
                 width: "80%",
@@ -478,7 +526,11 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={["אלכס", "דוד"]} header="גורם מקצועי" />
+              <DropDown items={[
+                { id: 1, name: "אלכס" },
+                { id: 2, name: "אלכסיי" },
+                { id: 3, name: "ולאדימיר" },
+              ]} header="גורם מקצועי" />
             </Form.Item>
           </Col>
         </Row>
@@ -495,7 +547,7 @@ export function AcceptTable() {
 
           <Col span={17}>
             <Form.Item
-              name="pro_att2"
+              name="Professional_at1"
               label="גורם מקצועי:"
               style={{
                 width: "80%",
@@ -507,19 +559,43 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <DropDown items={["אלכס", "דוד"]} header="גורם מקצועי" />
+              <DropDown items={[
+                { id: 1, name: "אלכס" },
+                { id: 2, name: "אלכסיי" },
+                { id: 3, name: "ולאדימיר" },
+              ]} header="גורם מקצועי" />
             </Form.Item>
           </Col>
         </Row>
       </Form>
     </React.Fragment>
+    </Card>
   );
 }
 
 export function SellItem(props) {
+
+  
+  let iaf_nums = useSelector((state) => state.iaf_nums.items);
+  let creators = useSelector((state) => state.creators.items);
+  let providers = useSelector((state) => state.providers.items);
+  let measurements = useSelector((state) => state.measurements.items);
+  let [selectedCreatorId, setSelected] = useState(null);
+  console.log(creators);
   let valueInsertion = (row, field, e) => {
     row[field] = e.target.value;
     props.new_value(row);
+  };
+  let [screensStatus, setStatus] = useState({
+    New_bid: false,
+  });
+
+  let openScreen = (screen_type, e) => {
+    setStatus({ [screen_type]: true });
+  };
+
+  let cancelScreen = (screen_type) => {
+    setStatus({ [screen_type]: false });
   };
   let DropdownInsertion = (row, value, field, e) => {
     row[field] = value;
@@ -545,6 +621,12 @@ export function SellItem(props) {
         return (
           <Input
             type="text"
+            rules={[
+              {
+                required: true,
+                message: "יש להזין פקע",
+              },
+            ]}
             value={value}
             onInput={valueInsertion.bind(this, row, "desc")}
           />
@@ -559,7 +641,7 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-            items={["73937356", "8123616493"]}
+            items={iaf_nums.map(num => ({ id: num.id, name: num.iaf_num }))}
             valueChanged={(va) => {
               DropdownInsertion(row, va, "iaf_num");
             }}
@@ -576,7 +658,10 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-            items={["כן", "לא"]}
+            items={[
+              { id: 1, name: "כן" },
+              { id: 2, name: "לא" },
+            ]}
             valueChanged={(va) => {
               DropdownInsertion(row, va, "tech");
             }}
@@ -589,14 +674,17 @@ export function SellItem(props) {
       align: "right",
       width: "10%",
       title: "מספר יצרן",
-      key: "creator_num",
-      dataIndex: "creator_num",
+      key: "creator",
+      dataIndex: "creator",
       render(value, row, index) {
         return (
-          <Input
-            type="text"
-            value={value}
-            onInput={valueInsertion.bind(this, row, "creator_num")}
+          <DropDown
+            onChange={(selectedCreator) => setSelected(selectedCreator.id)}
+            items={creators.map(num => ({ id: num.id, name: num.creator_num }))}
+            valueChanged={(va) => {
+              DropdownInsertion(row, va, "מספר יצרן");
+            }}
+            header="מספר יצרן"
           />
         );
       },
@@ -608,27 +696,21 @@ export function SellItem(props) {
       dataIndex: "creator_name",
       render(value, row, index) {
         return (
-          <DropDown
-            items={["דוד", "אלכס"]}
-            valueChanged={(va) => {
-              DropdownInsertion(row, va, "creator_name");
-            }}
-            header="שם יצרן"
-          />
+          <System_input value={selectedCreatorId ? creators.find(creator => creator.id == selectedCreatorId).creator_name : ""} placeHolder="שם יצרן"></System_input>
         );
       },
     },
     {
       align: "right",
       title: "ספק מומלץ",
-      key: "recomended_provider",
-      dataIndex: "recomended_provider",
+      key: "provider",
+      dataIndex: "provider",
       render(value, row, index) {
         return (
           <DropDown
-            items={["אלכס", "דוד"]}
+            items={providers.map(num => ({ id: num.provider_id, name: num.provider_name }))}
             valueChanged={(va) => {
-              DropdownInsertion(row, va, "recomended_provider");
+              DropdownInsertion(row, va, "provider");
             }}
             header="ספק מומלץ"
           />
@@ -644,7 +726,17 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <Input
-            type="number"
+            type="text"
+            rules={[
+              {
+                required: true,
+                message: "יש להזין פקע",
+              },
+              {
+                validator: isNumber,
+                message: "פקע חייבת להיות מספר",
+              },
+            ]}
             value={value}
             onInput={valueInsertion.bind(this, row, "quantity")}
           />
@@ -659,7 +751,7 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <DropDown
-            items={["קילו", "אינץ"]}
+            items={measurements.map(num => ({ id: num.id, name: num.measurement }))}
             header="יחידת מידה"
             valueChanged={(va) => {
               DropdownInsertion(row, va, "measurement");
@@ -677,7 +769,17 @@ export function SellItem(props) {
       render(value, row, index) {
         return (
           <Input
-            type="number"
+            type="text"
+            rules={[
+              {
+                required: true,
+                message: "יש להזין פקע",
+              },
+              {
+                validator: isNumber,
+                message: "פקע חייבת להיות מספר",
+              },
+            ]}
             value={value}
             onInput={valueInsertion.bind(this, row, "price")}
           />
@@ -692,10 +794,19 @@ export function SellItem(props) {
     },
   };
 
+
   return (
+    <Card title="פריטים נדרשים">
     <>
       <Button onClick={props.add_item}>הוסף פריט</Button>
-      <Button>הוסף הצעת מחיר</Button>
+      <Button onClick={props.add_price}
+        onClick={openScreen.bind(this, "New_bid")}
+      > הוסף הצעה חדשה </Button>
+      <New_bid
+        show={screensStatus.New_bid}
+        onCancel={cancelScreen.bind(this, "New_bid")}
+        sell_Items={props.sell_Items}
+      />
       <Table
         columns={columns}
         pagination={false}
@@ -704,6 +815,7 @@ export function SellItem(props) {
         rowSelection={selection}
       />
     </>
+    </Card>
   );
 }
 
@@ -763,14 +875,15 @@ export function Bid(prop) {
     }))
   );
   return (
+    <Card title="בחירת ספקים">
     <>
       <Table
         columns={columns}
-        title={() => "ריכוז הצעות"}
         dataSource={rows}
         pagination={false}
         scroll={{ y: "200px" }}
       />
     </>
+    </Card>
   );
 }

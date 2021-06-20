@@ -14,35 +14,110 @@ export function Update_bag(props) {
 
   const columns = [
     {
+      align:"right",
       title: "מספר תיק",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
+      align:"right",
       title: "תיאור תיק",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "desc",
+      key: "desc",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        );
+      }  
     },
     {
-      title: 'סה"כ תקציב',
-      dataIndex: "age",
-      key: "age",
+      align:"right",
+      title: 'סהכ תקציב',
+      dataIndex: "budget",
+      key: "budget",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            rules={[
+              {
+                validator: isNumber,
+                message: "סהכ תקציב חייב להיות מספר"
+              }
+            ]}
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        );
+      }  
     },
     {
+      align:"right",
       title: "תקציב שממומש מחושב",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "calculated_budget1",
+      key: "calculated_budget1",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            rules={[
+              {
+                validator: isNumber,
+                message: "תקציב חייב להיות מספר"
+              }
+            ]}
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        );
+      } 
     },
     {
+      align:"right",
       title: "תקציב שממומש טיוב",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "calculated_budget2",
+      key: "calculated_budget2",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            rules={[
+              {
+                validator: isNumber,
+                message: "תקציב חייב להיות מספר"
+              }
+            ]}
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        );
+      } 
     },
     {
+      align:"right",
       title: "תקציב שנותר",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "budget_left",
+      key: "budget_left",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            rules={[
+              {
+                validator: isNumber,
+                message: "תקציב חייב להיות מספר"
+              }
+            ]}
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        );
+      } 
     },
   ];
 
@@ -50,7 +125,11 @@ export function Update_bag(props) {
     {
       key: "1",
       name: "תיאור 1",
-      age: "fdsfds",
+      desc: "תיאור תיק",
+      budget: "סהכ תקציב",
+      calculated_budget1: "תקציב שממומש מחושב",
+      calculated_budget2: "תקציב שממוש טיוב",
+      budget_left: "תקציב שנותר"
     },
     {
       key: "2",
@@ -98,12 +177,14 @@ export function Update_bag(props) {
 export function Update_notificationData(props) {
   const columns = [
     {
+      align:"right",
       title: "ערוץ רכש",
       dataIndex: "name",
       key: "name",
       render: (text) => <p>{text}</p>,
     },
     {
+      align:"right",
       title: "תנאי",
       dataIndex: "condition",
       key: "condition",
@@ -118,9 +199,10 @@ export function Update_notificationData(props) {
       },
     },
     {
+      align:"right",
       title: "הזנה",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "desc",
+      key: "desc",
     },
   ];
 
@@ -128,15 +210,17 @@ export function Update_notificationData(props) {
     {
       key: "1",
       name: "אסמכתא",
-      age: "fdsfds",
+      desc: "הזנה",
     },
     {
       key: "2",
       name: "משיכה",
+      desc:"הזנה"
     },
     {
       key: "2",
       name: "דרישה",
+      desc:"הזנה"
     },
   ];
 
@@ -168,12 +252,16 @@ export function Update_provider(props) {
 
   const columns = [
     {
+      width: "7%",
+      align: "right",
       title: "שם הספק",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <p>{text}</p>,
     },
     {
+      width:"10%",
+      align: "right",
       title: "התמחויות",
       dataIndex: "proffession",
       key: "proffession",
@@ -188,13 +276,21 @@ export function Update_provider(props) {
       },
     },
     {
+      width:"10%",
+      align: "right",
       title: "טלפון",
       dataIndex: "phone",
       key: "phone",
       render(value, row, index) {
         return (
           <Input
-            type="number"
+            type="text"
+            rules={[
+              {
+                validator: isNumber,
+                message: "טלפון חייב להיות מספר",
+              },
+            ]}
             value={value}
             onInput={valueInsertion.bind(this, row, "")}
           />
@@ -202,6 +298,8 @@ export function Update_provider(props) {
       },
     },
     {
+      width:"10%",
+      align: "right",
       title: "פקס",
       dataIndex: "fax",
       key: "fax",
@@ -216,6 +314,8 @@ export function Update_provider(props) {
       },
     },
     {
+      width:"10%",
+      align: "right",
       title: "איש קשר",
       dataIndex: "contact",
       key: "contact",
@@ -230,6 +330,8 @@ export function Update_provider(props) {
       },
     },
     {
+      width:"15%",
+      align: "right",
       title: "כתובת החברה/איסוף",
       dataIndex: "adress",
       key: "adress",
@@ -244,6 +346,8 @@ export function Update_provider(props) {
       },
     },
     {
+      width:"15%",
+      align: "right",
       title: "מייל",
       dataIndex: "mail",
       key: "mail",
@@ -258,6 +362,8 @@ export function Update_provider(props) {
       },
     },
     {
+      width:"15%",
+      align: "right",
       title: "אתר אינטרנט",
       dataIndex: "website",
       key: "website",
@@ -272,6 +378,8 @@ export function Update_provider(props) {
       },
     },
     {
+      width:"5%",
+      align: "right",
       title: "מס ספק משהבט",
       dataIndex: "provider_number",
       key: "provider_number",
@@ -298,7 +406,7 @@ export function Update_provider(props) {
       name: "תיאור 2",
     },
   ];
-
+  let [form] = Form.useForm();
   return (
     <FormModal
       header="עדכון ספקים"
@@ -339,7 +447,77 @@ export function Update_provider(props) {
   );
 }
 
+export function New_bid(props) {
+  //<FolderOpenOutlined />
+  const layout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 16 },
+    name: "control-hooks",
+  };
+
+  const columns = [
+    {
+      title: 'תיאור הפריט',
+      dataIndex: 'name',
+      key: 'name',
+      render: text => <p>{text}</p>,
+    },
+    {
+      title: 'כמות',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: 'מחיר ליחידה',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: 'מועד אספקה',
+      dataIndex: 'age',
+      key: 'dateArrive',
+    },
+    
+  ]
+
+  const data = [
+    {
+      key: '1',
+      name: 'תיאור 1',
+      age: ''
+    },
+    {
+      key: '2',
+      name: 'תיאור 2',
+      
+    },
+  ]
+  
+  return (
+  <FormModal header="הצעת מחיר חדשה - הזמנה מספר" show={props.show} onCancel={props.onCancel}>
+    <Form {...layout}>
+      <Form.Item label=" שם ספק" >
+          <Input 
+          placeholder=" בחירה מרשימה "
+          suffix={<UserOutlined className="site-form-item-icon" />}
+          />
+        </Form.Item>
+        <Form.Item label="פריטים">
+        <Table 
+      columns={columns} 
+      dataSource={data} 
+      pagination={false} 
+      bordered 
+      
+      />
+      </Form.Item> 
+          </Form>
+  </FormModal>
+);
+}
+
 export function Screen_Permission(props) {
+  let [form] = Form.useForm();
   const layout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 16 },
@@ -349,39 +527,59 @@ export function Screen_Permission(props) {
   const columns = [
     {
       title: "מספר אישי",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <a>{text}</a>,
+      dataIndex: "idf_num",
+      key: "idf_num",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            rules={[
+              {
+                validator: isNumber,
+                message: "מספר אישי חייב להיות מספר"
+              }
+            ]}
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        );
+      } 
     },
     {
       title: "שם משתמש",
-      dataIndex: "age",
-      key: "age",
+      dataIndex: "username",
+      key: "username",
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "")}
+          />
+        );
+      } 
     },
     {
       title: "סוג הרשאות",
-      dataIndex: "age",
-      kefy: "age",
+      dataIndex: "permissions",
+      kefy: "permissions",
     },
   ];
 
   const data = [
     {
       key: "1",
-      name: "אסמכתא",
-      age: "fdsfds",
     },
     {
       key: "2",
-      name: "משיכה",
     },
     {
       key: "2",
-      name: "דרישה",
     },
   ];
-  let [form] = Form.useForm();
+
   return (
+    
     <FormModal header="מסך הרשאות" show={props.show} onCancel={props.onCancel}>
       <Form
         form={form}
