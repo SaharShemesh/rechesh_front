@@ -1,9 +1,9 @@
-import { Form, Table, Input } from "antd";
+import { Row, Col, Divider, Form, Table, Input } from "antd";
 import React, { useState } from "react";
 import { FormModal } from "../../helpers/Modal";
 import { UserOutlined } from "@ant-design/icons";
 import { isNumber } from "../../../helpers/validators";
-let valueInsertion = (row, key, e) => {};
+let valueInsertion = (row, key, e) => { };
 export function Update_bag(props) {
   //<FolderOpenOutlined />
   const layout = {
@@ -14,14 +14,14 @@ export function Update_bag(props) {
 
   const columns = [
     {
-      align:"right",
+      align: "right",
       title: "מספר תיק",
       dataIndex: "name",
       key: "name",
       render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
+      align: "right",
       title: "תיאור תיק",
       dataIndex: "desc",
       key: "desc",
@@ -33,10 +33,10 @@ export function Update_bag(props) {
             onInput={valueInsertion.bind(this, row, "")}
           />
         );
-      }  
+      }
     },
     {
-      align:"right",
+      align: "right",
       title: 'סהכ תקציב',
       dataIndex: "budget",
       key: "budget",
@@ -54,10 +54,10 @@ export function Update_bag(props) {
             onInput={valueInsertion.bind(this, row, "")}
           />
         );
-      }  
+      }
     },
     {
-      align:"right",
+      align: "right",
       title: "תקציב שממומש מחושב",
       dataIndex: "calculated_budget1",
       key: "calculated_budget1",
@@ -75,10 +75,10 @@ export function Update_bag(props) {
             onInput={valueInsertion.bind(this, row, "")}
           />
         );
-      } 
+      }
     },
     {
-      align:"right",
+      align: "right",
       title: "תקציב שממומש טיוב",
       dataIndex: "calculated_budget2",
       key: "calculated_budget2",
@@ -96,10 +96,10 @@ export function Update_bag(props) {
             onInput={valueInsertion.bind(this, row, "")}
           />
         );
-      } 
+      }
     },
     {
-      align:"right",
+      align: "right",
       title: "תקציב שנותר",
       dataIndex: "budget_left",
       key: "budget_left",
@@ -117,7 +117,7 @@ export function Update_bag(props) {
             onInput={valueInsertion.bind(this, row, "")}
           />
         );
-      } 
+      }
     },
   ];
 
@@ -144,23 +144,42 @@ export function Update_bag(props) {
       show={props.show}
       onCancel={props.onCancel}
     >
-      <Form layout="inline">
-        <Form.Item
-          label=" מס' תיק"
-          name="bag_num"
-          rules={[
-            {
-              validator: isNumber,
-              message: "חייב להיות מספר",
-            },
-          ]}
-        >
-          <Input placeholder="מספר תיק" />
-        </Form.Item>
-        <Form.Item label="תיאור תיק" name="bag_desc">
-          <Input type="text" placeholder="תיאור תיק" />
-        </Form.Item>
-      </Form>
+      <Row>
+        <Col span={8} >
+          <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            wrapperCol={{
+              span: 16,
+            }}
+            label=" מס' תיק"
+            name="bag_num"
+            rules={[
+              {
+                validator: isNumber,
+                message: "חייב להיות מספר",
+              },
+            ]}
+          >
+            <Input placeholder="מספר תיק" />
+          </Form.Item>
+        </Col>
+        <Col span={8} >
+
+          <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            wrapperCol={{
+              span: 16,
+            }}
+            label="תיאור תיק" name="bag_desc">
+            <Input type="text" placeholder="תיאור תיק" />
+          </Form.Item>
+        </Col>
+
+      </Row>
 
       <Form {...layout}>
         <Table
@@ -177,14 +196,14 @@ export function Update_bag(props) {
 export function Update_notificationData(props) {
   const columns = [
     {
-      align:"right",
+      align: "right",
       title: "ערוץ רכש",
       dataIndex: "name",
       key: "name",
       render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
+      align: "right",
       title: "תנאי",
       dataIndex: "condition",
       key: "condition",
@@ -199,7 +218,7 @@ export function Update_notificationData(props) {
       },
     },
     {
-      align:"right",
+      align: "right",
       title: "הזנה",
       dataIndex: "desc",
       key: "desc",
@@ -215,12 +234,12 @@ export function Update_notificationData(props) {
     {
       key: "2",
       name: "משיכה",
-      desc:"הזנה"
+      desc: "הזנה"
     },
     {
       key: "2",
       name: "דרישה",
-      desc:"הזנה"
+      desc: "הזנה"
     },
   ];
 
@@ -260,7 +279,7 @@ export function Update_provider(props) {
       render: (text) => <p>{text}</p>,
     },
     {
-      width:"10%",
+      width: "10%",
       align: "right",
       title: "התמחויות",
       dataIndex: "proffession",
@@ -276,7 +295,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"10%",
+      width: "10%",
       align: "right",
       title: "טלפון",
       dataIndex: "phone",
@@ -298,7 +317,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"10%",
+      width: "10%",
       align: "right",
       title: "פקס",
       dataIndex: "fax",
@@ -314,7 +333,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"10%",
+      width: "10%",
       align: "right",
       title: "איש קשר",
       dataIndex: "contact",
@@ -330,7 +349,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"15%",
+      width: "15%",
       align: "right",
       title: "כתובת החברה/איסוף",
       dataIndex: "adress",
@@ -346,7 +365,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"15%",
+      width: "15%",
       align: "right",
       title: "מייל",
       dataIndex: "mail",
@@ -362,7 +381,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"15%",
+      width: "15%",
       align: "right",
       title: "אתר אינטרנט",
       dataIndex: "website",
@@ -378,7 +397,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"5%",
+      width: "5%",
       align: "right",
       title: "מס ספק משהבט",
       dataIndex: "provider_number",
@@ -414,35 +433,64 @@ export function Update_provider(props) {
       show={props.show}
       onCancel={props.onCancel}
     >
-      <Form layout="inline">
-        <Form.Item label=" שם ספק" name="providerName">
-          <Input placeholder="שם ספק" />
-        </Form.Item>
-        <Form.Item label="התמחות" name="proffession">
-          <Input type="text" placeholder="התמחות" />
-        </Form.Item>
-        <Form.Item
-          label="מספר ספק משהבט"
-          name="providerNum"
-          rules={[
-            {
-              validator: isNumber,
-              message: "חייב להיות מספר",
-            },
-          ]}
-        >
-          <Input type="text" placeholder="תיאור תיק" />
-        </Form.Item>
-      </Form>
+      <Row>
+        <Col span={6} >
+          <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            wrapperCol={{
+              span: 16,
+            }}
+            label=" שם ספק" name="providerName">
+            <Input placeholder="שם ספק" />
+          </Form.Item>
+        </Col>
+        <Col span={6} >
+          <Form.Item
+            labelCol={{
+              span: 5,
+            }}
+            wrapperCol={{
+              span: 16,
+            }}
+            label="התמחות" name="proffession">
+            <Input type="text" placeholder="התמחות" />
+          </Form.Item>
+        </Col>
+        <Col span={8} >
+          <Form.Item
+            labelCol={{
+              span: 8,
+            }}
+            wrapperCol={{
+              span: 16,
+            }}
+            label="מספר ספק משהבט"
+            name="providerNum"
+            rules={[
+              {
+                validator: isNumber,
+                message: "חייב להיות מספר",
+              },
+            ]}
+          >
+            <Input type="text" placeholder="תיאור תיק" />
+          </Form.Item>
+        </Col>
 
-      <Form {...layout}>
-        <Table
-          columns={columns}
-          dataSource={data}
-          pagination={false}
-          bordered
-        />
-      </Form>
+      </Row>
+      <Divider> </Divider>
+      <Row>
+        <Form {...layout}>
+          <Table
+            columns={columns}
+            dataSource={data}
+            pagination={false}
+            bordered
+          />
+        </Form>
+      </Row>
     </FormModal>
   );
 }
@@ -477,7 +525,7 @@ export function New_bid(props) {
       dataIndex: 'age',
       key: 'dateArrive',
     },
-    
+
   ]
 
   const data = [
@@ -489,31 +537,31 @@ export function New_bid(props) {
     {
       key: '2',
       name: 'תיאור 2',
-      
+
     },
   ]
-  
+
   return (
-  <FormModal header="הצעת מחיר חדשה - הזמנה מספר" show={props.show} onCancel={props.onCancel}>
-    <Form {...layout}>
-      <Form.Item label=" שם ספק" >
-          <Input 
-          placeholder=" בחירה מרשימה "
-          suffix={<UserOutlined className="site-form-item-icon" />}
+    <FormModal header="הצעת מחיר חדשה - הזמנה מספר" show={props.show} onCancel={props.onCancel}>
+      <Form {...layout}>
+        <Form.Item label=" שם ספק" >
+          <Input
+            placeholder=" בחירה מרשימה "
+            suffix={<UserOutlined className="site-form-item-icon" />}
           />
         </Form.Item>
         <Form.Item label="פריטים">
-        <Table 
-      columns={columns} 
-      dataSource={data} 
-      pagination={false} 
-      bordered 
-      
-      />
-      </Form.Item> 
-          </Form>
-  </FormModal>
-);
+          <Table
+            columns={columns}
+            dataSource={data}
+            pagination={false}
+            bordered
+
+          />
+        </Form.Item>
+      </Form>
+    </FormModal>
+  );
 }
 
 export function Screen_Permission(props) {
@@ -543,7 +591,7 @@ export function Screen_Permission(props) {
             onInput={valueInsertion.bind(this, row, "")}
           />
         );
-      } 
+      }
     },
     {
       title: "שם משתמש",
@@ -557,7 +605,7 @@ export function Screen_Permission(props) {
             onInput={valueInsertion.bind(this, row, "")}
           />
         );
-      } 
+      }
     },
     {
       title: "סוג הרשאות",
@@ -579,7 +627,7 @@ export function Screen_Permission(props) {
   ];
 
   return (
-    
+
     <FormModal header="מסך הרשאות" show={props.show} onCancel={props.onCancel}>
       <Form
         form={form}

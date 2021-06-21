@@ -89,7 +89,7 @@ export let Filter = (props) => {
           <Row gutter={24} justify="center">
             <Col span={6}>
               <Form.Item
-                 labelCol={{
+                labelCol={{
                   span: 7,
                 }}
                 wrapperCol={{
@@ -121,7 +121,7 @@ export let Filter = (props) => {
           <Row gutter={24} justify="center">
             <Col span={6}>
               <Form.Item
-                 labelCol={{
+                labelCol={{
                   span: 7,
                 }}
                 wrapperCol={{
@@ -152,7 +152,7 @@ export let Filter = (props) => {
           <Row gutter={24} justify="center">
             <Col span={6}>
               <Form.Item
-                 labelCol={{
+                labelCol={{
                   span: 7,
                 }}
                 wrapperCol={{
@@ -183,7 +183,7 @@ export let Filter = (props) => {
           <Row gutter={24} justify="center">
             <Col span={6}>
               <Form.Item
-                 labelCol={{
+                labelCol={{
                   span: 7,
                 }}
                 wrapperCol={{
@@ -215,7 +215,7 @@ export let Filter = (props) => {
           <Row gutter={24} justify="center">
             <Col span={6}>
               <Form.Item
-                 labelCol={{
+                labelCol={{
                   span: 7,
                 }}
                 wrapperCol={{
@@ -243,14 +243,10 @@ export let Filter = (props) => {
               </Form.Item>
             </Col>
           </Row>
-          <Row  justify="center">
-            
-              <Button type="primary" shape="circle" icon={<SearchOutlined />} />
-            
-           
+          <Row justify="center">
+            <Button type="primary" shape="circle" icon={<SearchOutlined />} />
           </Row>
         </Form>
-
       </Panel>
     </Collapse>
 
