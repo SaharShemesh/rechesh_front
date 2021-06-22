@@ -12,6 +12,10 @@ import iaf_num_Reducer from "../features/collections/iaf_numSlice";
 import creator_Reducer from "../features/collections/creatorSlice";
 import provider_Reducer from "../features/collections/providerSlice";
 import measurement_Reducer from "../features/collections/measurementSlice";
+import constants_Reducer from "../features/collections/constantSlice";
+import users_Reducer from "../features/collections/userSlice";
+import user_permissions_Reducer from "../features/collections/user_permissionSlice";
+import users_roles_Reducer from "../features/collections/user_roleSlice";
 //reducers
 import {} from "../features/order/orderSlice";
 export const store = configureStore({
@@ -28,5 +32,9 @@ export const store = configureStore({
     creators: creator_Reducer,
     providers: provider_Reducer,
     measurements: measurement_Reducer,
+    constants: constants_Reducer,
+    users: users_Reducer,
+    user_permissions: user_permissions_Reducer,
+    users_roles: users_roles_Reducer,
   },
 });

@@ -36,7 +36,7 @@ export default function Management_panel() {
           style={gridStyle}
           onClick={openScreen.bind(this, "Update_bag")}
         >
-          עריכת ספקים
+          עדכון תיקי משיכה
         </Card.Grid>
         <Card.Grid
           onClick={openScreen.bind(this, "Update_notification")}

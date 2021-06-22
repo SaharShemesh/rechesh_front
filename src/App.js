@@ -17,6 +17,9 @@ import { fetch_iaf_num} from "./features/collections/iaf_numSlice";
 import { fetch_creators } from "./features/collections/creatorSlice";
 import { fetch_providers } from "./features/collections/providerSlice";
 import { fetch_measurements } from "./features/collections/measurementSlice";
+import { fetch_constants } from "./features/collections/constantSlice";
+import {fetch_users} from "./features/collections/userSlice";
+import { fetch_user_permissions } from "./features/collections/user_permissionSlice";
 function App() {
   let [ready, setReady] = useState(false);
   useEffect(() => {
@@ -34,6 +37,9 @@ function App() {
       store.dispatch(fetch_creators()),
       store.dispatch(fetch_providers()),
       store.dispatch(fetch_measurements()),
+      store.dispatch(fetch_constants()),
+      store.dispatch(fetch_users()),
+      store.dispatch(fetch_user_permissions()),
     ]).then((done) => setReady(true));
   }, []);
   if (!ready) return <Spin />;

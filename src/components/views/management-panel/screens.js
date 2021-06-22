@@ -3,8 +3,23 @@ import React, { useState } from "react";
 import { FormModal } from "../../helpers/Modal";
 import { UserOutlined } from "@ant-design/icons";
 import { isNumber } from "../../../helpers/validators";
-let valueInsertion = (row, key, e) => {};
+import {useSelector, useDispatch} from "react-redux";
+import { DropDown } from "../../helpers/fields";
+import { unwrapResult } from "@reduxjs/toolkit";
+import {update_users} from "../../../features/collections/userSlice"
+
 export function Update_bag(props) {
+  let pulling_bags = useSelector(state => state.pulling_bags.items);
+  
+  const rows = pulling_bags.map(pulling_bag => ({
+    name:pulling_bag
+  }))
+    let [data,set_data] = useState(rows);
+  let valueInsertion = (index, attribute, e) => {
+     let new_data = data.slice();
+     new_data[index][attribute] = e.target.value;
+     set_data(new_data);
+  };
   //<FolderOpenOutlined />
   const layout = {
     labelCol: { span: 12 },
@@ -16,9 +31,9 @@ export function Update_bag(props) {
     {
       align:"right",
       title: "מספר תיק",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <p>{text}</p>,
+      dataIndex: "bag_number",
+      key: "bag_number",
+      render: (number, row, index) => <Input type="number" value={number} onChange={valueInsertion.bind(this, index, "bag_number")}  />,
     },
     {
       align:"right",
@@ -30,7 +45,7 @@ export function Update_bag(props) {
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "desc")}
           />
         );
       }  
@@ -43,7 +58,7 @@ export function Update_bag(props) {
       render(value, row, index) {
         return (
           <Input
-            type="text"
+            type="number"
             rules={[
               {
                 validator: isNumber,
@@ -51,7 +66,7 @@ export function Update_bag(props) {
               }
             ]}
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onInput={valueInsertion.bind(this, index, "budget")}
           />
         );
       }  
@@ -59,29 +74,15 @@ export function Update_bag(props) {
     {
       align:"right",
       title: "תקציב שממומש מחושב",
-      dataIndex: "calculated_budget1",
-      key: "calculated_budget1",
-      render(value, row, index) {
-        return (
-          <Input
-            type="text"
-            rules={[
-              {
-                validator: isNumber,
-                message: "תקציב חייב להיות מספר"
-              }
-            ]}
-            value={value}
-            onInput={valueInsertion.bind(this, row, "")}
-          />
-        );
-      } 
+      dataIndex: "calculated_budget",
+      key: "calculated_budget",
+      render:(value) => <p>{value}</p>
     },
     {
       align:"right",
       title: "תקציב שממומש טיוב",
-      dataIndex: "calculated_budget2",
-      key: "calculated_budget2",
+      dataIndex: "tiov_budget",
+      key: "tiov_budget",
       render(value, row, index) {
         return (
           <Input
@@ -93,7 +94,7 @@ export function Update_bag(props) {
               }
             ]}
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onInput={valueInsertion.bind(this, row, "tiov_budget")}
           />
         );
       } 
@@ -103,39 +104,10 @@ export function Update_bag(props) {
       title: "תקציב שנותר",
       dataIndex: "budget_left",
       key: "budget_left",
-      render(value, row, index) {
-        return (
-          <Input
-            type="text"
-            rules={[
-              {
-                validator: isNumber,
-                message: "תקציב חייב להיות מספר"
-              }
-            ]}
-            value={value}
-            onInput={valueInsertion.bind(this, row, "")}
-          />
-        );
-      } 
+      render:(value, row, index) => <p>{value}</p>
     },
   ];
 
-  const data = [
-    {
-      key: "1",
-      name: "תיאור 1",
-      desc: "תיאור תיק",
-      budget: "סהכ תקציב",
-      calculated_budget1: "תקציב שממומש מחושב",
-      calculated_budget2: "תקציב שממוש טיוב",
-      budget_left: "תקציב שנותר"
-    },
-    {
-      key: "2",
-      name: "תיאור 2",
-    },
-  ];
 
   return (
     <FormModal
@@ -147,17 +119,12 @@ export function Update_bag(props) {
       <Form layout="inline">
         <Form.Item
           label=" מס' תיק"
-          name="bag_num"
-          rules={[
-            {
-              validator: isNumber,
-              message: "חייב להיות מספר",
-            },
-          ]}
-        >
+          name="bag_num">
           <Input placeholder="מספר תיק" />
         </Form.Item>
-        <Form.Item label="תיאור תיק" name="bag_desc">
+
+        <Form.Item label="תיאור תיק" 
+        name="bag_desc">
           <Input type="text" placeholder="תיאור תיק" />
         </Form.Item>
       </Form>
@@ -175,12 +142,14 @@ export function Update_bag(props) {
 }
 
 export function Update_notificationData(props) {
+  let constants = useSelector((state) => state.constants.items).map((constant) => ({type: constant.type, condition: constant.condition, price_value: constant.price_value}));
+  console.log(constants);
   const columns = [
     {
       align:"right",
       title: "ערוץ רכש",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "type",
+      key: "type",
       render: (text) => <p>{text}</p>,
     },
     {
@@ -188,21 +157,22 @@ export function Update_notificationData(props) {
       title: "תנאי",
       dataIndex: "condition",
       key: "condition",
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      align:"right",
+      title: "הזנה",
+      dataIndex: "price_value",
+      key: "price_value",
       render(value, row, index) {
         return (
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            // onChange={valueInsertion.bind(this, row, "")}
           />
         );
       },
-    },
-    {
-      align:"right",
-      title: "הזנה",
-      dataIndex: "desc",
-      key: "desc",
     },
   ];
 
@@ -214,11 +184,26 @@ export function Update_notificationData(props) {
     },
     {
       key: "2",
+      name: "אסמכתא",
+      desc:"הזנה"
+    },
+    {
+      key: "3",
+      name: "אסמכתא",
+      desc:"הזנה"
+    },
+    {
+      key: "4",
       name: "משיכה",
       desc:"הזנה"
     },
     {
-      key: "2",
+      key: "5",
+      name: "דרישה",
+      desc:"הזנה"
+    },
+    {
+      key: "6",
       name: "דרישה",
       desc:"הזנה"
     },
@@ -230,18 +215,26 @@ export function Update_notificationData(props) {
       show={props.show}
       onCancel={props.onCancel}
     >
-      <Table columns={columns} dataSource={data} pagination={false} bordered />
+      <Table columns={columns} dataSource={constants} pagination={false} bordered />
     </FormModal>
   );
 }
 
 export function Update_provider(props) {
+  let providers = useSelector(state => state.providers.items);
   //<FolderOpenOutlined />
   const layout = {
     labelCol: { span: 12 },
     wrapperCol: { span: 22 },
     name: "control-hooks",
   };
+
+  let valueInsertion = (index, attribute, e) => {
+    let new_data = rows.slice();
+    new_data[index][attribute] = e.target.value;
+    set_rows(new_data);
+ };
+
 
   const tailLayout = {
     wrapperCol: {
@@ -252,7 +245,7 @@ export function Update_provider(props) {
 
   const columns = [
     {
-      width: "7%",
+      width: "5%",
       align: "right",
       title: "שם הספק",
       dataIndex: "name",
@@ -260,45 +253,39 @@ export function Update_provider(props) {
       render: (text) => <p>{text}</p>,
     },
     {
-      width:"10%",
+      width:"12%",
       align: "right",
       title: "התמחויות",
-      dataIndex: "proffession",
-      key: "proffession",
+      dataIndex: "profession",
+      key: "profession",
       render(value, row, index) {
         return (
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "profession")}
           />
         );
       },
     },
     {
-      width:"10%",
+      width:"12%",
       align: "right",
       title: "טלפון",
-      dataIndex: "phone",
-      key: "phone",
+      dataIndex: "phones",
+      key: "phones",
       render(value, row, index) {
         return (
           <Input
             type="text"
-            rules={[
-              {
-                validator: isNumber,
-                message: "טלפון חייב להיות מספר",
-              },
-            ]}
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "phones")}
           />
         );
       },
     },
     {
-      width:"10%",
+      width:"11%",
       align: "right",
       title: "פקס",
       dataIndex: "fax",
@@ -306,9 +293,9 @@ export function Update_provider(props) {
       render(value, row, index) {
         return (
           <Input
-            type="number"
+            type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "fax")}
           />
         );
       },
@@ -317,20 +304,20 @@ export function Update_provider(props) {
       width:"10%",
       align: "right",
       title: "איש קשר",
-      dataIndex: "contact",
-      key: "contact",
+      dataIndex: "contact_name",
+      key: "contact_name",
       render(value, row, index) {
         return (
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "contact_name")}
           />
         );
       },
     },
     {
-      width:"15%",
+      width:"12%",
       align: "right",
       title: "כתובת החברה/איסוף",
       dataIndex: "adress",
@@ -340,7 +327,7 @@ export function Update_provider(props) {
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "adress")}
           />
         );
       },
@@ -356,7 +343,7 @@ export function Update_provider(props) {
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "mail")}
           />
         );
       },
@@ -365,48 +352,50 @@ export function Update_provider(props) {
       width:"15%",
       align: "right",
       title: "אתר אינטרנט",
-      dataIndex: "website",
-      key: "website",
+      dataIndex: "site_adress",
+      key: "site_adress",
       render(value, row, index) {
         return (
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "site_adress")}
           />
         );
       },
     },
     {
-      width:"5%",
+      width:"10%",
       align: "right",
       title: "מס ספק משהבט",
-      dataIndex: "provider_number",
-      key: "provider_number",
+      dataIndex: "num",
+      key: "num",
       render(value, row, index) {
         return (
           <Input
             type="number"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "num")}
           />
         );
       },
     },
   ];
 
-  const data = [
-    {
-      key: "1",
-      name: "תיאור 1",
-      age: "fdsfds",
-    },
-    {
-      key: "2",
-      name: "תיאור 2",
-    },
-  ];
-  let [form] = Form.useForm();
+  const data = providers.map( provider => ({
+    id: provider.provider_id,
+    name: provider.provider_name,
+    num: provider.provider_num,
+    profession: provider.profession,
+    phones: provider.phones,
+    fax: provider.fax,
+    contact_name: provider.contact_name,
+    adress: provider.adress,
+    mail: provider.mail,
+    site_adress: provider.site_adress
+  }))
+  let [rows,set_rows] = useState(data); 
+  
   return (
     <FormModal
       header="עדכון ספקים"
@@ -438,7 +427,7 @@ export function Update_provider(props) {
       <Form {...layout}>
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={rows}
           pagination={false}
           bordered
         />
@@ -518,12 +507,45 @@ export function New_bid(props) {
 
 export function Screen_Permission(props) {
   let [form] = Form.useForm();
+  let users = useSelector(state => state.users.items);
+  let user_permissions = useSelector(state => state.user_permissions.items);
+  let dispatch = useDispatch();
   const layout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 16 },
     name: "control-hooks",
   };
-
+  let save_users = async () => {
+         let users = rows.map(row => ({
+            id:row.id,
+            soldier_id:row.soldier_id,
+            id_num:row.idf_num,
+            first_name:row.username.split(" ")[0],
+            last_name:row.username.split(" ")[1],
+            permission_id: row.permission.id
+         })); 
+         console.log(JSON.stringify(users));
+        try{
+      let r = await dispatch(update_users(users));
+      unwrapResult(r)
+        }
+        catch(e){
+          console.log("error",e);
+        }
+        finally{
+          props.onCancel();
+        }
+    }
+  let valueInsertion = (index, attribute, e) => {
+    let new_data = rows.slice();
+    new_data[index][attribute] = e.target.value;
+    set_rows(new_data);
+ };
+ let update_permission = function(index,value){
+    let new_data = rows.slice();
+    new_data[index].permission = value;
+    set_rows(new_data);
+ };
   const columns = [
     {
       title: "מספר אישי",
@@ -540,7 +562,7 @@ export function Screen_Permission(props) {
               }
             ]}
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onInput={valueInsertion.bind(this, index, "idf_num")}
           />
         );
       } 
@@ -554,66 +576,51 @@ export function Screen_Permission(props) {
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "username")}
           />
         );
       } 
     },
     {
-      title: "סוג הרשאות",
-      dataIndex: "permissions",
-      kefy: "permissions",
+      title: "הרשאה",
+      dataIndex: "permission",
+      kefy: "permission",
+      render:(value, row, index) => <DropDown value={value} onChange={update_permission.bind(this,index)} items={user_permissions.map(perm => ({
+        name:perm.permission,
+        id:perm.permission_id
+      }))} />
     },
   ];
-
-  const data = [
-    {
-      key: "1",
-    },
-    {
-      key: "2",
-    },
-    {
-      key: "2",
-    },
-  ];
-
+  const data = users.map(user => ({
+    soldier_id:user.soldier_id,
+    id:user.id,
+    idf_num:user.soldier.id_num,
+     username:user.soldier.first_name + " "+ user.soldier.last_name,
+    permission: {
+      name: user.Permission.permission,
+      id:user.Permission.permission_id
+    }
+  }));
+ let [rows,set_rows] = useState(data); 
+ let [idf_num,set_num] = useState("");
+ console.log(rows.map(row => row.idf_num.includes(form.getFieldValue("idf_num"))));
   return (
     
-    <FormModal header="מסך הרשאות" show={props.show} onCancel={props.onCancel}>
-      <Form
-        form={form}
-        onValuesChange={() => console.log(form.getFieldsValue())}
-        {...layout}
-      >
-        <Form.Item
-          name="soldiers"
-          label=" חיפוש"
-          rules={[
-            {
-              validator: isNumber,
-              message: "מספר אישי חייב להיות מספר",
-            },
-            {
-              len: 7,
-              message: "מספר אישי חייב להיות באורך 7",
-            },
-          ]}
-        >
+    <FormModal header="מסך הרשאות" show={props.show} onCancel={props.onCancel} onOk={save_users}>
           <Input
             placeholder=" מספר אישי "
+            value={idf_num}
+            onChange={(e) => set_num(e.target.value)}
             suffix={<UserOutlined className="site-form-item-icon" />}
           />
-        </Form.Item>
-        <Form.Item label="טבלת משתמשים">
+        {JSON.stringify(form.getFieldValue("idf_num"))}
           <Table
             columns={columns}
-            dataSource={data}
+            dataSource={rows.filter(row => row.idf_num.includes(idf_num))}
             pagination={false}
             bordered
           />
-        </Form.Item>
-      </Form>
+
     </FormModal>
   );
 }

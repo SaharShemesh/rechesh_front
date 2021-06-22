@@ -16,16 +16,7 @@ export const pulling_BagSlice = createSlice({
   reducers: {},
   extraReducers: {
     [fetch_bags.fulfilled]: (state, action) => {
-      state.items = state.items.concat(
-        action.payload.map(
-          ({ bag_id, bag_description, sum_budget, bag_number }) => ({
-            id: bag_id,
-            name: bag_description,
-            sum_budget,
-            bag_number,
-          })
-        )
-      );
+    state.items = state.items.concat(action.payload);
     },
   },
 });
