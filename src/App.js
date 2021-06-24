@@ -20,6 +20,7 @@ import { fetch_measurements } from "./features/collections/measurementSlice";
 import { fetch_constants } from "./features/collections/constantSlice";
 import {fetch_users} from "./features/collections/userSlice";
 import { fetch_user_permissions } from "./features/collections/user_permissionSlice";
+import { fetch_users_roles } from "./features/collections/user_roleSlice";
 function App() {
   let [ready, setReady] = useState(false);
   useEffect(() => {
@@ -40,6 +41,7 @@ function App() {
       store.dispatch(fetch_constants()),
       store.dispatch(fetch_users()),
       store.dispatch(fetch_user_permissions()),
+      store.dispatch(fetch_users_roles()),
     ]).then((done) => setReady(true));
   }, []);
   if (!ready) return <Spin />;

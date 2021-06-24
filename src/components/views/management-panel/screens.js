@@ -1,4 +1,4 @@
-import { Form, Table, Input } from "antd";
+import { Form, Table, Input,Button } from "antd";
 import React, { useState } from "react";
 import { FormModal } from "../../helpers/Modal";
 import { UserOutlined } from "@ant-design/icons";
@@ -11,22 +11,46 @@ import {update_users} from "../../../features/collections/userSlice"
 export function Update_bag(props) {
   let pulling_bags = useSelector(state => state.pulling_bags.items);
   
-  const rows = pulling_bags.map(pulling_bag => ({
-    name:pulling_bag
+  const data = pulling_bags.map( (pulling_bag,index) => ({
+    key:index,
+    id: pulling_bag.bag_id,
+    bag_number: pulling_bag.bag_number,
+    bag_description: pulling_bag.bag_description,
+    sum_budget: pulling_bag.sum_budget,
+    calculated_finished_budget: pulling_bag.calculated_finished_budget,
+    tiov_budget: pulling_bag.tiov_budget,
+    budget_left: pulling_bag.sum_budget - pulling_bag.tiov_budget,
   }))
-    let [data,set_data] = useState(rows);
+  let [rows,set_rows] = useState(data); 
+  
   let valueInsertion = (index, attribute, e) => {
-     let new_data = data.slice();
-     new_data[index][attribute] = e.target.value;
-     set_data(new_data);
-  };
+    let new_data = rows.slice();
+    new_data[index][attribute] = e.target.value;
+    set_rows(new_data);
+ };
   //<FolderOpenOutlined />
   const layout = {
     labelCol: { span: 12 },
     wrapperCol: { span: 22 },
     name: "control-hooks",
   };
-
+  const add_bag = function() {
+      let new_bag = {
+        key:rows.length,
+        bag_number: "",
+        bag_description: "",
+        sum_budget: 0,
+        calculated_finished_budget: "0",
+        tiov_budget: 0,
+      };
+      new_bag.budget_left =  new_bag.sum_budget - new_bag.tiov_budget;
+      //console.log([]...rows,new_bag});
+      set_rows([...rows,new_bag]);
+  }
+  const delete_last = function(){
+    rows.pop();
+    set_rows([...rows]);
+  }
   const columns = [
     {
       align:"right",
@@ -38,14 +62,14 @@ export function Update_bag(props) {
     {
       align:"right",
       title: "תיאור תיק",
-      dataIndex: "desc",
-      key: "desc",
+      dataIndex: "bag_description",
+      key: "bag_description",
       render(value, row, index) {
         return (
           <Input
             type="text"
             value={value}
-            onChange={valueInsertion.bind(this, index, "desc")}
+            onChange={valueInsertion.bind(this, index, "bag_description")}
           />
         );
       }  
@@ -53,20 +77,14 @@ export function Update_bag(props) {
     {
       align:"right",
       title: 'סהכ תקציב',
-      dataIndex: "budget",
-      key: "budget",
+      dataIndex: "sum_budget",
+      key: "sum_budget",
       render(value, row, index) {
         return (
           <Input
             type="number"
-            rules={[
-              {
-                validator: isNumber,
-                message: "סהכ תקציב חייב להיות מספר"
-              }
-            ]}
             value={value}
-            onInput={valueInsertion.bind(this, index, "budget")}
+            onInput={valueInsertion.bind(this, index, "sum_budget")}
           />
         );
       }  
@@ -74,9 +92,17 @@ export function Update_bag(props) {
     {
       align:"right",
       title: "תקציב שממומש מחושב",
-      dataIndex: "calculated_budget",
-      key: "calculated_budget",
-      render:(value) => <p>{value}</p>
+      dataIndex: "calculated_finished_budget",
+      key: "calculated_finished_budget",
+      render(value, row, index) {
+        return (
+          <Input
+            type="number"
+            value={value}
+            onInput={valueInsertion.bind(this, index, "calculated_finished_budget")}
+          />
+        );
+      }  
     },
     {
       align:"right",
@@ -87,12 +113,6 @@ export function Update_bag(props) {
         return (
           <Input
             type="text"
-            rules={[
-              {
-                validator: isNumber,
-                message: "תקציב חייב להיות מספר"
-              }
-            ]}
             value={value}
             onInput={valueInsertion.bind(this, row, "tiov_budget")}
           />
@@ -104,7 +124,15 @@ export function Update_bag(props) {
       title: "תקציב שנותר",
       dataIndex: "budget_left",
       key: "budget_left",
-      render:(value, row, index) => <p>{value}</p>
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onInput={valueInsertion.bind(this, row, "budget_left")}
+          />
+        );
+      } 
     },
   ];
 
@@ -127,16 +155,21 @@ export function Update_bag(props) {
         name="bag_desc">
           <Input type="text" placeholder="תיאור תיק" />
         </Form.Item>
+        <Form.Item>
+        <Button type="primary" onClick={add_bag}>הוסף תיק</Button>
+        </Form.Item>
+        <Form.Item>
+        <Button type="primary" onClick={delete_last}>מחק תיק</Button>
+        </Form.Item>
       </Form>
-
-      <Form {...layout}>
+      <div>
         <Table
           columns={columns}
-          dataSource={data}
+          dataSource={rows}
           pagination={false}
           bordered
         />
-      </Form>
+      </div>
     </FormModal>
   );
 }
