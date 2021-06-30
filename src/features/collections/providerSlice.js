@@ -10,8 +10,19 @@ export let fetch_providers = createAsyncThunk(
   }
 );
 
+export let update_providers = createAsyncThunk("update_providers",async (providers) => {
+  let response = await fetcher("Providers",{
+     method:"PUT",
+     body:JSON.stringify(providers),
+     headers:{
+       "Content-Type":"application/json"
+     }
+  });
+  return response;
+})
+
 export const providers_Slice = createSlice({
-  name: "assignments",
+  name: "providers",
   initialState: {
     status: "idle",
     items: [],
@@ -23,6 +34,9 @@ export const providers_Slice = createSlice({
         action.payload
       );
     },
+    [update_providers.fulfilled]:(state,action) => {
+      state.items = action.payload;
+    }
   },
 });
 

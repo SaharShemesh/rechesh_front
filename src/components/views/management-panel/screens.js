@@ -1,4 +1,4 @@
-import { Form, Table, Input,Button } from "antd";
+import { Form, Table, Input,Button, Popconfirm } from "antd";
 import React, { useState } from "react";
 import { FormModal } from "../../helpers/Modal";
 import { UserOutlined } from "@ant-design/icons";
@@ -6,7 +6,8 @@ import { isNumber } from "../../../helpers/validators";
 import {useSelector, useDispatch} from "react-redux";
 import { DropDown } from "../../helpers/fields";
 import { unwrapResult } from "@reduxjs/toolkit";
-import {update_users} from "../../../features/collections/userSlice"
+import {update_users} from "../../../features/collections/userSlice";
+import {update_providers} from "../../../features/collections/providerSlice";
 
 export function Update_bag(props) {
   let pulling_bags = useSelector(state => state.pulling_bags.items);
@@ -22,6 +23,13 @@ export function Update_bag(props) {
     budget_left: pulling_bag.sum_budget - pulling_bag.tiov_budget,
   }))
   let [rows,set_rows] = useState(data); 
+
+  const handleDelete = (key) => {
+    const rows = [...this.state.rows];
+    this.setState({
+      rows: rows.filter((item) => item.key !== key),
+    });
+  };
   
   let valueInsertion = (index, attribute, e) => {
     let new_data = rows.slice();
@@ -47,10 +55,10 @@ export function Update_bag(props) {
       //console.log([]...rows,new_bag});
       set_rows([...rows,new_bag]);
   }
-  const delete_last = function(){
+  /*const delete_last = function(){
     rows.pop();
     set_rows([...rows]);
-  }
+  }*/
   const columns = [
     {
       align:"right",
@@ -132,9 +140,21 @@ export function Update_bag(props) {
             onInput={valueInsertion.bind(this, row, "budget_left")}
           />
         );
-      } 
+      },
+       
+    },
+    {
+      align: "right",
+      title: "מחיקה",
+      dataIndex: "deleteRow",
+      render: (_, row) =>
+          <Popconfirm title="האם אתה בטוח?" onConfirm={() => this.handleDelete(row.key)}>
+            <a>מחק</a>
+          </Popconfirm>
     },
   ];
+
+  
 
 
   return (
@@ -159,7 +179,7 @@ export function Update_bag(props) {
         <Button type="primary" onClick={add_bag}>הוסף תיק</Button>
         </Form.Item>
         <Form.Item>
-        <Button type="primary" onClick={delete_last}>מחק תיק</Button>
+        {/* <Button type="primary" onClick={delete_last}>מחק תיק</Button> */}
         </Form.Item>
       </Form>
       <div>
@@ -255,6 +275,7 @@ export function Update_notificationData(props) {
 
 export function Update_provider(props) {
   let providers = useSelector(state => state.providers.items);
+  let dispatch = useDispatch();
   //<FolderOpenOutlined />
   const layout = {
     labelCol: { span: 12 },
@@ -262,6 +283,47 @@ export function Update_provider(props) {
     name: "control-hooks",
   };
 
+  let save_providers = async () => {
+    let providers = rows.map(row => ({
+      id: row.provider_id,
+      name: row.provider_name,
+      num: row.provider_num,
+      profession: row.profession,
+      phones: row.phones,
+      fax: row.fax,
+      contact_name: row.contact_name,
+      adress: row.adress,
+      mail: row.mail,
+      site_adress: row.site_adress
+    })); 
+    console.log(JSON.stringify(providers));
+   try{
+ let r = await dispatch(update_providers(providers));
+ unwrapResult(r)
+   }
+   catch(e){
+     console.log("error",e);
+   }
+   finally{
+     props.onCancel();
+   }
+}
+
+  const add_provider = function() {
+    let new_provider = {
+      key:rows.length,
+      name: "",
+      profession: "",
+      phones: "",
+      fax: "",
+      contact_name: "",
+      adress: "",
+      mail: "",
+      site_adress: "",
+      num: 0,
+    };
+    set_rows([...rows,new_provider]);
+  }
   let valueInsertion = (index, attribute, e) => {
     let new_data = rows.slice();
     new_data[index][attribute] = e.target.value;
@@ -275,6 +337,7 @@ export function Update_provider(props) {
       span: 16,
     },
   };
+  
 
   const columns = [
     {
@@ -414,7 +477,7 @@ export function Update_provider(props) {
       },
     },
   ];
-
+  console.log(providers);
   const data = providers.map( provider => ({
     id: provider.provider_id,
     name: provider.provider_name,
@@ -428,14 +491,10 @@ export function Update_provider(props) {
     site_adress: provider.site_adress
   }))
   let [rows,set_rows] = useState(data); 
+
   
   return (
-    <FormModal
-      header="עדכון ספקים"
-      buttonText="עדכן"
-      show={props.show}
-      onCancel={props.onCancel}
-    >
+    <FormModal header="עדכון ספקים" show={props.show} onCancel={props.onCancel} onOk={save_providers}>
       <Form layout="inline">
         <Form.Item label=" שם ספק" name="providerName">
           <Input placeholder="שם ספק" />
@@ -454,6 +513,9 @@ export function Update_provider(props) {
           ]}
         >
           <Input type="text" placeholder="תיאור תיק" />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" onClick={add_provider}>הוסף ספק</Button>
         </Form.Item>
       </Form>
 
@@ -617,7 +679,7 @@ export function Screen_Permission(props) {
     {
       title: "הרשאה",
       dataIndex: "permission",
-      kefy: "permission",
+      key: "permission",
       render:(value, row, index) => <DropDown value={value} onChange={update_permission.bind(this,index)} items={user_permissions.map(perm => ({
         name:perm.permission,
         id:perm.permission_id
@@ -628,7 +690,7 @@ export function Screen_Permission(props) {
     soldier_id:user.soldier_id,
     id:user.id,
     idf_num:user.soldier.id_num,
-     username:user.soldier.first_name + " "+ user.soldier.last_name,
+    username:user.soldier.first_name + " "+ user.soldier.last_name,
     permission: {
       name: user.Permission.permission,
       id:user.Permission.permission_id
@@ -657,3 +719,5 @@ export function Screen_Permission(props) {
     </FormModal>
   );
 }
+// .filter(bag => bag.id);  :for put
+// .filter(bag => !bag.id) : for post
