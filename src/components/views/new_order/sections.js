@@ -36,7 +36,7 @@ export function Order_details(props) {
                 span: 8,
               }}
               wrapperCol={{
-                span: 15,
+                span: 14,
               }}
               rules={[
                 {
@@ -96,6 +96,9 @@ export function Order_details(props) {
               labelCol={{
                 span: 7,
               }}
+              wrapperCol={{
+                span: 14,
+              }}
               
               rules={[
                 {
@@ -128,7 +131,7 @@ export function Order_details(props) {
                 span: 8,
               }}
               wrapperCol={{
-                span: 15,
+                span: 14,
               }}
               name="budget_type"
               rules={[
@@ -169,6 +172,10 @@ export function Order_details(props) {
               labelCol={{
                 span: 7,
               }}
+              wrapperCol={{
+                span: 14,
+              }}
+
               rules={[
                 {
                   required: true,
@@ -220,7 +227,7 @@ export function Order_details(props) {
                 span: 8,
               }}
               wrapperCol={{
-                span: 15,
+                span: 14,
               }}
               rules={[
                 {
@@ -263,7 +270,7 @@ export function Order_details(props) {
               span: 8,
             }}
             wrapperCol={{
-              span: 15,
+              span: 14,
             }}
               rules={[
                 {
@@ -346,9 +353,6 @@ export function Order_details(props) {
 }
 
 export function Actions(prop) {
-  if (prop.permission == 1) {
-    return <h1>manager rank</h1>;
-  }
 
   return (
     <Card title="פעולות נוספות" style={{ width: 300 }}>
@@ -421,6 +425,7 @@ export function Details() {
             <DisabledInput placeHolder="מחלקה"></DisabledInput>
           </Col>
         </Row>
+       
       </React.Fragment>
     </Card>
   );
@@ -763,7 +768,7 @@ export function SellItem(props) {
     {
       align: "right",
       width: "10%",
-      title: "עלות משוארת ליח",
+      title: "עלות משוערת ליח",
       key: "price",
       dataIndex: "price",
       render(value, row, index) {

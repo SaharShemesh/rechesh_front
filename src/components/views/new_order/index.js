@@ -15,9 +15,7 @@ import { system_Notification } from "../../helpers/notification";
 import { Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { add_order } from "../../../features/order/orderSlice";
-//memos
-let ActionsMemo = Actions;
-let BidMemo = Bid;
+
 
 //dummy bids
 let object = {
@@ -80,7 +78,7 @@ export default function New_order() {
   let [bids, setBids] = useState(object);
   let [items, setItems] = useState([]);
   let [selected_items, setSelected] = useState([]);
-  
+
   function addItem() {
     if (items.length >= 1) {
       let messages = [];
@@ -145,7 +143,7 @@ export default function New_order() {
           if (name == "order_details") {
             details.current = values;
             console.log(values);
-            
+
           }
         }}
       >
@@ -155,7 +153,10 @@ export default function New_order() {
           </Col>
           <Col span={6}>
             <Details />
+            
           </Col>
+          </Row>
+          <Row>
           <Col span={18}>
             <SellItem
               sell_Items={items}
@@ -176,16 +177,18 @@ export default function New_order() {
           </Col>
           <Col span={1}></Col>
           <Col span={5}>
-            <ActionsMemo
+            <Actions
               on_delete={do_action.bind(this, "delete")}
-            ></ActionsMemo>
+            ></Actions>
+            {3 > 2 && <AcceptTable
+              on_delete={do_action.bind(this, "delete")}
+            ></AcceptTable>}
           </Col>
-          <Col span={13}>
+          {/* <Col span={13}>
             <BidMemo bids={bids} />
-          </Col>
+          </Col> */}
           <Col span={1}></Col>
           <Col span={10}>
-            <AcceptTable />
           </Col>
         </Row>
         <Row>

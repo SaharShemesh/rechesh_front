@@ -45,7 +45,7 @@ export let Filter = (props) => {
                   span: 7,
                 }}
                 wrapperCol={{
-                  span: 16,
+                  span: 12,
                 }}
                 name="customer"
                 label="מזמין:"
@@ -77,7 +77,7 @@ export let Filter = (props) => {
                   span: 7,
                 }}
                 wrapperCol={{
-                  span: 16,
+                  span: 12,
                 }}
                 name="order_bim"
                 label="בימ מזמין:"
@@ -108,7 +108,7 @@ export let Filter = (props) => {
                   span: 7,
                 }}
                 wrapperCol={{
-                  span: 16,
+                  span: 12,
                 }}
                 name="treating_factor"
                 label="גורם מטפל:"
@@ -140,7 +140,7 @@ export let Filter = (props) => {
                   span: 7,
                 }}
                 wrapperCol={{
-                  span: 16,
+                  span: 12,
                 }}
                 name="ERP_demand"
                 label="מס' דרישה-ERP:"
@@ -171,7 +171,7 @@ export let Filter = (props) => {
                   span: 7,
                 }}
                 wrapperCol={{
-                  span: 16,
+                  span: 12,
                 }}
                 name="ERP_num"
                 label="מס' הזמנה-ERP:"
@@ -202,7 +202,7 @@ export let Filter = (props) => {
                   span: 7,
                 }}
                 wrapperCol={{
-                  span: 16,
+                  span: 12,
                 }}
                 name="num"
                 label="מס' חשבונית:"
