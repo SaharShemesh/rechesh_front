@@ -1,19 +1,19 @@
-import { Form, Table, Input,Button, Popconfirm } from "antd";
+import { Form, Table, Input, Button, Popconfirm } from "antd";
 import React, { useState } from "react";
 import { FormModal } from "../../helpers/Modal";
 import { UserOutlined } from "@ant-design/icons";
 import { isNumber } from "../../../helpers/validators";
-import {useSelector, useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { DropDown } from "../../helpers/fields";
 import { unwrapResult } from "@reduxjs/toolkit";
-import {update_users} from "../../../features/collections/userSlice";
-import {update_providers} from "../../../features/collections/providerSlice";
+import { update_users } from "../../../features/collections/userSlice";
+import { create_providers, new_provider, update_provider, update_providers } from "../../../features/collections/providerSlice";
 
 export function Update_bag(props) {
-  let pulling_bags = useSelector(state => state.pulling_bags.items);
-  
-  const data = pulling_bags.map( (pulling_bag,index) => ({
-    key:index,
+  let pulling_bags = useSelector((state) => state.pulling_bags.items);
+
+  const data = pulling_bags.map((pulling_bag, index) => ({
+    key: index,
     id: pulling_bag.bag_id,
     bag_number: pulling_bag.bag_number,
     bag_description: pulling_bag.bag_description,
@@ -21,54 +21,60 @@ export function Update_bag(props) {
     calculated_finished_budget: pulling_bag.calculated_finished_budget,
     tiov_budget: pulling_bag.tiov_budget,
     budget_left: pulling_bag.sum_budget - pulling_bag.tiov_budget,
-  }))
-  let [rows,set_rows] = useState(data); 
+  }));
+  let [rows, set_rows] = useState(data);
 
   const handleDelete = (key) => {
-    const rows = [...this.state.rows];
+    const rows = [...rows];
     this.setState({
       rows: rows.filter((item) => item.key !== key),
     });
   };
-  
+
   let valueInsertion = (index, attribute, e) => {
     let new_data = rows.slice();
     new_data[index][attribute] = e.target.value;
     set_rows(new_data);
- };
+  };
   //<FolderOpenOutlined />
   const layout = {
     labelCol: { span: 12 },
     wrapperCol: { span: 22 },
     name: "control-hooks",
   };
-  const add_bag = function() {
-      let new_bag = {
-        key:rows.length,
-        bag_number: "",
-        bag_description: "",
-        sum_budget: 0,
-        calculated_finished_budget: "0",
-        tiov_budget: 0,
-      };
-      new_bag.budget_left =  new_bag.sum_budget - new_bag.tiov_budget;
-      //console.log([]...rows,new_bag});
-      set_rows([...rows,new_bag]);
-  }
+  const add_bag = function () {
+    let new_bag = {
+      key: rows.length,
+      bag_number: "",
+      bag_description: "",
+      sum_budget: 0,
+      calculated_finished_budget: "0",
+      tiov_budget: 0,
+    };
+    new_bag.budget_left = new_bag.sum_budget - new_bag.tiov_budget;
+    //console.log([]...rows,new_bag});
+    set_rows([...rows, new_bag]);
+  };
   /*const delete_last = function(){
     rows.pop();
     set_rows([...rows]);
   }*/
   const columns = [
     {
-      align:"right",
+      align: "right",
       title: "מספר תיק",
       dataIndex: "bag_number",
       key: "bag_number",
-      render: (number, row, index) => <Input type="number" value={number} onChange={valueInsertion.bind(this, index, "bag_number")}  />,
+      render: (number, row, index) => (
+        <Input
+          type="number"
+          value={number}
+          onChange={valueInsertion.bind(this, index, "bag_number")}
+        />
+      ),
     },
     {
-      align:"right",
+      align: "right",
       title: "תיאור תיק",
       dataIndex: "bag_description",
       key: "bag_description",
@@ -80,11 +86,11 @@ export function Update_bag(props) {
             onChange={valueInsertion.bind(this, index, "bag_description")}
           />
         );
-      }  
+      },
     },
     {
-      align:"right",
-      title: 'סהכ תקציב',
+      align: "right",
+      title: "סהכ תקציב",
       dataIndex: "sum_budget",
       key: "sum_budget",
       render(value, row, index) {
@@ -95,10 +101,10 @@ export function Update_bag(props) {
             onInput={valueInsertion.bind(this, index, "sum_budget")}
           />
         );
-      }  
+      },
     },
     {
-      align:"right",
+      align: "right",
       title: "תקציב שממומש מחושב",
       dataIndex: "calculated_finished_budget",
       key: "calculated_finished_budget",
@@ -107,13 +113,17 @@ export function Update_bag(props) {
           <Input
             type="number"
             value={value}
-            onInput={valueInsertion.bind(this, index, "calculated_finished_budget")}
+            onInput={valueInsertion.bind(
+              this,
+              index,
+              "calculated_finished_budget"
+            )}
           />
         );
-      }  
+      },
     },
     {
-      align:"right",
+      align: "right",
       title: "תקציב שממומש טיוב",
       dataIndex: "tiov_budget",
       key: "tiov_budget",
@@ -125,10 +135,10 @@ export function Update_bag(props) {
             onInput={valueInsertion.bind(this, row, "tiov_budget")}
           />
         );
-      } 
+      },
     },
     {
-      align:"right",
+      align: "right",
       title: "תקציב שנותר",
       dataIndex: "budget_left",
       key: "budget_left",
@@ -141,21 +151,21 @@ export function Update_bag(props) {
           />
         );
       },
-       
     },
     {
       align: "right",
       title: "מחיקה",
       dataIndex: "deleteRow",
-      render: (_, row) =>
-          <Popconfirm title="האם אתה בטוח?" onConfirm={() => this.handleDelete(row.key)}>
-            <a>מחק</a>
-          </Popconfirm>
+      render: (_, row) => (
+        <Popconfirm
+          title="האם אתה בטוח?"
+          onConfirm={() => handleDelete(row.key)}
+        >
+          <a>מחק</a>
+        </Popconfirm>
+      ),
     },
   ];
-
-  
-
 
   return (
     <FormModal
@@ -165,21 +175,20 @@ export function Update_bag(props) {
       onCancel={props.onCancel}
     >
       <Form layout="inline">
-        <Form.Item
-          label=" מס' תיק"
-          name="bag_num">
+        <Form.Item label=" מס' תיק" name="bag_num">
           <Input placeholder="מספר תיק" />
         </Form.Item>
 
-        <Form.Item label="תיאור תיק" 
-        name="bag_desc">
+        <Form.Item label="תיאור תיק" name="bag_desc">
           <Input type="text" placeholder="תיאור תיק" />
         </Form.Item>
         <Form.Item>
-        <Button type="primary" onClick={add_bag}>הוסף תיק</Button>
+          <Button type="primary" onClick={add_bag}>
+            הוסף תיק
+          </Button>
         </Form.Item>
         <Form.Item>
-        {/* <Button type="primary" onClick={delete_last}>מחק תיק</Button> */}
+          {/* <Button type="primary" onClick={delete_last}>מחק תיק</Button> */}
         </Form.Item>
       </Form>
       <div>
@@ -195,25 +204,31 @@ export function Update_bag(props) {
 }
 
 export function Update_notificationData(props) {
-  let constants = useSelector((state) => state.constants.items).map((constant) => ({type: constant.type, condition: constant.condition, price_value: constant.price_value}));
+  let constants = useSelector((state) => state.constants.items).map(
+    (constant) => ({
+      type: constant.type,
+      condition: constant.condition,
+      price_value: constant.price_value,
+    })
+  );
   console.log(constants);
   const columns = [
     {
-      align:"right",
+      align: "right",
       title: "ערוץ רכש",
       dataIndex: "type",
       key: "type",
       render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
+      align: "right",
       title: "תנאי",
       dataIndex: "condition",
       key: "condition",
       render: (text) => <p>{text}</p>,
     },
     {
-      align:"right",
+      align: "right",
       title: "הזנה",
       dataIndex: "price_value",
       key: "price_value",
@@ -238,27 +253,27 @@ export function Update_notificationData(props) {
     {
       key: "2",
       name: "אסמכתא",
-      desc:"הזנה"
+      desc: "הזנה",
     },
     {
       key: "3",
       name: "אסמכתא",
-      desc:"הזנה"
+      desc: "הזנה",
     },
     {
       key: "4",
       name: "משיכה",
-      desc:"הזנה"
+      desc: "הזנה",
     },
     {
       key: "5",
       name: "דרישה",
-      desc:"הזנה"
+      desc: "הזנה",
     },
     {
       key: "6",
       name: "דרישה",
-      desc:"הזנה"
+      desc: "הזנה",
     },
   ];
 
@@ -268,13 +283,19 @@ export function Update_notificationData(props) {
       show={props.show}
       onCancel={props.onCancel}
     >
-      <Table columns={columns} dataSource={constants} pagination={false} bordered />
+      <Table
+        columns={columns}
+        dataSource={constants}
+        pagination={false}
+        bordered
+      />
     </FormModal>
   );
 }
 
 export function Update_provider(props) {
-  let providers = useSelector(state => state.providers.items);
+  let providers = useSelector((state) => state.providers.items);
+  console.log("providers:",providers);
   let dispatch = useDispatch();
   //<FolderOpenOutlined />
   const layout = {
@@ -284,52 +305,27 @@ export function Update_provider(props) {
   };
 
   let save_providers = async () => {
-    let providers = rows.map(row => ({
-      id: row.provider_id,
-      name: row.provider_name,
-      num: row.provider_num,
-      profession: row.profession,
-      phones: row.phones,
-      fax: row.fax,
-      contact_name: row.contact_name,
-      adress: row.adress,
-      mail: row.mail,
-      site_adress: row.site_adress
-    })); 
     console.log(JSON.stringify(providers));
-   try{
- let r = await dispatch(update_providers(providers));
- unwrapResult(r)
-   }
-   catch(e){
-     console.log("error",e);
-   }
-   finally{
-     props.onCancel();
-   }
-}
+    try {
+      let r = await Promise.all([dispatch(update_providers(providers.slice().filter(provider => provider.provider_id)),dispatch(providers.slice().filter(prov => !prov.provider_id)))]);
+      unwrapResult(r);
+    } catch (e) {
+      console.log("error", e);
+    } finally {
+      props.onCancel();
+    }
+  };
 
-  const add_provider = function() {
-    let new_provider = {
-      key:rows.length,
-      name: "",
-      profession: "",
-      phones: "",
-      fax: "",
-      contact_name: "",
-      adress: "",
-      mail: "",
-      site_adress: "",
-      num: 0,
-    };
-    set_rows([...rows,new_provider]);
-  }
-  let valueInsertion = (index, attribute, e) => {
-    let new_data = rows.slice();
-    new_data[index][attribute] = e.target.value;
-    set_rows(new_data);
- };
-
+  const add_provider = async function () {
+    await dispatch(new_provider());
+  };
+  let valueInsertion = async (index, attribute, e) => {
+    await dispatch(update_provider({
+      value:e.target.value,
+      index,
+      attribute
+    }));
+  };
 
   const tailLayout = {
     wrapperCol: {
@@ -337,19 +333,18 @@ export function Update_provider(props) {
       span: 16,
     },
   };
-  
 
   const columns = [
     {
-      width: "5%",
+      width: "15%",
       align: "right",
       title: "שם הספק",
-      dataIndex: "name",
+      dataIndex: "provider_name",
       key: "name",
-      render: (text) => <p>{text}</p>,
+      render: (text,row,index) =>  <Input type="text" value={text} onChange={valueInsertion.bind(this, index, "provider_name")} />,
     },
     {
-      width:"12%",
+      width: "auto",
       align: "right",
       title: "התמחויות",
       dataIndex: "profession",
@@ -365,7 +360,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"12%",
+      width: "12%",
       align: "right",
       title: "טלפון",
       dataIndex: "phones",
@@ -381,7 +376,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"11%",
+      width: "11%",
       align: "right",
       title: "פקס",
       dataIndex: "fax",
@@ -397,7 +392,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"10%",
+      width: "10%",
       align: "right",
       title: "איש קשר",
       dataIndex: "contact_name",
@@ -413,7 +408,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"12%",
+      width: "12%",
       align: "right",
       title: "כתובת החברה/איסוף",
       dataIndex: "adress",
@@ -429,7 +424,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"15%",
+      width: "15%",
       align: "right",
       title: "מייל",
       dataIndex: "mail",
@@ -445,7 +440,7 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"15%",
+      width: "15%",
       align: "right",
       title: "אתר אינטרנט",
       dataIndex: "site_adress",
@@ -461,40 +456,30 @@ export function Update_provider(props) {
       },
     },
     {
-      width:"10%",
+      width: "10%",
       align: "right",
       title: "מס ספק משהבט",
-      dataIndex: "num",
+      dataIndex: "provider_num",
       key: "num",
       render(value, row, index) {
         return (
           <Input
             type="number"
             value={value}
-            onChange={valueInsertion.bind(this, index, "num")}
+            onChange={valueInsertion.bind(this, index, "provider_num")}
           />
         );
       },
     },
   ];
-  console.log(providers);
-  const data = providers.map( provider => ({
-    id: provider.provider_id,
-    name: provider.provider_name,
-    num: provider.provider_num,
-    profession: provider.profession,
-    phones: provider.phones,
-    fax: provider.fax,
-    contact_name: provider.contact_name,
-    adress: provider.adress,
-    mail: provider.mail,
-    site_adress: provider.site_adress
-  }))
-  let [rows,set_rows] = useState(data); 
 
-  
   return (
-    <FormModal header="עדכון ספקים" show={props.show} onCancel={props.onCancel} onOk={save_providers}>
+    <FormModal
+      header="עדכון ספקים"
+      show={props.show}
+      onCancel={props.onCancel}
+      onOk={save_providers}
+    >
       <Form layout="inline">
         <Form.Item label=" שם ספק" name="providerName">
           <Input placeholder="שם ספק" />
@@ -512,17 +497,18 @@ export function Update_provider(props) {
             },
           ]}
         >
-          <Input type="text" placeholder="תיאור תיק" />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" onClick={add_provider}>הוסף ספק</Button>
-        </Form.Item>
+          </Form.Item>
+          <Form.Item>
+          <Button type="primary" onClick={add_provider}>
+            הוסף ספק
+          </Button>
+        </Form.Item> 
       </Form>
 
       <Form {...layout}>
         <Table
           columns={columns}
-          dataSource={rows}
+          dataSource={providers}
           pagination={false}
           bordered
         />
@@ -541,69 +527,70 @@ export function New_bid(props) {
 
   const columns = [
     {
-      title: 'תיאור הפריט',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <p>{text}</p>,
+      title: "תיאור הפריט",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <p>{text}</p>,
     },
     {
-      title: 'כמות',
-      dataIndex: 'age',
-      key: 'age',
+      title: "כמות",
+      dataIndex: "age",
+      key: "age",
     },
     {
-      title: 'מחיר ליחידה',
-      dataIndex: 'age',
-      key: 'age',
+      title: "מחיר ליחידה",
+      dataIndex: "age",
+      key: "age",
     },
     {
-      title: 'מועד אספקה',
-      dataIndex: 'age',
-      key: 'dateArrive',
+      title: "מועד אספקה",
+      dataIndex: "age",
+      key: "dateArrive",
     },
-    
-  ]
+  ];
 
   const data = [
     {
-      key: '1',
-      name: 'תיאור 1',
-      age: ''
+      key: "1",
+      name: "תיאור 1",
+      age: "",
     },
     {
-      key: '2',
-      name: 'תיאור 2',
-      
+      key: "2",
+      name: "תיאור 2",
     },
-  ]
-  
+  ];
+
   return (
-  <FormModal header="הצעת מחיר חדשה - הזמנה מספר" show={props.show} onCancel={props.onCancel}>
-    <Form {...layout}>
-      <Form.Item label=" שם ספק" >
-          <Input 
-          placeholder=" בחירה מרשימה "
-          suffix={<UserOutlined className="site-form-item-icon" />}
+    <FormModal
+      header="הצעת מחיר חדשה - הזמנה מספר"
+      show={props.show}
+      onCancel={props.onCancel}
+    >
+      <Form {...layout}>
+        <Form.Item label=" שם ספק">
+          <Input
+            placeholder=" בחירה מרשימה "
+            suffix={<UserOutlined className="site-form-item-icon" />}
           />
         </Form.Item>
         <Form.Item label="פריטים">
-        <Table 
-      columns={columns} 
-      dataSource={data} 
-      pagination={false} 
-      bordered 
-      
-      />
-      </Form.Item> 
-          </Form>
-  </FormModal>
-);
+          <Table
+            columns={columns}
+            dataSource={data}
+            pagination={false}
+            bordered
+          />
+        </Form.Item>
+      </Form>
+    </FormModal>
+  );
 }
 
 export function Screen_Permission(props) {
   let [form] = Form.useForm();
-  let users = useSelector(state => state.users.items);
-  let user_permissions = useSelector(state => state.user_permissions.items);
+  let users = useSelector((state) => state.users.items);
+  let user_permissions = useSelector((state) => state.user_permissions.items);
   let dispatch = useDispatch();
   const layout = {
     labelCol: { span: 6 },
@@ -611,36 +598,34 @@ export function Screen_Permission(props) {
     name: "control-hooks",
   };
   let save_users = async () => {
-         let users = rows.map(row => ({
-            id:row.id,
-            soldier_id:row.soldier_id,
-            id_num:row.idf_num,
-            first_name:row.username.split(" ")[0],
-            last_name:row.username.split(" ")[1],
-            permission_id: row.permission.id
-         })); 
-         console.log(JSON.stringify(users));
-        try{
+    let users = rows.map((row) => ({
+      id: row.id,
+      soldier_id: row.soldier_id,
+      id_num: row.idf_num,
+      first_name: row.username.split(" ")[0],
+      last_name: row.username.split(" ")[1],
+      permission_id: row.permission.id,
+    }));
+    console.log(JSON.stringify(users));
+    try {
       let r = await dispatch(update_users(users));
-      unwrapResult(r)
-        }
-        catch(e){
-          console.log("error",e);
-        }
-        finally{
-          props.onCancel();
-        }
+      unwrapResult(r);
+    } catch (e) {
+      console.log("error", e);
+    } finally {
+      props.onCancel();
     }
+  };
   let valueInsertion = (index, attribute, e) => {
     let new_data = rows.slice();
     new_data[index][attribute] = e.target.value;
     set_rows(new_data);
- };
- let update_permission = function(index,value){
+  };
+  let update_permission = function (index, value) {
     let new_data = rows.slice();
     new_data[index].permission = value;
     set_rows(new_data);
- };
+  };
   const columns = [
     {
       title: "מספר אישי",
@@ -653,14 +638,14 @@ export function Screen_Permission(props) {
             rules={[
               {
                 validator: isNumber,
-                message: "מספר אישי חייב להיות מספר"
-              }
+                message: "מספר אישי חייב להיות מספר",
+              },
             ]}
             value={value}
             onInput={valueInsertion.bind(this, index, "idf_num")}
           />
         );
-      } 
+      },
     },
     {
       title: "שם משתמש",
@@ -674,48 +659,60 @@ export function Screen_Permission(props) {
             onChange={valueInsertion.bind(this, index, "username")}
           />
         );
-      } 
+      },
     },
     {
       title: "הרשאה",
       dataIndex: "permission",
       key: "permission",
-      render:(value, row, index) => <DropDown value={value} onChange={update_permission.bind(this,index)} items={user_permissions.map(perm => ({
-        name:perm.permission,
-        id:perm.permission_id
-      }))} />
+      render: (value, row, index) => (
+        <DropDown
+          value={value}
+          onChange={update_permission.bind(this, index)}
+          items={user_permissions.map((perm) => ({
+            name: perm.permission,
+            id: perm.permission_id,
+          }))}
+        />
+      ),
     },
   ];
-  const data = users.map(user => ({
-    soldier_id:user.soldier_id,
-    id:user.id,
-    idf_num:user.soldier.id_num,
-    username:user.soldier.first_name + " "+ user.soldier.last_name,
+  console.log("users = ", users)
+  const data = users.map((user) => ({
+    soldier_id: user.soldier_id,
+    id: user.id,
+    idf_num: user.Soldier.id_num,
+    username: user.Soldier.first_name + " " + user.Soldier.last_name,
     permission: {
       name: user.Permission.permission,
-      id:user.Permission.permission_id
-    }
+      id: user.Permission.permission_id,
+    },
   }));
- let [rows,set_rows] = useState(data); 
- let [idf_num,set_num] = useState("");
- console.log(rows.map(row => row.idf_num.includes(form.getFieldValue("idf_num"))));
+  let [rows, set_rows] = useState(data);
+  let [idf_num, set_num] = useState("");
+  console.log(
+    rows.map((row) => row.idf_num.includes(form.getFieldValue("idf_num")))
+  );
   return (
-    
-    <FormModal header="מסך הרשאות" show={props.show} onCancel={props.onCancel} onOk={save_users}>
-          <Input
-            placeholder=" מספר אישי "
-            value={idf_num}
-            onChange={(e) => set_num(e.target.value)}
-            suffix={<UserOutlined className="site-form-item-icon" />}
-          />
-        {JSON.stringify(form.getFieldValue("idf_num"))}
-          <Table
-            columns={columns}
-            dataSource={rows.filter(row => row.idf_num.includes(idf_num))}
-            pagination={false}
-            bordered
-          />
-
+    <FormModal
+      header="מסך הרשאות"
+      show={props.show}
+      onCancel={props.onCancel}
+      onOk={save_users}
+    >
+      <Input
+        placeholder=" מספר אישי "
+        value={idf_num}
+        onChange={(e) => set_num(e.target.value)}
+        suffix={<UserOutlined className="site-form-item-icon" />}
+      />
+      {JSON.stringify(form.getFieldValue("idf_num"))}
+      <Table
+        columns={columns}
+        dataSource={rows.filter((row) => row.idf_num.includes(idf_num))}
+        pagination={false}
+        bordered
+      />
     </FormModal>
   );
 }
