@@ -8,7 +8,7 @@ import { DropDown } from "../../helpers/fields";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { update_users } from "../../../features/collections/userSlice";
 import { create_providers, new_provider, update_provider, update_providers } from "../../../features/collections/providerSlice";
-
+import { update_constant, update_constants } from "../../../features/collections/constantSlice";
 export function Update_bag(props) {
   let pulling_bags = useSelector((state) => state.pulling_bags.items);
 
@@ -204,13 +204,29 @@ export function Update_bag(props) {
 }
 
 export function Update_notificationData(props) {
-  let constants = useSelector((state) => state.constants.items).map(
-    (constant) => ({
-      type: constant.type,
-      condition: constant.condition,
-      price_value: constant.price_value,
-    })
-  );
+  let dispatch = useDispatch();
+  let constants = useSelector((state) => state.constants.items);
+
+  let save_constants = async () => {
+    console.log(JSON.stringify(constants));
+    try {
+      let r = await dispatch(update_constants(constants));
+      unwrapResult(r);
+    } catch (e) {
+      console.log("error", e);
+    } finally {
+      props.onCancel();
+    }
+  };
+
+  let valueInsertion = async (index, attribute, e) => {
+   dispatch(update_constant({
+      value:e.target.value,
+      index,
+      attribute
+    }));
+  };
+
   console.log(constants);
   const columns = [
     {
@@ -225,7 +241,15 @@ export function Update_notificationData(props) {
       title: "תנאי",
       dataIndex: "condition",
       key: "condition",
-      render: (text) => <p>{text}</p>,
+      render(value, row, index) {
+        return (
+          <Input
+            type="text"
+            value={value}
+            onChange={valueInsertion.bind(this, index, "condition")}
+          />
+        );
+      },
     },
     {
       align: "right",
@@ -237,51 +261,20 @@ export function Update_notificationData(props) {
           <Input
             type="text"
             value={value}
-            // onChange={valueInsertion.bind(this, row, "")}
+            onChange={valueInsertion.bind(this, index, "price_value")}
           />
         );
       },
     },
   ];
 
-  const data = [
-    {
-      key: "1",
-      name: "אסמכתא",
-      desc: "הזנה",
-    },
-    {
-      key: "2",
-      name: "אסמכתא",
-      desc: "הזנה",
-    },
-    {
-      key: "3",
-      name: "אסמכתא",
-      desc: "הזנה",
-    },
-    {
-      key: "4",
-      name: "משיכה",
-      desc: "הזנה",
-    },
-    {
-      key: "5",
-      name: "דרישה",
-      desc: "הזנה",
-    },
-    {
-      key: "6",
-      name: "דרישה",
-      desc: "הזנה",
-    },
-  ];
 
   return (
-    <FormModal
-      header="עדכון נתוני התראות תקציב"
+      <FormModal
+      header="עדכון התראות"
       show={props.show}
       onCancel={props.onCancel}
+      onOk={save_constants}
     >
       <Table
         columns={columns}
@@ -307,7 +300,7 @@ export function Update_provider(props) {
   let save_providers = async () => {
     console.log(JSON.stringify(providers));
     try {
-      let r = await Promise.all([dispatch(update_providers(providers.slice().filter(provider => provider.provider_id)),dispatch(providers.slice().filter(prov => !prov.provider_id)))]);
+      let r = await Promise.all([dispatch(update_providers(providers.slice().filter(provider => provider.provider_id)))]);
       unwrapResult(r);
     } catch (e) {
       console.log("error", e);

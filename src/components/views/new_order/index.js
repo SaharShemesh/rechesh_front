@@ -7,6 +7,7 @@ import {
   SellItem,
   Bid,
 } from "./sections";
+import { Update_StatusOrder } from "./screens";
 import { useHistory } from "react-router";
 import { Row, Col, Button } from "antd";
 import "./css/order.css";
@@ -16,6 +17,8 @@ import { Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { add_order } from "../../../features/order/orderSlice";
 //memos
+
+
 let ActionsMemo = Actions;
 
 //dummy bids
@@ -64,6 +67,18 @@ let ActionsMemo = Actions;
 //   },
 // };
 export default function New_order() {
+
+  let [screensStatus, setStatus] = useState({
+    Update_StatusOrder: false,
+  });
+  
+  let openScreen = (screen_type, e) => {
+    setStatus({ [screen_type]: true });
+  };
+  
+  let cancelScreen = (screen_type) => {
+    setStatus({ [screen_type]: false });
+  };
   let history = useHistory();
   let details = useRef({});
   let orders = useSelector((state) => state.orders.items);
@@ -127,6 +142,7 @@ export default function New_order() {
   }
 
   let getBid = (bid) => {
+    
     let new_bids = bids;
     Object.keys(bid).forEach((item_sign) => {
       if (Object.keys(new_bids).find((sign) => sign == item_sign))
@@ -218,6 +234,16 @@ export default function New_order() {
             <Button onClick={create_order.bind(this, details)}>
               צור הזמנה
             </Button>
+            <Button
+            
+        onClick={openScreen.bind(this, "Update_StatusOrder")}
+      >
+              עדכן סטאטוס
+              </Button>
+              <Update_StatusOrder
+        show={screensStatus.Update_StatusOrder}
+        onCancel={cancelScreen.bind(this, "Update_StatusOrder")}
+      />
           </Col>
         </Row>
       </Form.Provider>

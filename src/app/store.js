@@ -16,6 +16,7 @@ import constants_Reducer from "../features/collections/constantSlice";
 import users_Reducer from "../features/collections/userSlice";
 import user_permissions_Reducer from "../features/collections/user_permissionSlice";
 import users_roles_Reducer from "../features/collections/user_roleSlice";
+import statuses_Reducer from "../features/collections/statusSlice";
 //reducers
 import {} from "../features/order/orderSlice";
 export const store = configureStore({
@@ -36,5 +37,7 @@ export const store = configureStore({
     users: users_Reducer,
     user_permissions: user_permissions_Reducer,
     users_roles: users_roles_Reducer,
+    statuses:statuses_Reducer,
+    
   },
 });

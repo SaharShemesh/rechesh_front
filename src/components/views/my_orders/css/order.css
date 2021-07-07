@@ -18,18 +18,17 @@
 } */
 
 div.ant-col {
-    text-align: right;
-  }
-  .ant-input[disabled] {
-    text-align: right;
-  }
-  .ant-input:placeholder-shown {
-    text-align: right;
-  }
-  .ant-dropdown-menu {
-    text-align: right;
-  }
-  .ant-form-item-label > label::after {
-    margin: 0 1px 0 0;
-  }
-  
+  text-align: right;
+}
+.ant-input[disabled] {
+  text-align: right;
+}
+.ant-input:placeholder-shown {
+  text-align: right;
+}
+.ant-dropdown-menu {
+  text-align: right;
+}
+.ant-form-item-label > label::after {
+  margin: 0 1px 0 0;
+}

@@ -1,9 +1,9 @@
-import { Form, Table, Input, AutoComplete } from "antd";
+import { Form, Table, Input, AutoComplete, Cascader } from "antd";
 import React, { useEffect, useState } from "react";
 import { FormModal } from "../../helpers/Modal";
 import { UserOutlined } from "@ant-design/icons";
-import { useSelector } from "react-redux";
 import { DropDown } from "../../helpers/fields";
+import { useSelector, useDispatch } from "react-redux";
 
 export function New_bid(props) {
   let current_date = new Date();
@@ -126,6 +126,48 @@ export function New_bid(props) {
           />
         </Form.Item>
       </Form>
+    </FormModal>
+  );
+}
+
+export function Update_StatusOrder(props) {
+  let statuses = useSelector((state) => state.statuses.items);
+
+
+  const { TextArea } = Input;
+
+  const layoutt = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 16 },
+    name: "control-hooks",
+  };
+  
+    return (
+    <FormModal 
+    header="עדכון סטטוס" 
+    show={props.show} 
+    onCancel={props.onCancel}>
+      <Form {...layoutt}>
+        <Form.Item label="עדכן סטטוס" >
+          </Form.Item>
+          <Form.Item
+          name="statuses"
+          label="עדכון סטאטוס:">
+            <DropDown
+                items={statuses.map((status) => ({
+                  id: status.id,
+                  name: status.status,
+                }))}
+                valueUpdated={(value) => console.log(value)}
+                />
+            
+          </Form.Item>
+          <Form.Item label="הערות"
+        >
+          
+          <TextArea placeholder="טקסט חופשי" rows={4} />
+        </Form.Item> 
+            </Form>
     </FormModal>
   );
 }

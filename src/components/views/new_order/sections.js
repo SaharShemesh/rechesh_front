@@ -877,3 +877,4 @@ export function Bid(prop) {
     </>
   );
 }
+
