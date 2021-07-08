@@ -19,7 +19,9 @@ export function Order_details(props) {
   let soldiers = useSelector((state) => state.soldiers.items);
   let budget_types = useSelector((state) => state.budget_types.items);
   let order_types = useSelector((state) => state.order_types.items);
-
+  let pakas = useSelector((state) => state.pakas.items);
+  let logged_user = useSelector((state) => state.current_user.user);
+  console.log(logged_user);
   return (
     <React.Fragment>
       <Form
@@ -63,23 +65,16 @@ export function Order_details(props) {
                   required: true,
                   message: "יש להזין פקע",
                 },
-                {
-                  validator: isNumber,
-                  message: "פקע חייבת להיות מספר",
-                },
-                {
-                  max: 9,
-                  message: "פקע ארוכה מדי",
-                },
-                {
-                  min: 8,
-                  message: "פקע קצרה מדי",
-                },
               ]}
               name="paka"
               label="פקע:"
             >
-              <Input className="system-field"></Input>
+              <DropDown
+                items={pakas.map((paka) => ({
+                  name: paka.paka_number,
+                  id: paka.paka_id,
+                }))}
+              />
             </Form.Item>
           </Col>
 
@@ -166,12 +161,12 @@ export function Order_details(props) {
               rules={[
                 {
                   validator: (_, vl) => {
-                    let value = vl.name;
-                    console.log(value);
+                    let value = vl;
                     if (
+                      logged_user.Permission.permission_id > 2 &&
                       form.getFieldValue("procument_type").id == 1 &&
-                      (value.substring(value.length - 3) == "962" ||
-                        value.substring(value.length - 3) == "950")
+                      (value.name.substring(value.length - 3) == "962" ||
+                        value.name.substring(value.length - 3) == "950")
                     ) {
                       message.error(
                         "מספר מטלה אינו תואם את סוג הרכש. מועבר לבחינת מחלקת רכש"
@@ -179,9 +174,10 @@ export function Order_details(props) {
                       return Promise.reject();
                     } else {
                       if (
+                        logged_user.Permission.permission_id > 2 &&
                         form.getFieldValue("procument_type").id > 1 &&
-                        value.substring(value.length - 3) != "962" &&
-                        value.substring(value.length - 3) != "950"
+                        value.name.substring(value.length - 3) != "962" &&
+                        value.name.substring(value.length - 3) != "950"
                       ) {
                         message.error(
                           "מספר מטלה אינו תואם את סוג הרכש. מועבר לבחינת מחלקת רכש"
@@ -250,7 +246,15 @@ export function Order_details(props) {
               name="pulling_bag"
               label="תיק משיכה:"
             >
-              <DropDown items={pulling_bags} header="תיק משיכה" />
+              <DropDown
+                items={pulling_bags.map(
+                  ({ bag_id, bag_number, bag_description }) => ({
+                    id: bag_id,
+                    name: bag_number + "-" + bag_description,
+                  })
+                )}
+                header="תיק משיכה"
+              />
             </Form.Item>
           </Col>
 
@@ -326,58 +330,69 @@ export function Actions(prop) {
           מחק פריטים מסומנים
         </Col>
 
-        <Col span={24}>
-          <Button
-            type="primary"
-            shape="circle"
-            size="large"
-            icon={<ApartmentOutlined />}
-          ></Button>{" "}
-          הפרד פריטים לבקשה משנית
-        </Col>
+        {prop.mode != "new" && (
+          <>
+            <Col span={24}>
+              <Button
+                type="primary"
+                shape="circle"
+                size="large"
+                icon={<ApartmentOutlined />}
+              ></Button>{" "}
+              הפרד פריטים לבקשה משנית
+            </Col>
 
-        <Col span={24}>
-          <Button
-            type="primary"
-            shape="circle"
-            size="large"
-            icon={<FileOutlined />}
-          ></Button>{" "}
-          הפק נספח ב
-        </Col>
+            <Col span={24}>
+              <Button
+                type="primary"
+                shape="circle"
+                size="large"
+                icon={<FileOutlined />}
+              ></Button>{" "}
+              הפק נספח ב
+            </Col>
 
-        <Col span={24}>
-          <Button
-            type="primary"
-            shape="circle"
-            size="large"
-            icon={<PlayCircleOutlined />}
-          ></Button>{" "}
-          כלל הבקשות המקושרות
-        </Col>
+            <Col span={24}>
+              <Button
+                type="primary"
+                shape="circle"
+                size="large"
+                icon={<PlayCircleOutlined />}
+              ></Button>{" "}
+              כלל הבקשות המקושרות
+            </Col>
+          </>
+        )}
       </Row>
     </React.Fragment>
   );
 }
 
 export function Details() {
+  let user = useSelector((state) => state.current_user.user);
   return (
     <React.Fragment>
       <Row justify="end" gutter={[0, 16]} align="middle">
         <Col span={24}>
-          <DisabledInput placeHolder="שם"></DisabledInput>
+          <DisabledInput
+            placeHolder={user.Soldier.first_name + " " + user.Soldier.last_name}
+          ></DisabledInput>
         </Col>
 
         <Col span={24}>
-          <DisabledInput placeHolder="נייד"></DisabledInput>
+          <DisabledInput placeHolder={user.phone}></DisabledInput>
         </Col>
 
         <Col span={24}>
-          <DisabledInput placeHolder="בימ/גף"></DisabledInput>
+          <DisabledInput
+            placeHolder={user.Location.bim.bim_name}
+          ></DisabledInput>
         </Col>
 
         <Col span={24}>
-          <DisabledInput placeHolder="מחלקה"></DisabledInput>
+          <DisabledInput
+            placeHolder={user.Location.department_name}
+          ></DisabledInput>
         </Col>
       </Row>
     </React.Fragment>

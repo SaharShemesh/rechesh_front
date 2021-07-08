@@ -7,34 +7,55 @@ import { useSelector, useDispatch } from "react-redux";
 import { DropDown } from "../../helpers/fields";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { update_users } from "../../../features/collections/userSlice";
-import { create_providers, new_provider, update_provider, update_providers } from "../../../features/collections/providerSlice";
+import {
+  create_providers,
+  new_provider,
+  update_provider,
+  update_providers,
+} from "../../../features/collections/providerSlice";
+import {
+  update_bag,
+  add_bag,
+  update_bags,
+  create_bags,
+  delete_bag,
+  remove_bag,
+} from "../../../features/collections/pulling_bagSlice";
 
 export function Update_bag(props) {
   let pulling_bags = useSelector((state) => state.pulling_bags.items);
-
-  const data = pulling_bags.map((pulling_bag, index) => ({
-    key: index,
-    id: pulling_bag.bag_id,
-    bag_number: pulling_bag.bag_number,
-    bag_description: pulling_bag.bag_description,
-    sum_budget: pulling_bag.sum_budget,
-    calculated_finished_budget: pulling_bag.calculated_finished_budget,
-    tiov_budget: pulling_bag.tiov_budget,
-    budget_left: pulling_bag.sum_budget - pulling_bag.tiov_budget,
-  }));
-  let [rows, set_rows] = useState(data);
+  let dispatch = useDispatch();
 
   const handleDelete = (key) => {
-    const rows = [...rows];
-    this.setState({
-      rows: rows.filter((item) => item.key !== key),
-    });
+    let { bag_id } = pulling_bags.find((pulling_bag) => pulling_bag.key == key);
+    if (bag_id) {
+      dispatch(delete_bag({ bag_id, key }))
+        .then(unwrapResult)
+        .catch((er) => console.log(er));
+    } else dispatch(remove_bag({ key }));
   };
-
+  const save_Bag = async () => {
+    try {
+      console.log(pulling_bags.filter((item) => item.bag_id));
+      let r = await Promise.all([
+        dispatch(update_bags(pulling_bags.filter((item) => item.bag_id))),
+        dispatch(create_bags(pulling_bags.filter((item) => !item.bag_id))),
+      ]);
+      unwrapResult(r);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      props.onCancel();
+    }
+  };
   let valueInsertion = (index, attribute, e) => {
-    let new_data = rows.slice();
-    new_data[index][attribute] = e.target.value;
-    set_rows(new_data);
+    dispatch(
+      update_bag({
+        index,
+        attribute,
+        value: e.target.value,
+      })
+    );
   };
   //<FolderOpenOutlined />
   const layout = {
@@ -42,18 +63,8 @@ export function Update_bag(props) {
     wrapperCol: { span: 22 },
     name: "control-hooks",
   };
-  const add_bag = function () {
-    let new_bag = {
-      key: rows.length,
-      bag_number: "",
-      bag_description: "",
-      sum_budget: 0,
-      calculated_finished_budget: "0",
-      tiov_budget: 0,
-    };
-    new_bag.budget_left = new_bag.sum_budget - new_bag.tiov_budget;
-    //console.log([]...rows,new_bag});
-    set_rows([...rows, new_bag]);
+  const new_bag = function () {
+    dispatch(add_bag());
   };
   /*const delete_last = function(){
     rows.pop();
@@ -109,17 +120,7 @@ export function Update_bag(props) {
       dataIndex: "calculated_finished_budget",
       key: "calculated_finished_budget",
       render(value, row, index) {
-        return (
-          <Input
-            type="number"
-            value={value}
-            onInput={valueInsertion.bind(
-              this,
-              index,
-              "calculated_finished_budget"
-            )}
-          />
-        );
+        return <p style={{ margin: 0 }}>{value}</p>;
       },
     },
     {
@@ -132,7 +133,7 @@ export function Update_bag(props) {
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "tiov_budget")}
+            onInput={valueInsertion.bind(this, index, "tiov_budget")}
           />
         );
       },
@@ -147,7 +148,7 @@ export function Update_bag(props) {
           <Input
             type="text"
             value={value}
-            onInput={valueInsertion.bind(this, row, "budget_left")}
+            onInput={valueInsertion.bind(this, index, "budget_left")}
           />
         );
       },
@@ -159,7 +160,7 @@ export function Update_bag(props) {
       render: (_, row) => (
         <Popconfirm
           title="האם אתה בטוח?"
-          onConfirm={() => handleDelete(row.key)}
+          onConfirm={handleDelete.bind(this, row.key)}
         >
           <a>מחק</a>
         </Popconfirm>
@@ -173,6 +174,7 @@ export function Update_bag(props) {
       buttonText="עדכן"
       show={props.show}
       onCancel={props.onCancel}
+      onOk={save_Bag}
     >
       <Form layout="inline">
         <Form.Item label=" מס' תיק" name="bag_num">
@@ -183,7 +185,7 @@ export function Update_bag(props) {
           <Input type="text" placeholder="תיאור תיק" />
         </Form.Item>
         <Form.Item>
-          <Button type="primary" onClick={add_bag}>
+          <Button type="primary" onClick={new_bag}>
             הוסף תיק
           </Button>
         </Form.Item>
@@ -194,7 +196,7 @@ export function Update_bag(props) {
       <div>
         <Table
           columns={columns}
-          dataSource={rows}
+          dataSource={pulling_bags}
           pagination={false}
           bordered
         />
@@ -295,7 +297,7 @@ export function Update_notificationData(props) {
 
 export function Update_provider(props) {
   let providers = useSelector((state) => state.providers.items);
-  console.log("providers:",providers);
+  console.log("providers:", providers);
   let dispatch = useDispatch();
   //<FolderOpenOutlined />
   const layout = {
@@ -307,7 +309,14 @@ export function Update_provider(props) {
   let save_providers = async () => {
     console.log(JSON.stringify(providers));
     try {
-      let r = await Promise.all([dispatch(update_providers(providers.slice().filter(provider => provider.provider_id)),dispatch(providers.slice().filter(prov => !prov.provider_id)))]);
+      let r = await Promise.all([
+        dispatch(
+          update_providers(
+            providers.slice().filter((provider) => provider.provider_id)
+          ),
+          dispatch(providers.slice().filter((prov) => !prov.provider_id))
+        ),
+      ]);
       unwrapResult(r);
     } catch (e) {
       console.log("error", e);
@@ -320,11 +329,13 @@ export function Update_provider(props) {
     await dispatch(new_provider());
   };
   let valueInsertion = async (index, attribute, e) => {
-    await dispatch(update_provider({
-      value:e.target.value,
-      index,
-      attribute
-    }));
+    await dispatch(
+      update_provider({
+        value: e.target.value,
+        index,
+        attribute,
+      })
+    );
   };
 
   const tailLayout = {
@@ -341,7 +352,13 @@ export function Update_provider(props) {
       title: "שם הספק",
       dataIndex: "provider_name",
       key: "name",
-      render: (text,row,index) =>  <Input type="text" value={text} onChange={valueInsertion.bind(this, index, "provider_name")} />,
+      render: (text, row, index) => (
+        <Input
+          type="text"
+          value={text}
+          onChange={valueInsertion.bind(this, index, "provider_name")}
+        />
+      ),
     },
     {
       width: "auto",
@@ -496,13 +513,12 @@ export function Update_provider(props) {
               message: "חייב להיות מספר",
             },
           ]}
-        >
-          </Form.Item>
-          <Form.Item>
+        ></Form.Item>
+        <Form.Item>
           <Button type="primary" onClick={add_provider}>
             הוסף ספק
           </Button>
-        </Form.Item> 
+        </Form.Item>
       </Form>
 
       <Form {...layout}>
@@ -677,7 +693,7 @@ export function Screen_Permission(props) {
       ),
     },
   ];
-  console.log("users = ", users)
+  console.log("users = ", users);
   const data = users.map((user) => ({
     soldier_id: user.soldier_id,
     id: user.id,

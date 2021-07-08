@@ -22,8 +22,7 @@ export function DropDown(props) {
       filterOption={(inputValue, option) => option.label.includes(inputValue)}
       onSearch={(label) => {
         let _option = options.find((option) => option.label == label);
-        if (props.onChange && _option)
-          props.onChange({ name: _option.label, id: _option.value });
+        if (_option) props.onChange({ name: _option.label, id: _option.value });
         if (!_option) _option = { value: -1, label: label };
         setSelected(_option);
       }}

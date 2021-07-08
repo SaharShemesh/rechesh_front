@@ -16,7 +16,6 @@ import { Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { add_order } from "../../../features/order/orderSlice";
 //memos
-let ActionsMemo = Actions;
 
 //dummy bids
 // let object = {
@@ -125,20 +124,23 @@ export default function New_order() {
       ])
     );
   }
-
+  let providers = {};
   let getBid = (bid) => {
     let new_bids = bids;
     Object.keys(bid).forEach((item_sign) => {
       if (Object.keys(new_bids).find((sign) => sign == item_sign))
         new_bids[item_sign] = { ...new_bids[item_sign], ...bid[item_sign] };
-      else
+      else {
         new_bids[item_sign] = {
           desc: items.find((sell) => sell.item_sign == item_sign).desc,
           quantity: items.find((sell) => sell.item_sign == item_sign).quantity,
           ...bid[item_sign],
         };
+      }
     });
     console.log(new_bids);
+    //fill loop
+    Object.keys(new_bids).forEach((item) => {});
     setBids({ ...new_bids });
   };
   let do_action = function (action) {
@@ -201,16 +203,10 @@ export default function New_order() {
           </Col>
           <Col span={1}></Col>
           <Col span={5}>
-            <ActionsMemo
+            <Actions
+              mode="new"
               on_delete={do_action.bind(this, "delete")}
-            ></ActionsMemo>
-          </Col>
-          <Col span={13}>
-            <Bid bids={bids} />
-          </Col>
-          <Col span={1}></Col>
-          <Col span={10}>
-            <AcceptTable />
+            ></Actions>
           </Col>
         </Row>
         <Row>

@@ -16,8 +16,10 @@ import constants_Reducer from "../features/collections/constantSlice";
 import users_Reducer from "../features/collections/userSlice";
 import user_permissions_Reducer from "../features/collections/user_permissionSlice";
 import users_roles_Reducer from "../features/collections/user_roleSlice";
+import pakaSlice from "../features/collections/pakaSlice";
 //reducers
 import {} from "../features/order/orderSlice";
+import currentSlice from "../features/current_user/current.userSlice";
 export const store = configureStore({
   reducer: {
     orders: orderReducer,
@@ -36,5 +38,7 @@ export const store = configureStore({
     users: users_Reducer,
     user_permissions: user_permissions_Reducer,
     users_roles: users_roles_Reducer,
+    current_user: currentSlice,
+    pakas: pakaSlice,
   },
 });
