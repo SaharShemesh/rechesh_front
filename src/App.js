@@ -23,6 +23,9 @@ import { fetch_user_permissions } from "./features/collections/user_permissionSl
 import { fetch_users_roles } from "./features/collections/user_roleSlice";
 import { fetch_current } from "./features/current_user/current.userSlice";
 import { fetch_pakas } from "./features/collections/pakaSlice";
+import { fetch_priorities } from "./features/collections/prioritySlice";
+import { fetch_paka_Type } from "./features/collections/paka_typeSlice";
+import { useSelector } from "react-redux";
 function App() {
   let [ready, setReady] = useState(false);
   useEffect(() => {
@@ -31,7 +34,6 @@ function App() {
       .dispatch(fetch_current())
       .then(() =>
         Promise.all([
-          store.dispatch(fetchOrders()),
           store.dispatch(fetch_units()),
           store.dispatch(fetch_types()),
           store.dispatch(fetch_bags()),
@@ -48,8 +50,11 @@ function App() {
           store.dispatch(fetch_user_permissions()),
           store.dispatch(fetch_pakas()),
           store.dispatch(fetch_users_roles()),
+          store.dispatch(fetch_priorities()),
+          store.dispatch(fetch_paka_Type()),
         ])
       )
+      .then(() => store.dispatch(fetchOrders()))
       .then((done) => setReady(true));
   }, []);
   if (!ready) return <Spin />;

@@ -13,6 +13,7 @@ import Home from "../views/Home.view";
 import My_orders from "../views/my_orders";
 import New_Order from "../views/new_order";
 import Management_view from "../views/management-panel";
+import Edit_view from "../views/edit_order";
 import { useState } from "react";
 function NavB() {
   let history = useHistory();
@@ -65,6 +66,10 @@ function App_Router() {
         <Route path="/management-panel">
           <Management_view />
         </Route>
+        <Route
+          path="/edit-ordr/:order/:sub_order"
+          children={<Edit_view />}
+        ></Route>
       </Switch>
     </>
   );

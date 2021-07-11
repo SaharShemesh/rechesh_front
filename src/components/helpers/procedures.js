@@ -62,3 +62,15 @@ export function get_random(keys) {
   } while (keys.find((keyy) => keyy == random));
   return random;
 }
+
+export const preaper_object_to_server = (values) => {
+  let details = Object.keys(values)
+    .filter((detail_name) => values[detail_name])
+    .reduce((res, key) => {
+      if (values[key].id && values[key].id == -1) return res;
+      let value = values[key].id ? values[key].id : values[key];
+      console.log(value);
+      return (res[key] = value), res;
+    }, {});
+  return details;
+};

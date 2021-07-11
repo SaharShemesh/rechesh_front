@@ -4,6 +4,7 @@ import { Row, Col, Form, Input, Button, Table, Modal } from "antd";
 import { Filter } from "./fltr";
 import { useHistory } from "react-router";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 export default function MyOrders_View() {
   let [form] = Form.useForm();
@@ -18,32 +19,62 @@ export default function MyOrders_View() {
   //   );
   // });
   let orders = useSelector((state) => state.orders.items);
-  console.log(orders);
-  let rows = orders.map((order, id) => ({
-    order_id: id + 1,
-    need: order.desc,
-    paka: order.paka,
-    priority: order.priority,
-    type: order.Paka_type,
-    Pulling_bag: order.pulling_bag ? order.pulling_bag.name : "",
-    price: 5000,
-    Customer: "דוד",
-    bim: "נשר",
-    treating_factor: "גורם",
-    erp_request: 3,
-    erp_order: 5,
-    erp_invoice: 10,
-    status: 2,
-    status_days: 3,
-    days: 90,
-  }));
+  let update_order = (index, attribute, e) => {
+    let orders = orders_table.concat();
+    orders[index][attribute] = e.target.value;
+    setOrders(orders);
+  };
+  let rows = [];
+  orders.forEach((order) => {
+    console.log(order.Orders);
+    order.Orders.forEach((sub_order, index) => {
+      let order_price = sub_order.Sell_items.reduce(
+        (prev, sell_item) => prev + sell_item.price * sell_item.quantity,
+        0
+      );
+      console.log(order_price);
+      rows.push({
+        order_id: {
+          order: order.id,
+          sub_order: sub_order.id,
+          index,
+        },
+        need: sub_order.need,
+        paka: sub_order.Paka ? sub_order.Paka.paka_number : "אין",
+        priority: sub_order.Priority ? sub_order.Priority.priority_name : "אין",
+        type: sub_order.Paka_type ? 5 : "אין",
+        Pulling_bag: sub_order.Pulling_bag
+          ? sub_order.Pulling_bag.bag_description
+          : "אין",
+        price: order_price,
+        Customer: order.Customer.first_name + "-" + order.Customer.id_num,
+        bim: order.Customer.user.Location.bim.bim_name,
+        treating_factor: "גורם",
+        erp_request: sub_order.erp_req ? sub_order.erp_req : "",
+        erp_order: sub_order.erp_order ? sub_order.erp_order : "",
+        erp_invoice: sub_order.invc ? sub_order.invc : "",
+        status: sub_order.Status.id,
+        status_days: 0,
+        days: Math.round(
+          (Date.parse(new Date().toString("mm-dd-yy")) -
+            Date.parse(sub_order.start_date)) /
+            86400000
+        ),
+      });
+    });
+  });
+  let [orders_table, setOrders] = useState(rows);
   let history = useHistory();
   const columns = [
     {
       title: "מס בקשה",
       dataIndex: "order_id",
       key: "order_id",
-      render: (text) => <p>{text}</p>,
+      render: (text) => (
+        <Link to={"edit-ordr/" + text.order + "/" + (text.index + 1)}>
+          <p dir="ltr">{text.order + "/ " + (text.index + 1)}</p>
+        </Link>
+      ),
     },
     {
       title: "תיאור בקשה",
@@ -104,19 +135,37 @@ export default function MyOrders_View() {
       title: "מס בקשה erp",
       dataIndex: "erp_request",
       key: "erp_request",
-      render: (text) => <p>{text}</p>,
+      render: (text, row, index) => (
+        <Input
+          type="number"
+          onChange={update_order.bind(this, index, "erp_request")}
+          value={text}
+        />
+      ),
     },
     {
       title: "מס הזמנה erp",
       dataIndex: "erp_order",
       key: "name",
-      render: (text) => <p>{text}</p>,
+      render: (text, row, index) => (
+        <Input
+          type="number"
+          onChange={update_order.bind(this, index, "erp_order")}
+          value={text}
+        />
+      ),
     },
     {
       title: "מספר חשבונית",
       dataIndex: "erp_invoice",
       key: "erp_invoice",
-      render: (text) => <p>{text}</p>,
+      render: (text, row, index) => (
+        <Input
+          type="number"
+          onChange={update_order.bind(this, index, "erp_invoice")}
+          value={text}
+        />
+      ),
     },
     {
       title: "סטטוס",
@@ -153,7 +202,7 @@ export default function MyOrders_View() {
       <Table
         pagination={false}
         locale={{ emptyText: <p>אין הזמנות</p> }}
-        dataSource={rows}
+        dataSource={orders_table}
         columns={columns}
       />
       ;

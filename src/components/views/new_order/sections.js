@@ -1,4 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import { Row, Col, Form, Input, Button, Table, message } from "antd";
 import { New_bid } from "./screens";
 import { DropDown, DisabledInput, System_input } from "../../helpers/fields";
@@ -11,8 +16,12 @@ import {
 import { map_bid_to_table } from "../../helpers/procedures";
 import { isNumber } from "../../../helpers/validators";
 import { useSelector } from "react-redux";
-export function Order_details(props) {
+export const Order_details = forwardRef(function (
+  { submit, add_item, order_details },
+  ref
+) {
   const [form] = Form.useForm();
+  let [render, toRender] = useState(false);
   let procument_types = useSelector((state) => state.procument_types.items);
   let pulling_bags = useSelector((state) => state.pulling_bags.items);
   let assignments = useSelector((state) => state.assignments.items);
@@ -21,7 +30,25 @@ export function Order_details(props) {
   let order_types = useSelector((state) => state.order_types.items);
   let pakas = useSelector((state) => state.pakas.items);
   let logged_user = useSelector((state) => state.current_user.user);
+  let priorities = useSelector((state) => state.priorities.items);
+  let paka_types = useSelector((state) => state.paka_types.items);
   console.log(logged_user);
+  let rerender = () => toRender(!render);
+  console.log(order_details);
+  if (order_details) form.setFieldsValue(order_details);
+  //because we use functional component..
+  useImperativeHandle(ref, () => ({
+    submit_Form() {
+      form.submit();
+    },
+  }));
+  let is_Amop = () => {
+    return (
+      form.getFieldValue("paka") &&
+      pakas.find((paka) => paka.paka_id == form.getFieldValue("paka").id)
+        .paka_team == "אמופ"
+    );
+  };
   return (
     <React.Fragment>
       <Form
@@ -50,7 +77,7 @@ export function Order_details(props) {
                   name: type.type,
                 }))}
                 header="סוג הזמנה"
-                valueUpdated={(value) => console.log(value)}
+                onChange={rerender}
               />
             </Form.Item>
           </Col>
@@ -62,10 +89,13 @@ export function Order_details(props) {
               }}
               rules={[
                 {
-                  required: true,
+                  required:
+                    form.getFieldValue("procument_type") &&
+                    form.getFieldValue("procument_type").id == 2,
                   message: "יש להזין פקע",
                 },
               ]}
+              dependencies={["procument_type"]}
               name="paka"
               label="פקע:"
             >
@@ -74,6 +104,48 @@ export function Order_details(props) {
                   name: paka.paka_number,
                   id: paka.paka_id,
                 }))}
+                onChange={(re) => {
+                  if (!re) return;
+                  let { id } = re;
+                  let paka = pakas.find((paka) => paka.paka_id == id);
+                  console.log(paka);
+                  if (paka) {
+                    if (paka.paka_team == "אמופ") {
+                      form.setFieldsValue({
+                        paka_desc: paka.paka_desc,
+                        priority: {
+                          name: paka.Priority.priority_name,
+                          id: paka.Priority.id,
+                        },
+                        paka_type: {
+                          name: paka.Paka_type.type,
+                          id: paka.Paka_type.id,
+                        },
+                        schedule: paka.deadline,
+                      });
+                    } else {
+                      form.setFieldsValue({
+                        paka_desc: paka.paka_desc,
+                        priority: {
+                          id: -1,
+                          name: "",
+                        },
+                        paka_type: {
+                          name: paka.Paka_type.type,
+                          id: paka.Paka_type.id,
+                        },
+                        schedule: paka.deadline,
+                      });
+                      if (add_item)
+                        add_item({
+                          iaf_num: paka.iaf_Num,
+                          desc: paka.item_desc,
+                        });
+                    }
+                    console.log(is_Amop());
+                    rerender();
+                  }
+                }}
               />
             </Form.Item>
           </Col>
@@ -85,10 +157,13 @@ export function Order_details(props) {
               }}
               rules={[
                 {
-                  required: true,
+                  required:
+                    form.getFieldValue("procument_type") &&
+                    form.getFieldValue("procument_type").id == 2,
                   message: "חובה להזין גורם מקצועי",
                 },
               ]}
+              dependencies={["procument_type"]}
               name="Professional_at"
               label="גורם מקצועי:"
             >
@@ -114,9 +189,12 @@ export function Order_details(props) {
                 span: 7,
               }}
               name="budget_type"
+              dependencies={["order_type"]}
               rules={[
                 {
-                  required: true,
+                  required:
+                    form.getFieldValue("order_type") &&
+                    form.getFieldValue("order_type").id == 1,
                   message: "חובה להזין גורם מתקצב",
                 },
               ]}
@@ -127,6 +205,7 @@ export function Order_details(props) {
                   id: type.type_id,
                   name: type.type,
                 }))}
+                onChange={rerender}
                 header="גורם מתקצב"
               />
             </Form.Item>
@@ -137,10 +216,17 @@ export function Order_details(props) {
               labelCol={{
                 span: 7,
               }}
-              name="desc"
+              name="paka_desc"
               label="תיאור:"
             >
-              <Input value="תיאור" placeHolder="תיאור"></Input>
+              <Input
+                value="תיאור"
+                placeHolder="תיאור"
+                disabled={
+                  form.getFieldValue("procument_type") &&
+                  form.getFieldValue("procument_type").id == 2
+                }
+              ></Input>
             </Form.Item>
           </Col>
 
@@ -157,8 +243,13 @@ export function Order_details(props) {
               ]}
               name="assignment_id"
               label="מספר מטלה:"
-              dependencies={["procument_type"]}
+              dependencies={["procument_type", "budget_type"]}
               rules={[
+                {
+                  required:
+                    form.getFieldValue("budget_type") &&
+                    form.getFieldValue("budget_type").id == 1,
+                },
                 {
                   validator: (_, vl) => {
                     let value = vl;
@@ -202,7 +293,9 @@ export function Order_details(props) {
               }}
               rules={[
                 {
-                  required: true,
+                  required:
+                    form.getFieldValue("order_type") &&
+                    form.getFieldValue("order_type").id == 1,
                   message: "חובה להזין סוג רכש",
                 },
               ]}
@@ -210,7 +303,7 @@ export function Order_details(props) {
               label="סוג רכש:"
             >
               <DropDown
-                onChange={(value) => console.log(value)}
+                onChange={rerender}
                 items={procument_types}
                 header="סוג רכש"
               />
@@ -225,7 +318,25 @@ export function Order_details(props) {
               name="priority"
               label="עדיפות:"
             >
-              <Input placeHolder="עדיפות"></Input>
+              <DropDown
+                header="עדיפות"
+                items={
+                  is_Amop()
+                    ? priorities.map((pr) => ({
+                        name: pr.priority_name,
+                        id: pr.id,
+                      }))
+                    : priorities.slice(-3).map((pr) => ({
+                        name: pr.priority_name,
+                        id: pr.id,
+                      }))
+                }
+                disabled={
+                  is_Amop() &&
+                  form.getFieldValue("procument_type") &&
+                  form.getFieldValue("procument_type").id == 2
+                }
+              />
             </Form.Item>
           </Col>
 
@@ -263,10 +374,20 @@ export function Order_details(props) {
               labelCol={{
                 span: 7,
               }}
-              name="Paka_type"
+              name="paka_type"
               label="סוג:"
             >
-              <Input placeHolder="סוג"></Input>
+              <DropDown
+                header="סוג"
+                items={paka_types.map((type) => ({
+                  name: type.type,
+                  id: type.id,
+                }))}
+                disabled={
+                  form.getFieldValue("procument_type") &&
+                  form.getFieldValue("procument_type").id == 2
+                }
+              />
             </Form.Item>
           </Col>
 
@@ -284,7 +405,7 @@ export function Order_details(props) {
                   message: "יש להזין הגדרת צורך",
                 },
               ]}
-              name="reason"
+              name="need"
               label="הגדרת הצורך:"
             >
               <Input className="system-field"></Input>
@@ -299,21 +420,21 @@ export function Order_details(props) {
               name="schedule"
               label="לוז פרויקט:"
             >
-              <Input placeHolder="לוז פרויקט"></Input>
+              <Input type="date" placeHolder="לוז פרויקט"></Input>
             </Form.Item>
           </Col>
 
           <Col span={8}></Col>
-          <Col span={24}>
+          {/* <Col span={24}>
             <Button type="primary" htmlType="submit">
               אשר
             </Button>
-          </Col>
+          </Col> */}
         </Row>
       </Form>
     </React.Fragment>
   );
-}
+});
 
 export function Actions(prop) {
   return (
@@ -605,7 +726,7 @@ export function SellItem(props) {
             rules={[
               {
                 required: true,
-                message: "יש להזין פקע",
+                message: "יש להזין תיאור",
               },
             ]}
             value={value}
@@ -617,14 +738,14 @@ export function SellItem(props) {
     {
       align: "right",
       title: "מסחא",
-      key: "iaf_num",
-      dataIndex: "iaf_num",
+      key: "Iaf_num",
+      dataIndex: "Iaf_num",
       render(value, row, index) {
         return (
           <DropDown
             items={iaf_nums.map((num) => ({ id: num.id, name: num.iaf_num }))}
             onChange={(va) => {
-              DropdownInsertion(row, va, "iaf_num");
+              DropdownInsertion(row, va, "Iaf_num");
             }}
             value={value ? value : null}
             header="מסחא"
@@ -636,8 +757,8 @@ export function SellItem(props) {
       align: "right",
       title: "איפיון טכני",
       width: "300px",
-      key: "tech",
-      dataIndex: "tech",
+      key: "technical_spec",
+      dataIndex: "technical_spec",
       render(value, row, index) {
         return (
           <DropDown
@@ -647,7 +768,7 @@ export function SellItem(props) {
             ]}
             value={value ? value : null}
             onChange={(va) => {
-              DropdownInsertion(row, va, "tech");
+              DropdownInsertion(row, va, "technical_spec");
             }}
             header="איפיון טכני"
           />
@@ -670,13 +791,13 @@ export function SellItem(props) {
               name: num.creator_num,
             }))}
             onChange={(va) => {
-              console.log(va);
               DropdownInsertion(row, va, "creator_num");
-              DropdownInsertion(
-                row,
-                creators.find((creator) => creator.id == va.id).creator_name,
-                "creator_name"
-              );
+              if (va)
+                DropdownInsertion(
+                  row,
+                  creators.find((creator) => creator.id == va.id).creator_name,
+                  "creator_name"
+                );
             }}
             header="מספר יצרן"
           />

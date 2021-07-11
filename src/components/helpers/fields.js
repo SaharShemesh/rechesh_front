@@ -1,20 +1,23 @@
 import { Menu, Dropdown, Button, Input, AutoComplete } from "antd";
-import { useState, React } from "react";
+import { useState, React, useEffect } from "react";
 import { procument_TypesSlice } from "../../features/collections/procumenttypeSlice";
 export function DropDown(props) {
-  let [selected, setSelected] = useState(
-    props.value
-      ? { label: props.value.name, value: props.value.id }
-      : { label: "", value: -1 }
-  );
+  let [selected, setSelected] = useState({ label: "", value: -1 });
+  console.log(props.value, " ", selected);
   let options = props.items.map((item) => ({
     label: item.name,
     value: item.id,
   }));
+  useEffect(() => {
+    console.log(props.value);
+    if (props.value)
+      setSelected({ label: props.value.name, value: props.value.id });
+  }, [props.value]);
   return (
     <AutoComplete
       options={options}
-      value={selected.label ? selected.label : ""}
+      disabled={props.disabled}
+      value={selected.label}
       placeholder={props.header}
       style={{
         minWidth: 250,
@@ -23,7 +26,10 @@ export function DropDown(props) {
       onSearch={(label) => {
         let _option = options.find((option) => option.label == label);
         if (_option) props.onChange({ name: _option.label, id: _option.value });
-        if (!_option) _option = { value: -1, label: label };
+        if (!_option) {
+          _option = { value: -1, label: label };
+          props.onChange(undefined);
+        }
         setSelected(_option);
       }}
       onSelect={(value, option) => {
