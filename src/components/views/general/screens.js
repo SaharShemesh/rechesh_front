@@ -1,4 +1,4 @@
-import { Form, Table, Input, AutoComplete } from "antd";
+import { Form, Table, Input, AutoComplete, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { FormModal } from "../../helpers/Modal";
 import { UserOutlined } from "@ant-design/icons";
@@ -20,11 +20,10 @@ export function New_bid(props) {
     })
   );
   let [sell_items, set_item] = useState(items);
-  console.log(items);
   useEffect(() => {
     if (items) set_item(items);
   }, [props.sell_Items]);
-  let providers = useSelector((state) => state.providers.items);
+  let providers_collection = useSelector((state) => state.providers.items);
   //<FolderOpenOutlined />
   const layout = {
     labelCol: { span: 6 },
@@ -78,14 +77,20 @@ export function New_bid(props) {
     },
   ];
   let [selected_provider, setSelected] = useState({ name: "", id: -1 });
-  let providers_collection = providers.map((provider) => ({
+  providers_collection = providers_collection.map((provider) => ({
     name: provider.provider_name,
     id: provider.provider_id,
   }));
+  let [providers, setProviders] = useState(providers_collection);
   let changeProvider = (provider) => {
     setSelected(provider);
   };
   let saveBid = () => {
+    if (selected_provider.id == -1) return message.error("בחר ספק");
+    let selected_collection = props.selected_providers_ids || [];
+    setProviders(
+      providers.filter((provider) => provider.id != selected_provider.id)
+    );
     let BID = sell_items.map((item) => ({
       [item.item_sign]: {
         [selected_provider.id]: {
@@ -96,7 +101,9 @@ export function New_bid(props) {
         },
       },
     }));
+    setSelected({ name: "", id: -1 });
     BID = Object.assign({}, ...BID);
+
     props.onCreation(BID);
   };
   return (
@@ -113,7 +120,8 @@ export function New_bid(props) {
         <Form.Item label=" שם ספק">
           <DropDown
             header="יש לבחור ספק רצוי"
-            items={providers_collection}
+            items={providers}
+            value={selected_provider}
             onChange={changeProvider}
           />
         </Form.Item>

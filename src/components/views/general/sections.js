@@ -1,17 +1,19 @@
 import React, {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
 } from "react";
 import { Row, Col, Form, Input, Button, Table, message } from "antd";
 import { New_bid } from "./screens";
-import { DropDown, DisabledInput, System_input } from "../../helpers/fields";
+import { DropDown, DisabledInput } from "../../helpers/fields";
 import {
   PlayCircleOutlined,
   CloseOutlined,
   ApartmentOutlined,
   FileOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 import { map_bid_to_table } from "../../helpers/procedures";
 import { isNumber } from "../../../helpers/validators";
@@ -32,10 +34,12 @@ export const Order_details = forwardRef(function (
   let logged_user = useSelector((state) => state.current_user.user);
   let priorities = useSelector((state) => state.priorities.items);
   let paka_types = useSelector((state) => state.paka_types.items);
-  console.log(logged_user);
+
   let rerender = () => toRender(!render);
-  console.log(order_details);
-  if (order_details) form.setFieldsValue(order_details);
+  useEffect(() => {
+    if (order_details) form.setFieldsValue(order_details);
+  }, []);
+
   //because we use functional component..
   useImperativeHandle(ref, () => ({
     submit_Form() {
@@ -108,7 +112,7 @@ export const Order_details = forwardRef(function (
                   if (!re) return;
                   let { id } = re;
                   let paka = pakas.find((paka) => paka.paka_id == id);
-                  console.log(paka);
+
                   if (paka) {
                     if (paka.paka_team == "אמופ") {
                       form.setFieldsValue({
@@ -142,7 +146,7 @@ export const Order_details = forwardRef(function (
                           desc: paka.item_desc,
                         });
                     }
-                    console.log(is_Amop());
+
                     rerender();
                   }
                 }}
@@ -221,7 +225,7 @@ export const Order_details = forwardRef(function (
             >
               <Input
                 value="תיאור"
-                placeHolder="תיאור"
+                placeholder="תיאור"
                 disabled={
                   form.getFieldValue("procument_type") &&
                   form.getFieldValue("procument_type").id == 2
@@ -549,7 +553,7 @@ export function AcceptTable() {
               labelCol={{ pull: 1, span: 6 }}
               wrapperCol={{ pull: 1 }}
             >
-              <Input className="system-space" placeHolder="מזמין"></Input>
+              <Input className="system-space" placeholder="מזמין"></Input>
             </Form.Item>
           </Col>
         </Row>
@@ -869,7 +873,6 @@ export function SellItem(props) {
       width: "300px",
       dataIndex: "measurement",
       render(value, row, index) {
-        console.log("יחידת מידה:", value);
         return (
           <DropDown
             items={measurements.map((num) => ({
@@ -915,7 +918,6 @@ export function SellItem(props) {
   let selection = {
     selectedRowKeys: props.selected_keys,
     onChange(selectedRowKeys) {
-      console.log("selected", selectedRowKeys);
       props.items_selected(selectedRowKeys);
     },
   };
@@ -930,6 +932,7 @@ export function SellItem(props) {
         הוסף הצעה חדשה
       </Button>
       <New_bid
+        selected_providers_ids={props.selected_providers_ids}
         show={screensStatus.New_bid}
         onCancel={cancelScreen.bind(this, "New_bid")}
         sell_Items={props.sell_Items}
@@ -949,8 +952,9 @@ export function SellItem(props) {
 export function Bid(prop) {
   let rows = map_bid_to_table(prop.bids);
   let providers_headers = Object.assign({}, Object.values(prop.bids)[0]);
+  console.log(providers_headers);
   delete providers_headers.desc;
-  console.log(rows);
+
   //delete providers_headers.desc;
   let columns = [
     {
@@ -960,7 +964,14 @@ export function Bid(prop) {
       key: "desc",
       dataIndex: "desc",
       render(value, row, index) {
-        // console.log(row);
+        if (index == rows.length - 1 || index == rows.length - 2) {
+          return {
+            children: <p>{row.desc}</p>,
+            props: {
+              colSpan: 2,
+            },
+          };
+        }
         return {
           children: <p>{row.desc}</p>,
           props: {
@@ -976,31 +987,53 @@ export function Bid(prop) {
       key: "order_info",
       dataIndex: "order_info",
       render(value, row, index) {
+        if (index == rows.length - 1 || index == rows.length - 2)
+          return {
+            props: { colSpan: 0 },
+          };
         return <p>{row.order_info}</p>;
       },
     },
-    ...Object.keys(providers_headers).map((provider_index) => ({
-      align: "right",
-      title: providers_headers[provider_index]["name"],
-      key: provider_index,
-      dataIndex: provider_index,
-      render(value, row, index) {
-        return <p>{row[provider_index]}</p>;
-      },
-    })),
+    ...Object.keys(providers_headers)
+      .filter((id) => id != "quantity")
+      .map((provider_index) => ({
+        align: "right",
+        title: providers_headers[provider_index]["name"],
+        key: provider_index,
+        dataIndex: provider_index,
+        render(value, row, index) {
+          if (index == rows.length - 1)
+            return (
+              <>
+                <Button
+                  shape="circle"
+                  size="small"
+                  icon={<CloseOutlined style={{ color: "#a09f9f" }} />}
+                  onClick={prop.delete_bid.bind(this, provider_index)}
+                ></Button>
+                <Button
+                  shape="circle"
+                  size="small"
+                  style={{ marginRight: "4px" }}
+                  onClick={prop.check_bid.bind(this, provider_index)}
+                  icon={<CheckOutlined style={{ color: "#bdbdbd" }} />}
+                ></Button>
+              </>
+            );
+          return <p>{row[provider_index]}</p>;
+        },
+      })),
   ];
 
-  console.log(
-    ...Object.keys(providers_headers).map((provider_index) => ({
-      align: "right",
-      title: providers_headers[provider_index]["name"],
-      key: provider_index,
-      dataIndex: provider_index,
-      render(value, row, index) {
-        return <p>{row[provider_index]}</p>;
-      },
-    }))
-  );
+  // ...Object.keys(providers_headers).map((provider_index) => ({
+  //   align: "right",
+  //   title: providers_headers[provider_index]["name"],
+  //   key: provider_index,
+  //   dataIndex: provider_index,
+  //   render(value, row, index) {
+  //     return <p>{row[provider_index]}</p>;
+  //   },
+  // }))
   return (
     <>
       <Table

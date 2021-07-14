@@ -26,13 +26,12 @@ export default function MyOrders_View() {
   };
   let rows = [];
   orders.forEach((order) => {
-    console.log(order.Orders);
     order.Orders.forEach((sub_order, index) => {
       let order_price = sub_order.Sell_items.reduce(
         (prev, sell_item) => prev + sell_item.price * sell_item.quantity,
         0
       );
-      console.log(order_price);
+
       rows.push({
         order_id: {
           order: order.id,

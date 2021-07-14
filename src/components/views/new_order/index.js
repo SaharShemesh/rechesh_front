@@ -6,7 +6,7 @@ import {
   Actions,
   SellItem,
   Bid,
-} from "./sections";
+} from "../general/sections";
 import { useHistory } from "react-router";
 import { Row, Col, Button, message } from "antd";
 import "./css/order.css";
@@ -20,6 +20,7 @@ import { Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { add_order, createOrder } from "../../../features/order/orderSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { General_details_mapper, Items_mapper } from "../../helpers/mappers";
 //memos
 export default function New_order() {
   let history = useHistory();
@@ -31,7 +32,7 @@ export default function New_order() {
     details_form.current.submit_Form();
     //details.current = { ...details.current, status: 1 };
     // dispatch(add_order({ order: details.current }));
-    // console.log("DETAILS: ", details);
+    //
     // history.push("/my-orders");
   };
   //sections state
@@ -99,7 +100,6 @@ export default function New_order() {
     setBids({ ...new_bids });
   };
   let do_action = function (action) {
-    console.log(selected_items);
     console.log(
       re_order_the_key(
         items.filter((item) => !selected_items.includes(item.key)),
@@ -126,29 +126,8 @@ export default function New_order() {
               return message.error("הוסף פריטים להזמנה זו");
             }
             if (items.length > 0 && validate_items()) {
-              console.log(values);
-              let details = preaper_object_to_server(values);
-              let sell_items = items.map(
-                ({
-                  technical_spec,
-                  desc,
-                  quantity,
-                  price,
-                  creator_num,
-                  measurement,
-                  recommended_provider,
-                  Iaf_num,
-                }) => ({
-                  technical_spec: technical_spec.id == 1 ? true : false,
-                  desc,
-                  quantity,
-                  price,
-                  creator: creator_num.id,
-                  measurement: measurement.id,
-                  provider: recommended_provider.id,
-                  Iaf_num: Iaf_num.id,
-                })
-              );
+              let details = General_details_mapper.client_to_server(values);
+              let sell_items = Items_mapper.client_to_server(items);
               console.log(
                 JSON.stringify({
                   Order: { ...details, Sell_items: sell_items },
@@ -184,17 +163,15 @@ export default function New_order() {
               add_item={addItem}
               selected_keys={selected_items}
               items_selected={(items) => {
-                console.log("items:", items);
                 setSelected(items);
               }}
               new_value={(row) => {
-                console.log(row);
                 let index = items.findIndex(
                   (current_row) => current_row.key == row.key
                 );
                 let new_items = items.slice();
                 new_items[index] = row;
-                console.log("new_items:", new_items);
+
                 setItems(new_items);
               }}
               new_bid={getBid}

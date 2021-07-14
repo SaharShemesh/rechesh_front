@@ -3,13 +3,12 @@ import { useState, React, useEffect } from "react";
 import { procument_TypesSlice } from "../../features/collections/procumenttypeSlice";
 export function DropDown(props) {
   let [selected, setSelected] = useState({ label: "", value: -1 });
-  console.log(props.value, " ", selected);
+
   let options = props.items.map((item) => ({
     label: item.name,
     value: item.id,
   }));
   useEffect(() => {
-    console.log(props.value);
     if (props.value)
       setSelected({ label: props.value.name, value: props.value.id });
   }, [props.value]);
@@ -49,15 +48,5 @@ export function DisabledInput(props) {
       value={props.value}
       onInput={props.onChange}
     ></Input>
-  );
-}
-
-export function System_input(props) {
-  return (
-    <Input
-      value={props.value}
-      key={props.value}
-      placeholder={props.placeholder}
-    />
   );
 }

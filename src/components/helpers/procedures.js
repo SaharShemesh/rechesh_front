@@ -1,5 +1,10 @@
 export function map_bid_to_table(object) {
   let rows = [];
+  let get_provider_ids = () => {
+    return Object.keys(Object.values(object)[0] || {})
+      .filter((key) => key != "desc" && key != "quantity")
+      .map((provider_id) => parseInt(provider_id));
+  };
   let get_provider = (providers, at) => {
     let providers_co = {};
     Object.keys(providers).forEach((pr) => {
@@ -10,6 +15,15 @@ export function map_bid_to_table(object) {
     });
     return providers_co;
   };
+
+  let get_sum_bid = (provider_id) => {
+    return Object.values(object).reduce((sum, item) => {
+      return item[provider_id]
+        ? parseInt(item.quantity) * parseFloat(item[provider_id].price) + sum
+        : sum;
+    }, 0);
+  };
+
   Object.keys(object).forEach((item_id, c) => {
     let item = object[item_id];
     let item_desc = item.desc;
@@ -41,7 +55,34 @@ export function map_bid_to_table(object) {
       ...get_provider(item, "providing_time"),
     });
   });
-  console.log("rowss", rows);
+  //add footer
+  rows.push({
+    key: Object.values(object).length + 2,
+    desc: 'סה"כ מחיר כולל מע"מ',
+    ...get_provider_ids()
+      .map((id) => ({ [id]: get_sum_bid(id) }))
+      .reduce(
+        (prev, value) => ({
+          ...prev,
+          [Object.keys(value)[0]]: Object.values(value)[0],
+        }),
+        {}
+      ),
+  });
+  rows.push({
+    key: Object.values(object).length + 3,
+    desc: "",
+    ...get_provider_ids()
+      .map((id) => ({ [id]: id }))
+      .reduce(
+        (prev, value) => ({
+          ...prev,
+          [Object.keys(value)[0]]: Object.values(value)[0],
+        }),
+        {}
+      ),
+  });
+
   return rows;
 }
 
@@ -62,15 +103,3 @@ export function get_random(keys) {
   } while (keys.find((keyy) => keyy == random));
   return random;
 }
-
-export const preaper_object_to_server = (values) => {
-  let details = Object.keys(values)
-    .filter((detail_name) => values[detail_name])
-    .reduce((res, key) => {
-      if (values[key].id && values[key].id == -1) return res;
-      let value = values[key].id ? values[key].id : values[key];
-      console.log(value);
-      return (res[key] = value), res;
-    }, {});
-  return details;
-};

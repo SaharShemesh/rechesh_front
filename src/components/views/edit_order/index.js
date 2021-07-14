@@ -12,20 +12,17 @@ import {
   Actions,
   SellItem,
   Bid,
-} from "../new_order/sections";
+} from "../general/sections";
 import { useHistory, useParams } from "react-router";
 import { Row, Col, Button, message } from "antd";
 import "../new_order/css/order.css";
-import {
-  get_random,
-  preaper_object_to_server,
-  re_order_the_key,
-} from "../../helpers/procedures";
+import { get_random, re_order_the_key } from "../../helpers/procedures";
 import { system_Notification } from "../../helpers/notification";
 import { Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { add_order, createOrder } from "../../../features/order/orderSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { General_details_mapper, Items_mapper } from "../../helpers/mappers";
 //memos
 export default function Edit_order(props) {
   let history = useHistory();
@@ -64,87 +61,10 @@ export default function Edit_order(props) {
   order = order.find((order) => order.id == parseInt(params.order)).Orders[
     parseInt(params.sub_order) - 1
   ];
-  let order_details = {
-    order_type: { name: order.Order_type.type, id: order.Order_type.type_id },
-    paka: order.Paka
-      ? {
-          name: order.Paka.paka_number,
-          id: order.Paka.paka_id,
-        }
-      : undefined,
-    Professional_at: order.proffesional_authority
-      ? {
-          name:
-            order.proffesional_authority.first_name +
-            " " +
-            order.proffesional_authority.last_name +
-            "-" +
-            order.proffesional_authority.id_num,
-          id: order.proffesional_authority.id,
-        }
-      : undefined,
-    budget_type: order.Budget_type
-      ? {
-          name: order.Budget_type.type,
-          id: order.Budget_type.type_id,
-        }
-      : undefined,
-    paka_desc: order.paka_desc ? order.paka_desc : undefined,
-    assignment_id: order.assignment
-      ? {
-          name: order.assignment.assignment_number,
-          id: order.assignment.id,
-        }
-      : undefined,
-    procument_type: order.Procument_Type
-      ? {
-          name: order.Procument_Type.type,
-          id: order.Procument_Type.type_id,
-        }
-      : undefined,
-    priority: order.Priority
-      ? {
-          name: order.Priority.priority_name,
-          id: order.Priority.id,
-        }
-      : undefined,
-    pulling_bag: order.Pulling_bag
-      ? {
-          name: order.Pulling_bag.bag_description,
-          id: order.Pulling_bag.bag_id,
-        }
-      : undefined,
-    paka_type:
-      order.Paka && order.Paka.Paka_type
-        ? {
-            name: order.Paka.Paka_type.type,
-            id: order.Paka.Paka_type.id,
-          }
-        : undefined,
-    need: order.need,
-    schedule: order.schedule,
-  };
+  let order_details = General_details_mapper.server_to_client(order);
   let sell_items = [];
   if (order.Sell_items) {
-    sell_items = order.Sell_items.map((item) => ({
-      desc: item.desc,
-      technical_spec: item.technical_spec
-        ? { name: "כן", id: 1 }
-        : { name: "לא", id: 2 },
-      creator_num: { name: item.Creator.creator_num, id: item.Creator.id },
-      creator_name: item.Creator.creator_name,
-      recommended_provider: {
-        name: item.Provider.provider_name,
-        id: item.Provider.provider_id,
-      },
-      quantity: item.quantity,
-      measurement: {
-        name: item.Measurement.measurement,
-        id: item.Measurement.id,
-      },
-      price: item.price,
-      Iaf_num: { name: item.iaf_num.iaf_num, id: item.iaf_num.id },
-    }));
+    sell_items = Items_mapper.server_to_client(order.Sell_items);
   }
   useEffect(() => sell_items.forEach((sell) => addItem(sell)), []);
 
@@ -197,16 +117,16 @@ export default function Edit_order(props) {
       }
     });
     //fill loop
+    console.log(new_bids);
     setBids({ ...new_bids });
   };
   let do_action = function (action) {
-    console.log(selected_items);
-    console.log(
-      re_order_the_key(
-        items.filter((item) => !selected_items.includes(item.key)),
-        "item_number"
-      )
-    );
+    // console.log(
+    //   re_order_the_key(
+    //     items.filter((item) => !selected_items.includes(item.key)),
+    //     "item_number"
+    //   )
+    // );
     switch (action) {
       case "delete":
         setItems(
@@ -220,51 +140,7 @@ export default function Edit_order(props) {
   };
   return (
     <React.Fragment>
-      <Form.Provider
-        onFormFinish={(name, { values, forms }) => {
-          while (5 < 4) addItem();
-          if (name == "order_details") {
-            if (items.length == 0) {
-              return message.error("הוסף פריטים להזמנה זו");
-            }
-            if (items.length > 0 && validate_items()) {
-              console.log(values);
-              let details = preaper_object_to_server(values);
-              let sell_items = items.map(
-                ({
-                  technical_spec,
-                  desc,
-                  quantity,
-                  price,
-                  creator_num,
-                  measurement,
-                  recommended_provider,
-                  Iaf_num,
-                }) => ({
-                  technical_spec: technical_spec.id == 1 ? true : false,
-                  desc,
-                  quantity,
-                  price,
-                  creator: creator_num.id,
-                  measurement: measurement.id,
-                  provider: recommended_provider.id,
-                  Iaf_num: Iaf_num.id,
-                })
-              );
-              console.log(
-                JSON.stringify({
-                  Order: { ...details, Sell_items: sell_items },
-                })
-              );
-              dispatch(
-                createOrder({ Order: { ...details, Sell_items: sell_items } })
-              )
-                .then((x) => history.push("/my-orders"))
-                .catch((ee) => console.log("error", ee));
-            }
-          }
-        }}
-      >
+      <Form.Provider onFormFinish={(name, { values, forms }) => {}}>
         <Row justify="end" gutter={[0, 0]}>
           <Col span={19}>
             <Order_details
@@ -287,17 +163,24 @@ export default function Edit_order(props) {
               add_item={addItem}
               selected_keys={selected_items}
               items_selected={(items) => {
-                console.log("items:", items);
                 setSelected(items);
               }}
               new_value={(row) => {
-                console.log(row);
                 let index = items.findIndex(
                   (current_row) => current_row.key == row.key
                 );
                 let new_items = items.slice();
                 new_items[index] = row;
-                console.log("new_items:", new_items);
+                //update bid
+                let updated_bids = { ...bids };
+                Object.keys(updated_bids).forEach((item_sign) => {
+                  let item = new_items.find(
+                    (item) => item.item_sign == item_sign
+                  );
+                  if (item.desc != updated_bids[item_sign].desc)
+                    updated_bids[item_sign].desc = item.desc;
+                });
+                setBids(updated_bids);
                 setItems(new_items);
               }}
               new_bid={getBid}
@@ -313,7 +196,13 @@ export default function Edit_order(props) {
         </Row>
         <Row>
           <Col span={14}>
-            <Bid bids={bids} />
+            <Bid
+              bids={bids}
+              delete_bid={(prov_id) => {
+                let updated_bids = { ...bids };
+              }}
+              check_bid={(prov_id) => {}}
+            />
           </Col>
           <Col span={10} style={{ marginTop: "62px" }}>
             <AcceptTable />
