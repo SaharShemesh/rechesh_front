@@ -932,7 +932,7 @@ export function SellItem(props) {
         הוסף הצעה חדשה
       </Button>
       <New_bid
-        selected_providers_ids={props.selected_providers_ids}
+        // selected_providers_ids={props.selected_providers_ids}
         show={screensStatus.New_bid}
         onCancel={cancelScreen.bind(this, "New_bid")}
         sell_Items={props.sell_Items}

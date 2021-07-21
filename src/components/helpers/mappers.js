@@ -67,14 +67,14 @@ export class General_details_mapper {
     return order_details;
   }
   static client_to_server(values) {
-    let details = Object.keys(values)
-      .filter((detail_name) => values[detail_name])
-      .reduce((res, key) => {
-        if (values[key].id && values[key].id == -1) return res;
-        let value = values[key].id ? values[key].id : values[key];
+    let details = Object.keys(values).reduce((res, key) => {
+      let value;
+      console.log(values[key]);
+      if (values[key] == undefined) value = null;
+      else value = values[key].id ? values[key].id : values[key];
 
-        return (res[key] = value), res;
-      }, {});
+      return (res[key] = value), res;
+    }, {});
     return details;
   }
 }
@@ -91,16 +91,21 @@ export class Items_mapper {
         measurement,
         recommended_provider,
         Iaf_num,
-      }) => ({
-        technical_spec: technical_spec.id == 1 ? true : false,
-        desc,
-        quantity,
-        price,
-        creator: creator_num.id,
-        measurement: measurement.id,
-        provider: recommended_provider.id,
-        Iaf_num: Iaf_num.id,
-      })
+        id,
+      }) => {
+        let item = {
+          technical_spec: technical_spec.id == 1 ? true : false,
+          desc,
+          quantity,
+          price,
+          creator: creator_num.id,
+          measurement: measurement.id,
+          provider: recommended_provider.id,
+          Iaf_num: Iaf_num.id,
+        };
+        if (id) item.id = id;
+        return item;
+      }
     );
 
     return sell_items;
@@ -109,6 +114,7 @@ export class Items_mapper {
   static server_to_client(sell_items) {
     let mapped_items = sell_items.map((item) => ({
       desc: item.desc,
+      id: item.item_id,
       technical_spec: item.technical_spec
         ? { name: "כן", id: 1 }
         : { name: "לא", id: 2 },

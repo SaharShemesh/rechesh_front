@@ -16,11 +16,23 @@ import {
 import { useHistory, useParams } from "react-router";
 import { Row, Col, Button, message } from "antd";
 import "../new_order/css/order.css";
-import { get_random, re_order_the_key } from "../../helpers/procedures";
+import {
+  get_changes,
+  get_random,
+  re_order_the_key,
+  isEmpty,
+} from "../../helpers/procedures";
 import { system_Notification } from "../../helpers/notification";
 import { Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { add_order, createOrder } from "../../../features/order/orderSlice";
+import {
+  add_order,
+  createOrder,
+  create_sell_items,
+  update_General_Details,
+  update_order,
+  update_sell_items,
+} from "../../../features/order/orderSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { General_details_mapper, Items_mapper } from "../../helpers/mappers";
 //memos
@@ -66,8 +78,45 @@ export default function Edit_order(props) {
   if (order.Sell_items) {
     sell_items = Items_mapper.server_to_client(order.Sell_items);
   }
-  useEffect(() => sell_items.forEach((sell) => addItem(sell)), []);
+  console.log(sell_items);
+  useEffect(() => {
+    let rows = re_order_the_key(
+      sell_items.map((sell) => getItem_format(sell)),
+      "item_number"
+    );
+    setItems(rows);
+    console.log("items:", items);
+  }, []);
 
+  function getItem_format({
+    Iaf_num = "",
+    desc = "",
+    technical_spec = "",
+    creator_num = "",
+    creator_name = "",
+    recommended_provider = "",
+    quantity = "",
+    measurement = "",
+    price = "",
+    id = 0,
+  }) {
+    let item = {
+      key: items.length,
+      item_number: items.length + 1,
+      desc,
+      Iaf_num,
+      technical_spec,
+      creator_num,
+      creator_name,
+      recommended_provider,
+      quantity,
+      measurement,
+      price,
+      item_sign: get_random(items.map((item) => item.item_sign)),
+    };
+    if (id) item.id = id;
+    return item;
+  }
   function addItem({
     Iaf_num = "",
     desc = "",
@@ -78,29 +127,24 @@ export default function Edit_order(props) {
     quantity = "",
     measurement = "",
     price = "",
+    id = 0,
   }) {
     if (items.length >= 1) {
       if (!validate_items()) return;
     }
-    setItems(
-      re_order_the_key([
-        ...items,
-        {
-          key: items.length,
-          item_number: items.length + 1,
-          desc,
-          Iaf_num,
-          technical_spec,
-          creator_num,
-          creator_name,
-          recommended_provider,
-          quantity,
-          measurement,
-          price,
-          item_sign: get_random(items.map((item) => item.item_sign)),
-        },
-      ])
-    );
+    let item = getItem_format({
+      Iaf_num,
+      desc,
+      technical_spec,
+      creator_num,
+      creator_name,
+      recommended_provider,
+      quantity,
+      measurement,
+      price,
+      id,
+    });
+    setItems(re_order_the_key([...items, item]));
   }
   let providers = {};
   let getBid = (bid) => {
@@ -140,7 +184,92 @@ export default function Edit_order(props) {
   };
   return (
     <React.Fragment>
-      <Form.Provider onFormFinish={(name, { values, forms }) => {}}>
+      <Form.Provider
+        onFormFinish={async (name, { values, forms }) => {
+          if (name == "order_details") {
+            console.log(values);
+            console.log(order_details);
+            console.log(get_changes(order_details, values));
+
+            if (items.length > 0 && validate_items()) {
+              let general_details = get_changes(order_details, values);
+              console.log(
+                General_details_mapper.client_to_server(general_details)
+              );
+              let sell_items_to_server = Items_mapper.client_to_server(
+                items.map((item) => ({ ...item }))
+              );
+              sell_items_to_server.forEach((item) => {
+                delete item.key;
+                delete item.item_number;
+                delete item.item_sign;
+              });
+              let updated_items = sell_items_to_server.filter(
+                (item) => item.id
+              );
+              let new_items = sell_items_to_server.filter((item) => !item.id);
+              try {
+                if (
+                  !isEmpty(general_details) ||
+                  !isEmpty(updated_items) ||
+                  !isEmpty(new_items)
+                ) {
+                  if (!isEmpty(general_details)) {
+                    let res = await dispatch(
+                      update_General_Details({
+                        general_details:
+                          General_details_mapper.client_to_server(
+                            general_details
+                          ),
+                        main_order_id: params.order,
+                        order_id: order.id,
+                      })
+                    );
+                    unwrapResult(res);
+                  }
+                  if (!isEmpty(updated_items)) {
+                    let update = await dispatch(
+                      update_sell_items({
+                        order_id: order.id,
+                        main_id: parseInt(params.order),
+                        items: updated_items,
+                      })
+                    );
+                    unwrapResult(update);
+                  }
+                  if (!isEmpty(updated_items)) {
+                    let update = await dispatch(
+                      update_sell_items({
+                        order_id: order.id,
+                        main_id: parseInt(params.order),
+                        items: updated_items,
+                      })
+                    );
+                    unwrapResult(update);
+                  }
+
+                  if (!isEmpty(new_items)) {
+                    let add = await dispatch(
+                      create_sell_items({
+                        order_id: order.id,
+                        main_id: parseInt(params.order),
+                        items: new_items,
+                      })
+                    );
+                    unwrapResult(add);
+                  }
+                  history.push("/");
+                } else {
+                  message.warning("לא נעשו שינויים בהזמנה!");
+                }
+              } catch (e) {
+                console.log(e);
+              } finally {
+              }
+            }
+          }
+        }}
+      >
         <Row justify="end" gutter={[0, 0]}>
           <Col span={19}>
             <Order_details
@@ -196,13 +325,15 @@ export default function Edit_order(props) {
         </Row>
         <Row>
           <Col span={14}>
-            <Bid
-              bids={bids}
-              delete_bid={(prov_id) => {
-                let updated_bids = { ...bids };
-              }}
-              check_bid={(prov_id) => {}}
-            />
+            {!isEmpty(bids) && (
+              <Bid
+                bids={bids}
+                delete_bid={(prov_id) => {
+                  let updated_bids = { ...bids };
+                }}
+                check_bid={(prov_id) => {}}
+              />
+            )}
           </Col>
           <Col span={10} style={{ marginTop: "62px" }}>
             <AcceptTable />

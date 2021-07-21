@@ -103,3 +103,22 @@ export function get_random(keys) {
   } while (keys.find((keyy) => keyy == random));
   return random;
 }
+
+export function get_changes(original, modified) {
+  return Object.keys(modified)
+    .filter((key) => {
+      if (modified[key] && modified[key].id) {
+        if (!original[key]) return true;
+        else if (modified[key].id != original[key].id) return true;
+        else return false;
+      } else {
+        if (modified[key] != original[key]) return true;
+        else return false;
+      }
+    })
+    .reduce((object, key) => ({ ...object, [key]: modified[key] }), {});
+}
+
+export function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
