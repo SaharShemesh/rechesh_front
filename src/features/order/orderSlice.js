@@ -177,10 +177,10 @@ export const orderSlice = createSlice({
           order.Orders.findIndex((order) => order.id == action.payload.order_id)
         ];
 
-      // sub_order.Sell_items = Object.assign(
-      //   action.payload.items,
-      //   sub_order.Sell_items
-      // );
+      sub_order.Sell_items = Object.assign(
+        action.payload.items,
+        sub_order.Sell_items
+      );
     },
   },
 });
